@@ -56,8 +56,16 @@ export const expenseRouter = createTRPCRouter({
         );
       }
 
-      // If no approval rule specified, use company default
-      let approvalRuleId = input.approvalRuleId;
+      // Resolve approval rule:
+      // 1. User specific rule
+      // 2. Explicitly passed in input (e.g. from a draft)
+      // 3. Company default rule
+      let approvalRuleId = ctx.session.user.approvalRuleId;
+      
+      if (!approvalRuleId && input.approvalRuleId) {
+        approvalRuleId = input.approvalRuleId;
+      }
+      
       if (!approvalRuleId) {
         const defaultRule = await ctx.db.approvalRule.findFirst({
           where: {
@@ -66,7 +74,7 @@ export const expenseRouter = createTRPCRouter({
             isActive: true,
           },
         });
-        approvalRuleId = defaultRule?.id;
+        approvalRuleId = defaultRule?.id ?? null;
       }
 
       return ctx.db.expense.create({
@@ -78,7 +86,7 @@ export const expenseRouter = createTRPCRouter({
           currencyId: input.currencyCode,
           categoryId: input.categoryId,
           submitterId: ctx.session.user.id,
-          approvalRuleId: approvalRuleId ?? undefined,
+          approvalRuleId: approvalRuleId ?? null,
           remarks: input.remarks,
           receiptUrl: input.receiptUrl,
           status: "DRAFT",

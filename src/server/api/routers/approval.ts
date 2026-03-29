@@ -40,6 +40,7 @@ export const approvalRouter = createTRPCRouter({
             }),
           )
           .min(1, "At least one approval step is required"),
+        appliedUserIds: z.array(z.string()).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -107,6 +108,9 @@ export const approvalRouter = createTRPCRouter({
               stepOrder: step.stepOrder,
             })),
           },
+          appliedUsers: input.appliedUserIds ? {
+            connect: input.appliedUserIds.map(id => ({ id })),
+          } : undefined,
         },
         include: {
           steps: {
@@ -119,6 +123,9 @@ export const approvalRouter = createTRPCRouter({
           },
           specificApprover: {
             select: { id: true, name: true, designation: true },
+          },
+          appliedUsers: {
+            select: { id: true, name: true, email: true },
           },
         },
       });
@@ -141,6 +148,9 @@ export const approvalRouter = createTRPCRouter({
           },
           specificApprover: {
             select: { id: true, name: true, designation: true },
+          },
+          appliedUsers: {
+            select: { id: true, name: true, email: true, designation: true },
           },
         },
       });
@@ -173,6 +183,7 @@ export const approvalRouter = createTRPCRouter({
             }),
           )
           .optional(),
+        appliedUserIds: z.array(z.string()).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -226,6 +237,19 @@ export const approvalRouter = createTRPCRouter({
         };
       }
 
+      if (input.appliedUserIds) {
+        // Disconnect all current users before connecting new ones
+        // This ensures "one rule per user"
+        await ctx.db.user.updateMany({
+          where: { approvalRuleId: id },
+          data: { approvalRuleId: null },
+        });
+
+        updatePayload.appliedUsers = {
+          connect: input.appliedUserIds.map((userId) => ({ id: userId })),
+        };
+      }
+
       return ctx.db.approvalRule.update({
         where: { id },
         data: updatePayload,
@@ -260,7 +284,10 @@ export const approvalRouter = createTRPCRouter({
         specificApprover: {
           select: { id: true, name: true, designation: true },
         },
-        _count: { select: { expenses: true } },
+        appliedUsers: {
+          select: { id: true, name: true },
+        },
+        _count: { select: { expenses: true, appliedUsers: true } },
       },
       orderBy: { createdAt: "desc" },
     });

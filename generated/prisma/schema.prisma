@@ -114,13 +114,15 @@ model User {
   role          Role      @default(EMPLOYEE)
   designation   String? // "CFO", "Director", "Finance Lead", etc.
 
-  companyId String?
-  managerId String? // Reports to this user
-  isActive  Boolean @default(true) // For soft-deletion
+  companyId      String?
+  managerId      String? // Reports to this user
+  approvalRuleId String? // Specific rule for this user's expenses
+  isActive       Boolean @default(true) // For soft-deletion
 
-  company      Company? @relation(fields: [companyId], references: [id])
-  manager      User?    @relation("ManagerRelation", fields: [managerId], references: [id])
-  subordinates User[]   @relation("ManagerRelation")
+  company      Company?      @relation(fields: [companyId], references: [id])
+  manager      User?         @relation("ManagerRelation", fields: [managerId], references: [id])
+  subordinates User[]        @relation("ManagerRelation")
+  approvalRule ApprovalRule? @relation("AppliedRule", fields: [approvalRuleId], references: [id])
 
   // NextAuth relations
   accounts Account[]
@@ -227,6 +229,7 @@ model ApprovalRule {
 
   company          Company        @relation(fields: [companyId], references: [id])
   specificApprover User?          @relation("SpecificApprover", fields: [specificApproverId], references: [id])
+  appliedUsers     User[]         @relation("AppliedRule")
   steps            ApprovalStep[]
   expenses         Expense[]
 }

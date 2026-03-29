@@ -22,6 +22,8 @@ export default function EditRulePage() {
   });
 
   const [steps, setSteps] = useState<{ id: string; approverId: string }[]>([]);
+  const [appliedUserIds, setAppliedUserIds] = useState<string[]>([]);
+  const [userSearch, setUserSearch] = useState("");
   const [error, setError] = useState("");
 
   const { data: rule, isLoading: isRuleLoading } = api.approval.getRuleById.useQuery(
@@ -30,6 +32,7 @@ export default function EditRulePage() {
   );
 
   const { data: managers } = api.user.listManagers.useQuery();
+  const { data: users } = api.user.list.useQuery();
 
   useEffect(() => {
     if (rule) {
@@ -47,6 +50,7 @@ export default function EditRulePage() {
           approverId: s.approverId,
         })),
       );
+      setAppliedUserIds(rule.appliedUsers.map((u) => u.id));
     }
   }, [rule]);
 
@@ -96,13 +100,27 @@ export default function EditRulePage() {
         ? Number(form.requiredPercent)
         : null,
       specificApproverId: ["SPECIFIC", "HYBRID"].includes(form.ruleType)
-        ? form.specificApproverId || null
+        ? form.specificApproverId ?? null
         : null,
       steps: steps.map((s, idx) => ({
         approverId: s.approverId,
         stepOrder: idx + 1,
       })),
+      appliedUserIds: appliedUserIds.length > 0 ? appliedUserIds : undefined,
     });
+  };
+
+  const filteredUsers = users?.filter(u => 
+    (u.name?.toLowerCase().includes(userSearch.toLowerCase()) ?? false) || 
+    u.email.toLowerCase().includes(userSearch.toLowerCase())
+  );
+
+  const toggleUser = (userId: string) => {
+    setAppliedUserIds(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
   };
 
   if (isRuleLoading) {
@@ -294,6 +312,70 @@ export default function EditRulePage() {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Section 3: Target Employees */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <h2 className="text-lg font-semibold text-slate-800">3. Applied Employees</h2>
+              <div className="text-xs text-slate-500">
+                {appliedUserIds.length} {appliedUserIds.length === 1 ? "employee" : "employees"} selected
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search employees by name or email..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="input pl-10"
+                />
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+
+              <div 
+                className="max-h-60 overflow-y-auto rounded-xl border border-dashed border-slate-200 p-2 space-y-1"
+              >
+                {filteredUsers?.length === 0 ? (
+                  <div className="py-6 text-center text-sm text-slate-400">No employees found.</div>
+                ) : (
+                  filteredUsers?.map((u) => (
+                    <label 
+                      key={u.id}
+                      className="flex items-center gap-3 p-2.5 rounded-lg transition-colors duration-200 cursor-pointer hover:bg-slate-50"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={appliedUserIds.includes(u.id)}
+                        onChange={() => toggleUser(u.id)}
+                        className="h-4 w-4 rounded cursor-pointer accent-brand-600"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-slate-900 truncate">
+                          {u.name ?? u.email}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-xs text-slate-500 truncate">{u.email}</div>
+                          {u.approvalRule && u.approvalRule.id !== ruleId && (
+                            <div className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-600 font-medium border border-blue-100">
+                              Current: {u.approvalRule.name}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </label>
+                  ))
+                )}
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed px-1">
+                Note: Selecting an employee who already has a specific rule will move them to this rule. 
+                If no employees are selected, this rule can only be triggered if set as the default workflow or manually assigned to an expense.
+              </p>
+            </div>
           </div>
 
           {error && (
