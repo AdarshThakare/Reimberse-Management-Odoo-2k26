@@ -389,11 +389,11 @@ export const expenseRouter = createTRPCRouter({
     }),
 
   /**
-   * Get complete expense history for admin dashboard.
+    * Get complete expense history for manager/admin dashboard.
    * Shows all expenses in the company with full approval chain.
-   * Admin only.
+    * Manager or Admin only.
    */
-  getCompanyExpenseHistory: adminProcedure
+    getCompanyExpenseHistory: managerProcedure
     .input(
       z
         .object({
