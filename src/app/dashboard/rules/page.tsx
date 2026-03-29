@@ -92,12 +92,12 @@ export default function ApprovalRulesPage() {
                 <div className="text-sm text-slate-500">
                   {rule._count.expenses} expenses
                 </div>
-                <button 
-                  onClick={() => alert('Editing rules coming soon. Use the DB directly for now, or create a new one.')} 
+                <Link 
+                  href={`/dashboard/rules/${rule.id}/edit`}
                   className="text-sm font-medium text-brand-600 hover:text-brand-700"
                 >
                   Edit Rule
-                </button>
+                </Link>
               </div>
             </div>
           ))}

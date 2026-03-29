@@ -125,6 +125,33 @@ export const approvalRouter = createTRPCRouter({
     }),
 
   /**
+   * Get a specific rule by ID (for editing)
+   */
+  getRuleById: adminProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const rule = await ctx.db.approvalRule.findFirst({
+        where: { id: input.id, companyId: ctx.session.user.companyId! },
+        include: {
+          steps: {
+            include: {
+              approver: { select: { id: true, name: true, designation: true } },
+            },
+            orderBy: { stepOrder: "asc" },
+          },
+          specificApprover: {
+            select: { id: true, name: true, designation: true },
+          },
+        },
+      });
+
+      if (!rule) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Rule not found." });
+      }
+      return rule;
+    }),
+
+  /**
    * Update an approval rule (name, type, conditions).
    */
   updateRule: adminProcedure
@@ -138,6 +165,14 @@ export const approvalRouter = createTRPCRouter({
         isManagerFirst: z.boolean().optional(),
         isDefault: z.boolean().optional(),
         isActive: z.boolean().optional(),
+        steps: z
+          .array(
+            z.object({
+              approverId: z.string(),
+              stepOrder: z.number().int().min(1),
+            }),
+          )
+          .optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -148,6 +183,29 @@ export const approvalRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Rule not found." });
       }
 
+      // Validate approvers
+      if (input.steps && input.steps.length > 0) {
+        const approverIds = input.steps.map((s) => s.approverId);
+        if (input.specificApproverId) approverIds.push(input.specificApproverId);
+        
+        const approvers = await ctx.db.user.findMany({
+          where: {
+            id: { in: approverIds },
+            companyId: ctx.session.user.companyId!,
+            role: { in: ["MANAGER", "ADMIN"] },
+          },
+        });
+        
+        const foundIds = new Set(approvers.map((a) => a.id));
+        const missingIds = approverIds.filter((id) => !foundIds.has(id));
+        if (missingIds.length > 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Some approvers are invalid or not managers: ${missingIds.join(", ")}`,
+          });
+        }
+      }
+
       if (input.isDefault) {
         await ctx.db.approvalRule.updateMany({
           where: { companyId: ctx.session.user.companyId!, isDefault: true },
@@ -155,10 +213,22 @@ export const approvalRouter = createTRPCRouter({
         });
       }
 
-      const { id, ...data } = input;
+      const { id, steps, ...data } = input;
+      // Build dynamic update payload
+      const updatePayload: Parameters<typeof ctx.db.approvalRule.update>[0]["data"] = { ...data };
+      if (steps) {
+        updatePayload.steps = {
+          deleteMany: {}, // Clear out the old exact steps for this rule
+          create: steps.map((step) => ({
+            approverId: step.approverId,
+            stepOrder: step.stepOrder,
+          })),
+        };
+      }
+
       return ctx.db.approvalRule.update({
         where: { id },
-        data,
+        data: updatePayload,
         include: {
           steps: {
             include: {
