@@ -1,12 +1,64 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+
+type GsapTimeline = {
+  to(target: HTMLElement, vars: Record<string, string | number>): GsapTimeline;
+  set(target: HTMLElement, vars: Record<string, string | number>): GsapTimeline;
+};
+
+type GsapRuntime = {
+  killTweensOf(target: HTMLElement): void;
+  timeline(vars: { onComplete?: () => void }): GsapTimeline;
+};
+
+declare global {
+  interface Window {
+    gsap?: GsapRuntime;
+  }
+}
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const arrowKnobRef = useRef<HTMLSpanElement | null>(null);
+
+  const animateArrow = async () => {
+    const knob = arrowKnobRef.current;
+    if (!knob || typeof window === "undefined") return;
+
+    const gsap = window.gsap;
+    if (!gsap) return;
+
+    gsap.killTweensOf(knob);
+
+    await new Promise<void>((resolve) => {
+      gsap
+        .timeline({ onComplete: resolve })
+        .to(knob, {
+          x: 18,
+          scale: 1.06,
+          duration: 0.11,
+          ease: "power3.out",
+        })
+        .to(knob, {
+          x: 38,
+          scale: 1,
+          duration: 0.1,
+          ease: "expo.in",
+        })
+        .set(knob, { x: -66, scale: 0.92, opacity: 0.9 })
+        .to(knob, {
+          x: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 0.28,
+          ease: "elastic.out(1,0.62)",
+        });
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +70,8 @@ export default function SignInPage() {
     }
 
     setLoading(true);
+    await animateArrow();
+
     try {
       await signIn("resend", { email, callbackUrl: "/" });
     } catch {
@@ -27,79 +81,87 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 px-4">
-      <div className="animate-fade-in w-full max-w-md">
-        {/* Logo / Brand */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
-            <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
-            </svg>
-          </div>
-          <h1 className="text-3xl font-bold text-white">ReimburseFlow</h1>
-          <p className="mt-2 text-sm text-brand-200">
-            Smart expense management with intelligent approval workflows
-          </p>
+    <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(140deg,#3a46b4_0%,#262f74_58%,#171b47_100%)]">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,#101536_0%,transparent_58%)]" />
+
+      <div className="relative flex min-h-screen flex-col px-6 pt-10 sm:px-12 sm:pt-12">
+        <div className="text-[2.1rem] font-extrabold tracking-tight text-white sm:text-[2.3rem]">
+          REIM
         </div>
 
-        {/* Card */}
-        <div className="rounded-2xl bg-white p-8 shadow-2xl">
-          <h2 className="text-xl font-semibold text-slate-900">Welcome back</h2>
-          <p className="mt-1 text-sm text-slate-500">
-            Sign in with your email to continue
-          </p>
+        <div className="flex flex-1 items-end justify-center">
+          <div className="animate-fade-in w-full max-w-100 rounded-t-2xl rounded-b-none bg-[#f0f1f5] p-4 shadow-[0_30px_65px_rgba(8,12,45,0.45)] sm:p-7">
+            <h1 className="text-[2.6rem] uppercase font-semibold leading-none tracking-tight text-[#101222] sm:text-[2.68rem]">
+              Welcome Back
+            </h1>
+            <p className="mt-3 text-sm text-[#5f657f]">
+              Sign in using your work email to receive a secure magic link.
+            </p>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-            <div>
-              <label htmlFor="email" className="label">
-                Email address
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                className="input"
-                autoComplete="email"
-                autoFocus
-              />
-            </div>
-
-            {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-                {error}
+            <form onSubmit={handleSubmit} className="mt-8 flex flex-col">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-sm font-semibold text-[#8d8f9b]"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  className="h-11 w-full rounded-xl border border-transparent bg-[#e3e3e8] px-4 text-sm text-[#1d233d] placeholder:text-[#9da0ac] outline-none transition focus:border-[#27307f]/30 focus:ring-2 focus:ring-[#27307f]/20"
+                  autoComplete="email"
+                  autoFocus
+                />
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn btn-primary w-full"
-            >
-              {loading ? (
-                <>
-                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-                    <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" className="opacity-75" />
-                  </svg>
-                  Sending magic link...
-                </>
-              ) : (
-                "Continue with Email"
+              {error && (
+                <p className="mt-3 text-sm font-medium text-red-600">{error}</p>
               )}
-            </button>
-          </form>
 
-          <div className="mt-6 text-center text-xs text-slate-400">
-            We&apos;ll send you a magic link to sign in instantly.
-            <br />No password needed.
+              <div className="mt-16 flex items-center gap-2.5">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="h-12 flex-1 cursor-pointer rounded-full border-2 border-[#11131f] bg-[#f0f1f5] px-5 text-sm font-semibold text-[#11131f] transition hover:bg-[#e7e8ee] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? "Sending magic link..." : "Continue with Email"}
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  aria-label="Continue"
+                  className="group flex h-12 w-20 cursor-pointer items-center justify-end overflow-hidden rounded-full bg-[#1b1d35] px-1 transition hover:bg-[#13162a] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <span
+                    ref={arrowKnobRef}
+                    className="will-change-transform flex h-10 w-10 items-center justify-center rounded-full bg-[#d8d9df] text-[#11131f]"
+                  >
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 12h14m-6-6 6 6-6 6"
+                      />
+                    </svg>
+                  </span>
+                </button>
+              </div>
+
+            
+            </form>
           </div>
         </div>
-
-        <p className="mt-6 text-center text-xs text-brand-300">
-          First time? A company will be created for you automatically.
-        </p>
       </div>
     </div>
   );
