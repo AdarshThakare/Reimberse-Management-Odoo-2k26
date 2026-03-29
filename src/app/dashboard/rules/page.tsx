@@ -30,8 +30,7 @@ export default function ApprovalRulesPage() {
 
         // Keep local re-ordered state if it still matches the same step set.
         if (
-          existing &&
-          existing.length === serverOrder.length &&
+          existing?.length === serverOrder.length &&
           existing.every((id) => serverOrder.includes(id))
         ) {
           next[rule.id] = existing;
@@ -45,8 +44,9 @@ export default function ApprovalRulesPage() {
   }, [rulesData]);
 
   useEffect(() => {
+    const timers = saveTimersRef.current;
     return () => {
-      Object.values(saveTimersRef.current).forEach((timerId) => {
+      Object.values(timers).forEach((timerId) => {
         clearTimeout(timerId);
       });
     };
@@ -59,34 +59,36 @@ export default function ApprovalRulesPage() {
 
     setSavingRuleIds((prev) => ({ ...prev, [ruleId]: true }));
 
-    saveTimersRef.current[ruleId] = setTimeout(async () => {
-      const rule = rulesData?.find((r) => r.id === ruleId);
-      if (!rule) return;
+    saveTimersRef.current[ruleId] = setTimeout(() => {
+      void (async () => {
+        const rule = rulesData?.find((r) => r.id === ruleId);
+        if (!rule) return;
 
-      const stepsForSave = orderedStepIds
-        .map((stepId, idx) => {
-          const step = rule.steps.find((s) => s.id === stepId);
-          if (!step) return null;
-          return {
-            approverId: step.approverId,
-            stepOrder: idx + 1,
-          };
-        })
-        .filter((s): s is { approverId: string; stepOrder: number } => s !== null);
+        const stepsForSave = orderedStepIds
+          .map((stepId, idx) => {
+            const step = rule.steps.find((s) => s.id === stepId);
+            if (!step) return null;
+            return {
+              approverId: step.approverId,
+              stepOrder: idx + 1,
+            };
+          })
+          .filter((s): s is { approverId: string; stepOrder: number } => s !== null);
 
-      try {
-        await updateRuleMutation.mutateAsync({
-          id: ruleId,
-          steps: stepsForSave,
-        });
-        setSaveError("");
-        await utils.approval.listRules.invalidate();
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to auto-save sequence";
-        setSaveError(message);
-      } finally {
-        setSavingRuleIds((prev) => ({ ...prev, [ruleId]: false }));
-      }
+        try {
+          await updateRuleMutation.mutateAsync({
+            id: ruleId,
+            steps: stepsForSave,
+          });
+          setSaveError("");
+          await utils.approval.listRules.invalidate();
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Failed to auto-save sequence";
+          setSaveError(message);
+        } finally {
+          setSavingRuleIds((prev) => ({ ...prev, [ruleId]: false }));
+        }
+      })();
     }, 1500);
   };
 
@@ -94,17 +96,17 @@ export default function ApprovalRulesPage() {
     if (rule.ruleType !== "SEQUENTIAL") return rule.steps;
 
     const order = stepOrderOverrides[rule.id];
-    if (!order || order.length !== rule.steps.length) return rule.steps;
+    if (order?.length !== rule.steps.length) return rule.steps;
 
     const byId = new Map(rule.steps.map((s) => [s.id, s]));
     return order.map((id) => byId.get(id)).filter((s): s is (typeof rule.steps)[number] => Boolean(s));
   };
 
   const handleDropOnRule = (ruleId: string, fallbackOrder: string[]) => {
-    if (!dragging || dragging.ruleId !== ruleId) return;
+    if (dragging?.ruleId !== ruleId) return;
     const currentOrder =
-      stepOrderOverrides[ruleId] && stepOrderOverrides[ruleId]!.length > 0
-        ? stepOrderOverrides[ruleId]!
+      stepOrderOverrides[ruleId]?.length
+        ? stepOrderOverrides[ruleId]
         : fallbackOrder;
     if (currentOrder.length === 0) return;
 
@@ -135,8 +137,8 @@ export default function ApprovalRulesPage() {
   ) => {
     setDragging({ ruleId, stepId });
     const currentOrder =
-      stepOrderOverrides[ruleId] && stepOrderOverrides[ruleId]!.length > 0
-        ? stepOrderOverrides[ruleId]!
+      stepOrderOverrides[ruleId]?.length
+        ? stepOrderOverrides[ruleId]
         : fallbackOrder;
     const currentIndex = currentOrder.indexOf(stepId);
     setDropIndicator({
@@ -152,7 +154,7 @@ export default function ApprovalRulesPage() {
     ruleId: string,
     stepIndex: number,
   ) => {
-    if (!dragging || dragging.ruleId !== ruleId) return;
+    if (dragging?.ruleId !== ruleId) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
 
@@ -275,13 +277,13 @@ export default function ApprovalRulesPage() {
                   className="space-y-2"
                   onDragOver={(e) => {
                     if (rule.ruleType !== "SEQUENTIAL") return;
-                    if (!dragging || dragging.ruleId !== rule.id) return;
+                    if (dragging?.ruleId !== rule.id) return;
                     e.preventDefault();
                     e.dataTransfer.dropEffect = "move";
                   }}
                   onDrop={(e) => {
                     if (rule.ruleType !== "SEQUENTIAL") return;
-                    if (!dragging || dragging.ruleId !== rule.id) return;
+                    if (dragging?.ruleId !== rule.id) return;
                     e.preventDefault();
                     handleDropOnRule(rule.id, fallbackOrder);
                     setDragging(null);
