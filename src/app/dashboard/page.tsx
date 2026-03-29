@@ -163,15 +163,22 @@ function StatCard({
     purple: "bg-purple-50 text-purple-700",
   };
 
-  const Wrapper = href ? Link : "div";
-  const props = href ? { href } : {};
-
-  return (
-    <Wrapper {...(props as any)} className="card">
+  const content = (
+    <>
       <div className="text-xs font-medium text-slate-500">{label}</div>
       <div className={`mt-2 inline-flex items-center rounded-lg px-3 py-1 text-2xl font-bold ${colorMap[color] ?? ""}`}>
         {value}
       </div>
-    </Wrapper>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="card">
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className="card">{content}</div>;
 }

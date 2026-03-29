@@ -13,7 +13,6 @@ import {
   adminProcedure,
 } from "~/server/api/trpc";
 import {
-  fetchCountriesWithCurrencies,
   ensureCurrencyExists,
 } from "~/server/services/currency.service";
 
@@ -101,7 +100,7 @@ export const companyRouter = createTRPCRouter({
    * Get the current user's company details.
    */
   get: employeeProcedure.query(async ({ ctx }) => {
-    const companyId = ctx.session.user.companyId!;
+    const companyId = ctx.session.user.companyId;
     return ctx.db.company.findUnique({
       where: { id: companyId },
       include: {
@@ -135,7 +134,7 @@ export const companyRouter = createTRPCRouter({
    */
   listCategories: employeeProcedure.query(async ({ ctx }) => {
     return ctx.db.expenseCategory.findMany({
-      where: { companyId: ctx.session.user.companyId!, isActive: true },
+      where: { companyId: ctx.session.user.companyId, isActive: true },
       orderBy: { name: "asc" },
     });
   }),

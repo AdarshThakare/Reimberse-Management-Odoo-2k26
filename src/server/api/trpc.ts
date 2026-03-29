@@ -113,7 +113,7 @@ const enforceCompany = t.middleware(({ ctx, next }) => {
         ...ctx.session!,
         user: {
           ...ctx.session!.user,
-          companyId: companyId as string, // Narrowed: guaranteed non-null by guard above
+          companyId, // Narrowed: guaranteed non-null by guard above
         },
       },
     },

@@ -4,13 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 
+type RuleType = "SEQUENTIAL" | "PERCENTAGE" | "SPECIFIC" | "HYBRID";
+
 export default function NewRulePage() {
   const router = useRouter();
   const utils = api.useUtils();
   
   const [form, setForm] = useState({
     name: "",
-    ruleType: "SEQUENTIAL" as "SEQUENTIAL" | "PERCENTAGE" | "SPECIFIC" | "HYBRID",
+    ruleType: "SEQUENTIAL" as RuleType,
     isManagerFirst: true,
     isDefault: false,
     requiredPercent: 100,
@@ -108,7 +110,9 @@ export default function NewRulePage() {
                 <label className="label">Rule Type</label>
                 <select
                   value={form.ruleType}
-                  onChange={(e) => setForm({ ...form, ruleType: e.target.value as any })}
+                  onChange={(e) =>
+                    setForm({ ...form, ruleType: e.target.value as RuleType })
+                  }
                   className="select"
                 >
                   <option value="SEQUENTIAL">Sequential (Step 1 → Step 2 → Step 3)</option>
@@ -129,7 +133,7 @@ export default function NewRulePage() {
                 />
                 <div>
                   <div className="text-sm font-semibold text-slate-900">Manager Gate First</div>
-                  <div className="text-xs text-slate-500">Employee's direct manager must approve before this rule starts</div>
+                  <div className="text-xs text-slate-500">Employee&apos;s direct manager must approve before this rule starts</div>
                 </div>
               </label>
 
@@ -180,7 +184,7 @@ export default function NewRulePage() {
                       <option value="">Select an approver...</option>
                       {managers?.map((m) => (
                         <option key={m.id} value={m.id}>
-                          {m.name || m.email} {m.designation ? `(${m.designation})` : ""}
+                          {m.name ?? m.email} {m.designation ? `(${m.designation})` : ""}
                         </option>
                       ))}
                     </select>
@@ -204,7 +208,7 @@ export default function NewRulePage() {
 
             {steps.length === 0 ? (
               <div className="text-center py-6 text-sm text-slate-500 border border-dashed border-slate-300 rounded-lg">
-                Click "+ Add Approver" to assign users to this workflow.
+                Click &quot;+ Add Approver&quot; to assign users to this workflow.
               </div>
             ) : (
               <div className="space-y-3">
@@ -222,7 +226,7 @@ export default function NewRulePage() {
                       <option value="">Select a manager...</option>
                       {managers?.map((m) => (
                         <option key={m.id} value={m.id}>
-                          {m.name || m.email} {m.designation ? `(${m.designation})` : ""}
+                          {m.name ?? m.email} {m.designation ? `(${m.designation})` : ""}
                         </option>
                       ))}
                     </select>

@@ -2,10 +2,8 @@
 
 import { api } from "~/trpc/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function ApprovalRulesPage() {
-  const router = useRouter();
   const { data: rules, isLoading } = api.approval.listRules.useQuery();
 
   return (
@@ -71,13 +69,13 @@ export default function ApprovalRulesPage() {
                 )}
 
                 <div className="space-y-2">
-                  {rule.steps.map((step, idx) => (
+                  {rule.steps.map((step) => (
                     <div key={step.id} className="flex items-center text-sm text-slate-700 p-2 rounded-lg border border-slate-100 bg-slate-50">
                       <span className="mr-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600">
                         {rule.ruleType === "SEQUENTIAL" ? step.stepOrder : "•"}
                       </span>
                       <div className="flex-1 truncate">
-                        {step.approver.name || step.approver.designation || "Unknown Approver"}
+                        {step.approver.name ?? step.approver.designation ?? "Unknown Approver"}
                         {step.approver.designation && <span className="text-slate-400 text-xs ml-1">({step.approver.designation})</span>}
                       </div>
                       

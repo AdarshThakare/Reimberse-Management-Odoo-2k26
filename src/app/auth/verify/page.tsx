@@ -9,6 +9,9 @@ export default function VerifyPage() {
 
   useEffect(() => {
     let isMounted = true;
+    let attempts = 0;
+    const pollIntervalMs = 5000;
+    const maxPollingAttempts = 18; // 18 * 5s = 90 seconds
 
     const checkSessionAndRedirect = async () => {
       const session = await getSession();
@@ -21,19 +24,26 @@ export default function VerifyPage() {
       }
     };
 
-    // Check immediately and then poll while waiting for email verification.
-    void checkSessionAndRedirect();
+    // Poll at a steady cadence while waiting for email verification.
     const intervalId = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+
+      attempts += 1;
+      if (attempts > maxPollingAttempts) {
+        window.clearInterval(intervalId);
+        return;
+      }
+
       void checkSessionAndRedirect();
-    }, 1500);
+    }, pollIntervalMs);
 
     const onFocus = () => {
-      void checkSessionAndRedirect();
+      attempts = 0;
     };
 
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        void checkSessionAndRedirect();
+        attempts = 0;
       }
     };
 

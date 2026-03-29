@@ -171,7 +171,7 @@ export async function getPendingApprovers(
     },
   });
 
-  if (!expense || expense.status !== "UNDER_REVIEW") return [];
+  if (expense?.status !== "UNDER_REVIEW") return [];
 
   // Manager gate
   if (expense.currentStepOrder === 0 && expense.submitter.managerId) {

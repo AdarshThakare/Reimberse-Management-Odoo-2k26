@@ -49,7 +49,7 @@ export const expenseRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       // Verify category belongs to user's company
       const category = await ctx.db.expenseCategory.findFirst({
-        where: { id: input.categoryId, companyId: ctx.session.user.companyId! },
+        where: { id: input.categoryId, companyId: ctx.session.user.companyId },
       });
       if (!category) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid category." });
@@ -70,7 +70,7 @@ export const expenseRouter = createTRPCRouter({
       if (!approvalRuleId) {
         const defaultRule = await ctx.db.approvalRule.findFirst({
           where: {
-            companyId: ctx.session.user.companyId!,
+            companyId: ctx.session.user.companyId,
             isDefault: true,
             isActive: true,
           },
@@ -259,7 +259,7 @@ export const expenseRouter = createTRPCRouter({
             { submitterId: ctx.session.user.id },
             {
               submitter: {
-                companyId: ctx.session.user.companyId!,
+                companyId: ctx.session.user.companyId,
               },
             },
           ],
