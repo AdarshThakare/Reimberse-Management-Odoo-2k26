@@ -11,6 +11,18 @@ const dateFmt = new Intl.DateTimeFormat("en-US", {
 
 type ExpenseStatus = "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
 
+const expenseStatuses: readonly ExpenseStatus[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "UNDER_REVIEW",
+  "APPROVED",
+  "REJECTED",
+];
+
+function isExpenseStatus(value: string): value is ExpenseStatus {
+  return expenseStatuses.includes(value as ExpenseStatus);
+}
+
 const statusColors = {
   DRAFT: "bg-gray-100 text-gray-800",
   SUBMITTED: "bg-blue-100 text-blue-800",
@@ -21,15 +33,15 @@ const statusColors = {
 
 export default function ExpenseHistoryPage() {
   const [page, setPage] = useState(0);
-  const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [statusFilter, setStatusFilter] = useState<ExpenseStatus | undefined>();
 
   const { data, isLoading, error } = api.expense.getCompanyExpenseHistory.useQuery({
     skip: page * 50,
     take: 50,
-    status: statusFilter as any,
+    status: statusFilter,
   });
 
-  const expenses = data?.expenses || [];
+  const expenses = data?.expenses ?? [];
   const hasMore = data?.hasMore ?? false;
 
   return (
@@ -47,7 +59,8 @@ export default function ExpenseHistoryPage() {
             <select
               value={statusFilter ?? ""}
               onChange={(e) => {
-                setStatusFilter(e.target.value || undefined);
+                const value = e.target.value;
+                setStatusFilter(isExpenseStatus(value) ? value : undefined);
                 setPage(0);
               }}
               className="input mt-1"
