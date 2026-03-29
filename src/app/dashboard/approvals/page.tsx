@@ -2,10 +2,50 @@
 
 import { api } from "~/trpc/react";
 import Link from "next/link";
+import { downloadCsv } from "~/utils/export-csv";
 
 export default function ApprovalsPage() {
   const { data: pending, isLoading } = api.expense.listPending.useQuery();
   const utils = api.useUtils();
+
+  const handleExportApprovals = () => {
+    if (!pending?.length) return;
+
+    const rows = pending.map((expense) => [
+      expense.id,
+      expense.subject,
+      expense.submitter.name ?? "",
+      expense.submitter.email,
+      expense.submitter.designation ?? "",
+      expense.category.name,
+      Number(expense.totalAmount),
+      expense.currency.id,
+      expense.status,
+      expense.approvalRule?.name ?? "",
+      expense.approvalRule?.ruleType ?? "",
+      expense.submittedAt ? new Date(expense.submittedAt).toISOString() : "",
+    ] as const);
+
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(
+      `approvals-pending-${dateStamp}.csv`,
+      [
+        "Expense ID",
+        "Subject",
+        "Submitter",
+        "Submitter Email",
+        "Submitter Designation",
+        "Category",
+        "Amount",
+        "Currency",
+        "Status",
+        "Approval Rule",
+        "Rule Type",
+        "Submitted At",
+      ],
+      rows,
+    );
+  };
 
   const approveMutation = api.approval.approve.useMutation({
     onSuccess: () => void utils.expense.listPending.invalidate(),
@@ -18,10 +58,22 @@ export default function ApprovalsPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-text-primary tracking-tight">Approval Queue</h1>
-        <p className="mt-2 text-sm text-text-secondary">
-          Expenses waiting for your approval
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h1 className="text-3xl font-bold text-text-primary tracking-tight">Approval Queue</h1>
+            <p className="mt-2 text-sm text-text-secondary">
+              Expenses waiting for your approval
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleExportApprovals}
+            className="btn btn-secondary"
+            disabled={!pending?.length}
+          >
+            Export CSV
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
