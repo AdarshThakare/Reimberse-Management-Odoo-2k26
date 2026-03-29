@@ -1,23 +1,25 @@
-import { postRouter } from "~/server/api/routers/post";
+/**
+ * Root tRPC Router
+ *
+ * Merges all domain routers into a single appRouter.
+ * Each router is prefixed by its namespace.
+ */
+
+import { companyRouter } from "~/server/api/routers/company";
+import { userRouter } from "~/server/api/routers/user";
+import { expenseRouter } from "~/server/api/routers/expense";
+import { approvalRouter } from "~/server/api/routers/approval";
+import { currencyRouter } from "~/server/api/routers/currency";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
-/**
- * This is the primary router for your server.
- *
- * All routers added in /api/routers should be manually added here.
- */
 export const appRouter = createTRPCRouter({
-  post: postRouter,
+  company: companyRouter,
+  user: userRouter,
+  expense: expenseRouter,
+  approval: approvalRouter,
+  currency: currencyRouter,
 });
 
-// export type definition of API
 export type AppRouter = typeof appRouter;
 
-/**
- * Create a server-side caller for the tRPC API.
- * @example
- * const trpc = createCaller(createContext);
- * const res = await trpc.post.all();
- *       ^? Post[]
- */
 export const createCaller = createCallerFactory(appRouter);

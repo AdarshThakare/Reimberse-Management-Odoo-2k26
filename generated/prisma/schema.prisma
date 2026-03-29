@@ -1,5 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ══════════════════════════════════════════════════════════
+// Reimbursement Management System — Prisma Schema
+// Database: PostgreSQL (Neon)
+// Normalization: 3NF+
+// ══════════════════════════════════════════════════════════
 
 generator client {
   provider = "prisma-client-js"
@@ -8,37 +11,296 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
+// ──────────────── ENUMS ────────────────
+
+/// System access-control roles. These determine what a user
+/// CAN DO in the system, not their organizational title.
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+/// Lifecycle states of an expense claim.
+/// Transitions: DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED | REJECTED
+enum ExpenseStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+/// Actions an approver can take on an expense.
+enum ApprovalActionType {
+  APPROVED
+  REJECTED
+}
+
+/// Defines how an approval rule evaluates its steps.
+/// SEQUENTIAL  — All steps in order; every approver must approve.
+/// PERCENTAGE  — X% of approvers must approve (simultaneous).
+/// SPECIFIC    — If one designated approver approves → instant approval.
+/// HYBRID      — PERCENTAGE OR SPECIFIC (whichever triggers first).
+enum ApprovalRuleType {
+  SEQUENTIAL
+  PERCENTAGE
+  SPECIFIC
+  HYBRID
+}
+
+/// Who paid for the expense.
+enum PaidBy {
+  EMPLOYEE
+  COMPANY
+}
+
+// ──────────────── CURRENCY ────────────────
+// Normalized away from Company. Multiple companies can share
+// the same currency. ISO 4217 code is the primary key.
+
+model Currency {
+  id     String @id // ISO 4217 code: "USD", "INR", "EUR"
+  name   String // "United States Dollar"
+  symbol String // "$"
+
+  companies         Company[]
+  expenses          Expense[]
+  exchangeRatesFrom ExchangeRateCache[] @relation("FromCurrency")
+}
+
+/// Caches exchange rates from the free exchangerate-api.com.
+/// Key: (fromCurrencyId, toCurrencyId) — unique pair.
+/// Refresh strategy: if fetchedAt > 1 hour ago, re-fetch.
+model ExchangeRateCache {
+  id             String   @id @default(cuid())
+  fromCurrencyId String
+  toCurrencyId   String
+  rate           Decimal  @db.Decimal(18, 8)
+  fetchedAt      DateTime @default(now())
+
+  fromCurrency Currency @relation("FromCurrency", fields: [fromCurrencyId], references: [id])
+
+  @@unique([fromCurrencyId, toCurrencyId])
+  @@index([fetchedAt])
+}
+
+// ──────────────── COMPANY ────────────────
+// Created automatically on first signup. Each company is a
+// self-contained tenant; all entities are scoped by companyId.
+
+model Company {
+  id             String   @id @default(cuid())
+  name           String
+  country        String
+  baseCurrencyId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  baseCurrency  Currency          @relation(fields: [baseCurrencyId], references: [id])
+  users         User[]
+  categories    ExpenseCategory[]
+  approvalRules ApprovalRule[]
+}
+
+// ──────────────── USER ────────────────
+// Extends the NextAuth User model with business fields.
+//   role        → system access control (ADMIN, MANAGER, EMPLOYEE)
+//   designation → organizational title ("CFO", "Finance Lead", etc.)
+//   managerId   → self-referencing FK for the reporting hierarchy
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(EMPLOYEE)
+  designation   String? // "CFO", "Director", "Finance Lead", etc.
+
+  companyId String?
+  managerId String? // Reports to this user
+
+  company      Company? @relation(fields: [companyId], references: [id])
+  manager      User?    @relation("ManagerRelation", fields: [managerId], references: [id])
+  subordinates User[]   @relation("ManagerRelation")
+
+  // NextAuth relations
+  accounts Account[]
+  sessions Session[]
+
+  // Business relations
+  expenses            Expense[]
+  approvalActions     ApprovalAction[]
+  approvalSteps       ApprovalStep[]
+  specificApproverFor ApprovalRule[]   @relation("SpecificApprover")
+
+  @@index([companyId])
+  @@index([managerId])
+}
+
+// ──────────────── EXPENSE CATEGORY ────────────────
+// Company-scoped. Examples: "Travel", "Food", "Software".
+// Unique constraint prevents duplicate names within a company.
+
+model ExpenseCategory {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  companyId   String
+  isActive    Boolean @default(true)
+
+  company  Company   @relation(fields: [companyId], references: [id])
+  expenses Expense[]
+
+  @@unique([companyId, name])
+}
+
+// ──────────────── EXPENSE ────────────────
+// Header-level expense data. Each expense can have multiple
+// line items (ExpenseLine) for granular breakdown.
+//
+// Currency handling:
+//   currencyId      → the currency the employee submitted in
+//   totalAmount     → the amount in submission currency
+//   convertedAmount → the amount in the company's base currency
+//   exchangeRate    → the rate used at submission time (audit trail)
+
+model Expense {
+  id          String   @id @default(cuid())
+  subject     String
+  description String?
+  expenseDate DateTime
+
+  totalAmount     Decimal  @db.Decimal(12, 2)
+  currencyId      String
+  convertedAmount Decimal? @db.Decimal(12, 2)
+  exchangeRate    Decimal? @db.Decimal(18, 8)
+
+  paidBy  PaidBy        @default(EMPLOYEE)
+  status  ExpenseStatus @default(DRAFT)
+  remarks String?
+
+  receiptUrl String? // Path to uploaded receipt image
+
+  categoryId       String
+  submitterId      String
+  approvalRuleId   String? // Which rule governs approval
+  currentStepOrder Int? // Active step in sequential flow
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  submittedAt DateTime? // Timestamp when employee hit "Submit"
+
+  category     ExpenseCategory @relation(fields: [categoryId], references: [id])
+  submitter    User            @relation(fields: [submitterId], references: [id])
+  currency     Currency        @relation(fields: [currencyId], references: [id])
+  approvalRule ApprovalRule?   @relation(fields: [approvalRuleId], references: [id])
+
+  lines           ExpenseLine[]
+  approvalActions ApprovalAction[]
+
+  @@index([submitterId, status])
+  @@index([status])
+}
+
+/// Individual line items within an expense.
+/// Populated manually or auto-filled by OCR.
+model ExpenseLine {
+  id          String  @id @default(cuid())
+  expenseId   String
+  description String
+  amount      Decimal @db.Decimal(12, 2)
+
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+}
+
+// ──────────────── APPROVAL WORKFLOW ────────────────
+// ApprovalRule:  defines the workflow policy (type, conditions)
+// ApprovalStep:  ordered list of approvers within a rule
+// ApprovalAction: immutable audit log of approve/reject decisions
+
+/// Configurable approval policy. The admin creates these and
+/// assigns them to expenses (or sets a default for the company).
+model ApprovalRule {
+  id        String           @id @default(cuid())
   name      String
+  companyId String
+  ruleType  ApprovalRuleType @default(SEQUENTIAL)
+
+  // For PERCENTAGE and HYBRID rules
+  requiredPercent Int? // e.g., 60 means 60% of approvers must approve
+
+  // For SPECIFIC and HYBRID rules
+  specificApproverId String? // If this user approves → auto-approved
+
+  // Manager gate: if true, the employee's direct manager must
+  // approve BEFORE the rule's steps are evaluated.
+  isManagerFirst Boolean @default(true)
+
+  isDefault Boolean @default(false) // Default rule for new expenses in this company
+  isActive  Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
-
-  @@index([name])
+  company          Company        @relation(fields: [companyId], references: [id])
+  specificApprover User?          @relation("SpecificApprover", fields: [specificApproverId], references: [id])
+  steps            ApprovalStep[]
+  expenses         Expense[]
 }
 
-// Necessary for Next auth
+/// A single approver position within an approval rule.
+/// stepOrder defines the sequence (1 = first, 2 = second, ...).
+model ApprovalStep {
+  id             String @id @default(cuid())
+  approvalRuleId String
+  approverId     String
+  stepOrder      Int
+
+  approvalRule ApprovalRule @relation(fields: [approvalRuleId], references: [id], onDelete: Cascade)
+  approver     User         @relation(fields: [approverId], references: [id])
+
+  @@unique([approvalRuleId, stepOrder])
+  @@unique([approvalRuleId, approverId])
+}
+
+// ──────────────── AUDIT TRAIL ────────────────
+
+/// Immutable record of every approval/rejection decision.
+/// Append-only — past actions are never modified or deleted.
+model ApprovalAction {
+  id         String             @id @default(cuid())
+  expenseId  String
+  approverId String
+  action     ApprovalActionType
+  comment    String?
+  stepOrder  Int // Which step this action corresponds to
+  createdAt  DateTime           @default(now())
+
+  expense  Expense @relation(fields: [expenseId], references: [id])
+  approver User    @relation(fields: [approverId], references: [id])
+
+  @@index([expenseId])
+}
+
+// ──────────────── NEXT-AUTH TABLES ────────────────
+// Required by @auth/prisma-adapter. Do not remove.
+
 model Account {
   id                       String  @id @default(cuid())
   userId                   String
   type                     String
   provider                 String
   providerAccountId        String
-  refresh_token            String? // @db.Text
-  access_token             String? // @db.Text
+  refresh_token            String?
+  access_token             String?
   expires_at               Int?
   token_type               String?
   scope                    String?
-  id_token                 String? // @db.Text
+  id_token                 String?
   session_state            String?
   user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   refresh_token_expires_in Int?
@@ -52,17 +314,6 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  posts         Post[]
 }
 
 model VerificationToken {
