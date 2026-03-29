@@ -75,29 +75,33 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Link href="/dashboard/expenses/new" className="card group flex items-center gap-4 hover:border-brand-300">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-100 text-brand-600 transition-transform group-hover:scale-110">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-slate-900">New Expense</div>
-            <div className="text-xs text-slate-500">Submit a new expense claim</div>
-          </div>
-        </Link>
+        {role !== "ADMIN" && (
+          <>
+            <Link href="/dashboard/expenses/new" className="card group flex items-center gap-4 hover:border-brand-300">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-100 text-brand-600 transition-transform group-hover:scale-110">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-slate-900">New Expense</div>
+                <div className="text-xs text-slate-500">Submit a new expense claim</div>
+              </div>
+            </Link>
 
-        <Link href="/dashboard/expenses" className="card group flex items-center gap-4 hover:border-brand-300">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 transition-transform group-hover:scale-110">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-            </svg>
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-slate-900">View Expenses</div>
-            <div className="text-xs text-slate-500">See all your expense claims</div>
-          </div>
-        </Link>
+            <Link href="/dashboard/expenses" className="card group flex items-center gap-4 hover:border-brand-300">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 transition-transform group-hover:scale-110">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-slate-900">View Expenses</div>
+                <div className="text-xs text-slate-500">See all your expense claims</div>
+              </div>
+            </Link>
+          </>
+        )}
 
         {(role === "MANAGER" || role === "ADMIN") && (
           <Link href="/dashboard/approvals" className="card group flex items-center gap-4 hover:border-brand-300">

@@ -68,7 +68,7 @@ export default function ApprovalsPage() {
                   </div>
                   {expense.convertedAmount && (
                     <div className="text-xs text-slate-400">
-                      ≈ ₹{Number(expense.convertedAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })} (company)
+                      (Submitted in {expense.currency.id}, converted to company base)
                     </div>
                   )}
                 </div>

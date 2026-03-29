@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "~/trpc/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 const STATUS_BADGE: Record<string, string> = {
@@ -20,7 +21,9 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default function ExpensesPage() {
+  const { data: session } = useSession();
   const { data: expenses, isLoading } = api.expense.list.useQuery();
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -31,12 +34,14 @@ export default function ExpensesPage() {
             View and manage your expense claims
           </p>
         </div>
-        <Link href="/dashboard/expenses/new" className="btn btn-primary">
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          New Expense
-        </Link>
+        {!isAdmin && (
+          <Link href="/dashboard/expenses/new" className="btn btn-primary">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            New Expense
+          </Link>
+        )}
       </div>
 
       {isLoading ? (
@@ -70,9 +75,9 @@ export default function ExpensesPage() {
                       {expense.currency.symbol}
                       {Number(expense.totalAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </div>
-                    {expense.convertedAmount && expense.currencyId !== "INR" && (
+                    {expense.convertedAmount && (
                       <div className="text-xs text-slate-400">
-                        ≈ ₹{Number(expense.convertedAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        (Submitted in {expense.currencyId})
                       </div>
                     )}
                   </td>
@@ -86,19 +91,23 @@ export default function ExpensesPage() {
                   </td>
                   <td>
                     <div className="flex items-center gap-3">
-                      <Link
-                        href={`/dashboard/expenses/${expense.id}`}
-                        className="text-sm font-medium text-brand-600 hover:text-brand-700"
-                      >
-                        View →
-                      </Link>
-                      {expense.status === "DRAFT" && (
-                        <Link
-                          href={`/dashboard/expenses/${expense.id}/edit`}
-                          className="text-sm font-medium text-slate-600 hover:text-slate-800"
-                        >
-                          Edit
-                        </Link>
+                      {!isAdmin && (
+                        <>
+                          <Link
+                            href={`/dashboard/expenses/${expense.id}`}
+                            className="text-sm font-medium text-brand-600 hover:text-brand-700"
+                          >
+                            View →
+                          </Link>
+                          {expense.status === "DRAFT" && (
+                            <Link
+                              href={`/dashboard/expenses/${expense.id}/edit`}
+                              className="text-sm font-medium text-slate-600 hover:text-slate-800"
+                            >
+                              Edit
+                            </Link>
+                          )}
+                        </>
                       )}
                     </div>
                   </td>

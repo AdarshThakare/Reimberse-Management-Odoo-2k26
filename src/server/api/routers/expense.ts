@@ -234,15 +234,15 @@ export const expenseRouter = createTRPCRouter({
       const expense = await ctx.db.expense.findFirst({
         where: {
           id: input.id,
-          // User can see own expenses, managers see team expenses
-          OR: [
-            { submitterId: ctx.session.user.id },
-            {
-              submitter: {
-                companyId: ctx.session.user.companyId,
-              },
-            },
-          ],
+          // Employees see only own expenses
+          // Managers/Admins see team/company expenses
+          ...(ctx.session.user.role === "EMPLOYEE"
+            ? { submitterId: ctx.session.user.id }
+            : {
+                submitter: {
+                  companyId: ctx.session.user.companyId,
+                },
+              }),
         },
         include: {
           category: true,
