@@ -20,6 +20,7 @@ export default function NewRulePage() {
   });
 
   const [steps, setSteps] = useState<{ id: string; approverId: string }[]>([]);
+  const [draggedStepId, setDraggedStepId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const { data: managers } = api.user.listManagers.useQuery();
@@ -42,6 +43,22 @@ export default function NewRulePage() {
 
   const handleStepChange = (id: string, approverId: string) => {
     setSteps(steps.map((s) => (s.id === id ? { ...s, approverId } : s)));
+  };
+
+  const moveStep = (fromId: string, toId: string) => {
+    if (fromId === toId) return;
+
+    setSteps((prev) => {
+      const fromIndex = prev.findIndex((s) => s.id === fromId);
+      const toIndex = prev.findIndex((s) => s.id === toId);
+      if (fromIndex === -1 || toIndex === -1) return prev;
+
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      if (!moved) return prev;
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -219,14 +236,54 @@ export default function NewRulePage() {
               </div>
             ) : (
               <div className="space-y-3 stagger-children">
+                {form.ruleType === "SEQUENTIAL" && (
+                  <p className="text-xs text-text-secondary">
+                    Drag and drop approvers to set the exact sequential order.
+                  </p>
+                )}
                 {steps.map((step, idx) => (
-                  <div key={step.id} className="flex gap-3 items-center group">
+                  <div
+                    key={step.id}
+                    className="flex gap-3 items-center group rounded-xl"
+                    draggable={form.ruleType === "SEQUENTIAL"}
+                    onDragStart={() => {
+                      if (form.ruleType !== "SEQUENTIAL") return;
+                      setDraggedStepId(step.id);
+                    }}
+                    onDragOver={(e) => {
+                      if (form.ruleType !== "SEQUENTIAL") return;
+                      e.preventDefault();
+                    }}
+                    onDrop={() => {
+                      if (form.ruleType !== "SEQUENTIAL" || !draggedStepId) return;
+                      moveStep(draggedStepId, step.id);
+                      setDraggedStepId(null);
+                    }}
+                    onDragEnd={() => setDraggedStepId(null)}
+                    style={
+                      draggedStepId === step.id
+                        ? { opacity: 0.55 }
+                        : undefined
+                    }
+                  >
                     <div
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold"
                       style={{ background: "rgba(56, 114, 225, 0.08)", color: "#3872E1" }}
                     >
                       {form.ruleType === "SEQUENTIAL" ? idx + 1 : "•"}
                     </div>
+
+                    {form.ruleType === "SEQUENTIAL" && (
+                      <div
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                        style={{ background: "rgba(33, 33, 47, 0.04)", color: "#7A809B" }}
+                        title="Drag to reorder"
+                      >
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6h.01M14 6h.01M10 12h.01M14 12h.01M10 18h.01M14 18h.01" />
+                        </svg>
+                      </div>
+                    )}
 
                     <select
                       value={step.approverId}
