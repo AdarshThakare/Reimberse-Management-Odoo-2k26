@@ -1,4 +1,53 @@
+"use client";
+
+import { useEffect } from "react";
+import { getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 export default function VerifyPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkSessionAndRedirect = async () => {
+      const session = await getSession();
+      if (!isMounted || !session?.user) return;
+
+      if (session.user.companyId) {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/setup");
+      }
+    };
+
+    // Check immediately and then poll while waiting for email verification.
+    void checkSessionAndRedirect();
+    const intervalId = window.setInterval(() => {
+      void checkSessionAndRedirect();
+    }, 1500);
+
+    const onFocus = () => {
+      void checkSessionAndRedirect();
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        void checkSessionAndRedirect();
+      }
+    };
+
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [router]);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 px-4">
       <div className="animate-fade-in w-full max-w-md text-center">
