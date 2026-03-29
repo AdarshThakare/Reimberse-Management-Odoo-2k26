@@ -1,4 +1,63 @@
+"use client";
+
+import { useEffect } from "react";
+import { getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 export default function VerifyPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    let isMounted = true;
+    let attempts = 0;
+    const pollIntervalMs = 5000;
+    const maxPollingAttempts = 18; // 18 * 5s = 90 seconds
+
+    const checkSessionAndRedirect = async () => {
+      const session = await getSession();
+      if (!isMounted || !session?.user) return;
+
+      if (session.user.companyId) {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/setup");
+      }
+    };
+
+    // Poll at a steady cadence while waiting for email verification.
+    const intervalId = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+
+      attempts += 1;
+      if (attempts > maxPollingAttempts) {
+        window.clearInterval(intervalId);
+        return;
+      }
+
+      void checkSessionAndRedirect();
+    }, pollIntervalMs);
+
+    const onFocus = () => {
+      attempts = 0;
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        attempts = 0;
+      }
+    };
+
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [router]);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 px-4">
       <div className="animate-fade-in w-full max-w-md text-center">

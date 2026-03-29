@@ -179,7 +179,12 @@ export default function TeamPage() {
                   <label className="label">Role</label>
                   <select
                     value={form.role}
-                    onChange={(e) => setForm((p) => ({ ...p, role: e.target.value as any }))}
+                    onChange={(e) =>
+                      setForm((p) => ({
+                        ...p,
+                        role: e.target.value === "MANAGER" ? "MANAGER" : "EMPLOYEE",
+                      }))
+                    }
                     className="select"
                   >
                     <option value="EMPLOYEE">Employee</option>

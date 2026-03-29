@@ -3,11 +3,6 @@
 import { api } from "~/trpc/react";
 import Link from "next/link";
 
-const STATUS_LABEL: Record<string, string> = {
-  UNDER_REVIEW: "Under Review",
-  SUBMITTED: "Submitted",
-};
-
 export default function ApprovalsPage() {
   const { data: pending, isLoading } = api.expense.listPending.useQuery();
   const utils = api.useUtils();

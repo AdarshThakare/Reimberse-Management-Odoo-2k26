@@ -20,12 +20,6 @@ const STATUS_LABEL: Record<string, string> = {
   REJECTED: "Rejected",
 };
 
-const STEP_COLORS = [
-  "bg-slate-200 text-slate-500",
-  "bg-brand-600 text-white",
-  "bg-emerald-600 text-white",
-];
-
 export default function ExpenseDetailPage() {
   const params = useParams();
   const router = useRouter();

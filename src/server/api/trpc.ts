@@ -68,7 +68,14 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 
   const result = await next();
   const end = Date.now();
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+
+  const isUnauthorized =
+    !result.ok &&
+    result.error.code === "UNAUTHORIZED";
+
+  if (!isUnauthorized) {
+    console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+  }
 
   return result;
 });
@@ -106,7 +113,7 @@ const enforceCompany = t.middleware(({ ctx, next }) => {
         ...ctx.session!,
         user: {
           ...ctx.session!.user,
-          companyId: companyId as string, // Narrowed: guaranteed non-null by guard above
+          companyId, // Narrowed: guaranteed non-null by guard above
         },
       },
     },

@@ -24,6 +24,10 @@ const handler = (req: NextRequest) =>
     onError:
       env.NODE_ENV === "development"
         ? ({ path, error }) => {
+            // Expected during logout/session expiry; avoid noisy dev logs.
+            if (error.code === "UNAUTHORIZED") {
+              return;
+            }
             console.error(
               `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`
             );

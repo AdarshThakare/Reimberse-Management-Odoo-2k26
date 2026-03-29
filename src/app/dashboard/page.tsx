@@ -1,20 +1,34 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "~/trpc/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
   const role = session?.user?.role;
 
-  const { data: company } = api.company.get.useQuery();
-  const { data: expenses } = api.expense.list.useQuery();
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/auth/signin");
+    }
+  }, [router, status]);
+
+  const { data: company } = api.company.get.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const { data: expenses } = api.expense.list.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
   const { data: pending } = api.expense.listPending.useQuery(undefined, {
-    enabled: role === "MANAGER" || role === "ADMIN",
+    enabled: isAuthenticated && (role === "MANAGER" || role === "ADMIN"),
   });
   const { data: allExpenses } = api.expense.listAll.useQuery(undefined, {
-    enabled: role === "ADMIN",
+    enabled: isAuthenticated && role === "ADMIN",
   });
 
   const stats = {
@@ -149,15 +163,22 @@ function StatCard({
     purple: "bg-purple-50 text-purple-700",
   };
 
-  const Wrapper = href ? Link : "div";
-  const props = href ? { href } : {};
-
-  return (
-    <Wrapper {...(props as any)} className="card">
+  const content = (
+    <>
       <div className="text-xs font-medium text-slate-500">{label}</div>
       <div className={`mt-2 inline-flex items-center rounded-lg px-3 py-1 text-2xl font-bold ${colorMap[color] ?? ""}`}>
         {value}
       </div>
-    </Wrapper>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="card">
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className="card">{content}</div>;
 }

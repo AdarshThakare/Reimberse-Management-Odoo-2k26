@@ -249,7 +249,7 @@ export const userRouter = createTRPCRouter({
   listManagers: employeeProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findMany({
       where: {
-        companyId: ctx.session.user.companyId!,
+        companyId: ctx.session.user.companyId,
         role: { in: ["MANAGER", "ADMIN"] },
       },
       select: { id: true, name: true, email: true, designation: true, role: true },
