@@ -153,6 +153,7 @@ exports.Prisma.UserScalarFieldEnum = {
   designation: 'designation',
   companyId: 'companyId',
   managerId: 'managerId',
+  approvalRuleId: 'approvalRuleId',
   isActive: 'isActive'
 };
 

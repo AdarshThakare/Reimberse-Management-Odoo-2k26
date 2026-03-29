@@ -19,6 +19,7 @@ declare module "next-auth" {
       role: Role;
       companyId: string | null;
       designation: string | null;
+      approvalRuleId: string | null;
     } & DefaultSession["user"];
   }
 
@@ -26,6 +27,7 @@ declare module "next-auth" {
     role: Role;
     companyId: string | null;
     designation: string | null;
+    approvalRuleId: string | null;
   }
 }
 
@@ -34,6 +36,7 @@ declare module "@auth/core/adapters" {
     role: Role;
     companyId: string | null;
     designation: string | null;
+    approvalRuleId: string | null;
   }
 }
 
@@ -65,6 +68,7 @@ export const authConfig = {
         role: (user as unknown as { role: Role }).role,
         companyId: (user as unknown as { companyId: string | null }).companyId,
         designation: (user as unknown as { designation: string | null }).designation,
+        approvalRuleId: (user as unknown as { approvalRuleId: string | null }).approvalRuleId,
       },
     }),
   },
