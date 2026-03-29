@@ -73,7 +73,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       />
       <div
         ref={veilRef}
-        className="pointer-events-none fixed inset-0 z-120 bg-[radial-gradient(circle_at_center,rgba(238,240,247,0.25)_0%,rgba(85,96,203,0.33)_46%,rgba(16,22,62,0.7)_100%)] opacity-0"
+        className="pointer-events-none fixed inset-0 z-120 opacity-0"
+        style={{
+          background: "radial-gradient(circle at center, rgba(246, 248, 252, 0.2) 0%, rgba(56, 114, 225, 0.25) 46%, rgba(33, 33, 47, 0.6) 100%)",
+        }}
       />
       <div key={pathname} ref={pageRef}>
         {children}

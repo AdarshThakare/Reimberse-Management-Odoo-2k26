@@ -1,14 +1,7 @@
 "use client";
 
 /**
- * Expense Detail Page
- *
- * Displays full details for a single expense:
- *   - Status breadcrumb (lifecycle tracker)
- *   - Expense metadata (amount, date, category, etc.)
- *   - Receipt image (if attached via OCR or upload)
- *   - Approval workflow info & history
- *   - Action buttons (Submit / Approve / Reject)
+ * Expense Detail Page — Premium redesign
  */
 
 import { useState } from "react";
@@ -31,6 +24,14 @@ const STATUS_LABEL: Record<string, string> = {
   UNDER_REVIEW: "Under Review",
   APPROVED: "Approved",
   REJECTED: "Rejected",
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  DRAFT: "#9CA0B8",
+  SUBMITTED: "#3872E1",
+  UNDER_REVIEW: "#F59E0B",
+  APPROVED: "#00DDB0",
+  REJECTED: "#EF4444",
 };
 
 export default function ExpenseDetailPage() {
@@ -71,12 +72,11 @@ export default function ExpenseDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20 text-slate-400">
-        <svg className="h-5 w-5 animate-spin mr-2" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-          <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" className="opacity-75" />
-        </svg>
-        Loading...
+      <div className="flex items-center justify-center py-20 text-text-muted">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 rounded-full border-2 border-accent-blue border-t-transparent animate-spin" />
+          <span className="text-sm">Loading...</span>
+        </div>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function ExpenseDetailPage() {
   if (!expense) {
     return (
       <div className="text-center py-20">
-        <h2 className="text-lg font-semibold text-slate-900">Expense not found</h2>
+        <h2 className="text-lg font-bold text-text-primary">Expense not found</h2>
         <button onClick={() => router.back()} className="btn btn-secondary mt-4">
           Go Back
         </button>
@@ -100,37 +100,40 @@ export default function ExpenseDetailPage() {
   // Status breadcrumb
   const stages = ["DRAFT", "SUBMITTED", "UNDER_REVIEW", "APPROVED"];
   const rejected = expense.status === "REJECTED";
-  const currentIdx = rejected
-    ? -1
-    : stages.indexOf(expense.status);
+  const currentIdx = rejected ? -1 : stages.indexOf(expense.status);
 
   return (
     <div className="animate-fade-in mx-auto max-w-3xl space-y-6">
       <button
         onClick={() => router.back()}
-        className="text-sm text-slate-500 hover:text-slate-700 transition-colors"
+        className="text-sm font-medium transition-colors duration-200 cursor-pointer"
+        style={{ color: "#3872E1" }}
       >
         ← Back
       </button>
 
-      {/* Status Breadcrumb */}
-      <div className="card">
-        <div className="flex items-center gap-2">
+      {/* Status Timeline */}
+      <div
+        className="rounded-2xl bg-white p-6"
+        style={{ border: "1px solid rgba(33, 33, 47, 0.06)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+      >
+        <div className="flex items-center gap-1">
           {rejected ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               {["Draft", "Submitted", "Rejected"].map((s, i) => (
-                <div key={s} className="flex items-center gap-2">
+                <div key={s} className="flex items-center gap-1">
                   <span
-                    className={`badge ${
+                    className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold"
+                    style={
                       i < 2
-                        ? "bg-slate-700 text-white"
-                        : "bg-red-600 text-white"
-                    }`}
+                        ? { background: "rgba(33, 33, 47, 0.08)", color: "#21212F" }
+                        : { background: "rgba(239, 68, 68, 0.1)", color: "#EF4444", border: "1px solid rgba(239, 68, 68, 0.2)" }
+                    }
                   >
                     {s}
                   </span>
                   {i < 2 && (
-                    <svg className="h-4 w-4 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <svg className="h-4 w-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                       <path d="M9 5l7 7-7 7" />
                     </svg>
                   )}
@@ -138,36 +141,47 @@ export default function ExpenseDetailPage() {
               ))}
             </div>
           ) : (
-            stages.map((s, i) => (
-              <div key={s} className="flex items-center gap-2">
-                <span
-                  className={`badge ${
-                    i <= currentIdx
-                      ? i === currentIdx
-                        ? "bg-brand-600 text-white"
-                        : "bg-emerald-600 text-white"
-                      : "bg-slate-100 text-slate-400"
-                  }`}
-                >
-                  {STATUS_LABEL[s]}
-                </span>
-                {i < stages.length - 1 && (
-                  <svg className="h-4 w-4 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path d="M9 5l7 7-7 7" />
-                  </svg>
-                )}
-              </div>
-            ))
+            stages.map((s, i) => {
+              const color = STATUS_COLORS[s] ?? "#9CA0B8";
+              const isCurrentOrPast = i <= currentIdx;
+              const isCurrent = i === currentIdx;
+              return (
+                <div key={s} className="flex items-center gap-1">
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition-all"
+                    style={
+                      isCurrentOrPast
+                        ? {
+                            background: isCurrent ? `${color}18` : `${color}10`,
+                            color: color,
+                            border: isCurrent ? `1px solid ${color}30` : "1px solid transparent",
+                            boxShadow: isCurrent ? `0 0 12px ${color}20` : "none",
+                          }
+                        : { background: "rgba(33, 33, 47, 0.04)", color: "#BFC3D9" }
+                    }
+                  >
+                    {isCurrent && <span className="h-1.5 w-1.5 rounded-full animate-pulse-dot" style={{ background: color }} />}
+                    {STATUS_LABEL[s]}
+                  </span>
+                  {i < stages.length - 1 && (
+                    <div className="h-[2px] w-8 rounded-full" style={{ background: i < currentIdx ? color : "rgba(33, 33, 47, 0.08)" }} />
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
       </div>
 
       {/* Expense Details */}
-      <div className="card space-y-5">
+      <div
+        className="rounded-2xl bg-white p-6 space-y-5"
+        style={{ border: "1px solid rgba(33, 33, 47, 0.06)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+      >
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">{expense.subject}</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-text-primary">{expense.subject}</h1>
+            <p className="mt-1 text-sm text-text-secondary">
               Submitted by {expense.submitter.name ?? expense.submitter.email}
               {expense.submitter.designation && ` (${expense.submitter.designation})`}
             </p>
@@ -177,25 +191,25 @@ export default function ExpenseDetailPage() {
           </span>
         </div>
 
-        <hr className="border-slate-200" />
+        <hr style={{ borderColor: "rgba(33, 33, 47, 0.06)" }} />
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Description" value={expense.description ?? "—"} />
           <Field label="Expense Date" value={new Date(expense.expenseDate).toLocaleDateString()} />
           <Field label="Category" value={expense.category.name} />
           <div>
-            <div className="text-xs font-medium text-slate-500">Amount</div>
-            <div className="mt-1 text-lg font-bold text-slate-900">
+            <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Amount</div>
+            <div className="mt-1.5 text-xl font-bold text-text-primary">
               {expense.currency.symbol}
               {Number(expense.totalAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-              <span className="ml-1 text-sm font-normal text-slate-400">
+              <span className="ml-1.5 text-sm font-normal text-text-muted">
                 {expense.currencyId}
               </span>
             </div>
             {expense.convertedAmount && (
-              <div className="text-sm text-slate-500">
-                Converted from {expense.currencyId}
-                <span className="text-xs text-slate-400 ml-1">
+              <div className="text-sm text-text-secondary mt-0.5">
+                ≈ ₹{Number(expense.convertedAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                <span className="text-xs text-text-muted ml-1">
                   (rate: {Number(expense.exchangeRate).toFixed(4)})
                 </span>
               </div>
@@ -205,13 +219,10 @@ export default function ExpenseDetailPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3 pt-3 border-t border-slate-200">
+        <div className="flex gap-3 pt-4" style={{ borderTop: "1px solid rgba(33, 33, 47, 0.06)" }}>
           {isDraft && isOwner && (
             <>
-              <Link
-                href={`/dashboard/expenses/${expense.id}/edit`}
-                className="btn btn-secondary"
-              >
+              <Link href={`/dashboard/expenses/${expense.id}/edit`} className="btn btn-secondary">
                 Edit Draft
               </Link>
               <button
@@ -226,12 +237,7 @@ export default function ExpenseDetailPage() {
           {expense.status === "UNDER_REVIEW" && isManagerOrAdmin && !isOwner && (
             <>
               <button
-                onClick={() =>
-                  approveMutation.mutate({
-                    expenseId: expense.id,
-                    comment: "Approved",
-                  })
-                }
+                onClick={() => approveMutation.mutate({ expenseId: expense.id, comment: "Approved" })}
                 disabled={approveMutation.isPending}
                 className="btn btn-success"
               >
@@ -240,12 +246,7 @@ export default function ExpenseDetailPage() {
               <button
                 onClick={() => {
                   const reason = prompt("Reason for rejection:");
-                  if (reason) {
-                    rejectMutation.mutate({
-                      expenseId: expense.id,
-                      comment: reason,
-                    });
-                  }
+                  if (reason) rejectMutation.mutate({ expenseId: expense.id, comment: reason });
                 }}
                 disabled={rejectMutation.isPending}
                 className="btn btn-danger"
@@ -290,29 +291,29 @@ export default function ExpenseDetailPage() {
         </div>
       </div>
 
-      {/* ── Receipt Image ── */}
+      {/* Receipt Image */}
       {expense.receiptUrl && (
-        <div className="card">
-          <h2 className="text-sm font-semibold text-slate-900 mb-3">Attached Receipt</h2>
+        <div
+          className="rounded-2xl bg-white p-6"
+          style={{ border: "1px solid rgba(33, 33, 47, 0.06)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+        >
+          <h2 className="text-sm font-bold text-text-primary mb-4">Attached Receipt</h2>
           <div className="flex items-start gap-4">
             <button
               type="button"
               onClick={() => setReceiptModal(true)}
-              className="group relative w-32 rounded-lg overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              className="group relative w-32 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer"
+              style={{ border: "1px solid rgba(33, 33, 47, 0.08)" }}
             >
-              <img
-                src={expense.receiptUrl}
-                alt="Receipt"
-                className="w-full object-cover"
-              />
+              <img src={expense.receiptUrl} alt="Receipt" className="w-full object-cover" />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-semibold bg-black/50 px-2.5 py-1 rounded-lg">
                   View Full Size
                 </span>
               </div>
             </button>
-            <div className="text-xs text-slate-500">
-              <p className="font-medium text-slate-700">Scanned receipt</p>
+            <div className="text-xs text-text-secondary">
+              <p className="font-semibold text-text-primary">Scanned receipt</p>
               <p className="mt-1">Click to view full-size image</p>
             </div>
           </div>
@@ -322,34 +323,35 @@ export default function ExpenseDetailPage() {
       {/* Receipt Modal */}
       {receiptModal && expense.receiptUrl && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={() => setReceiptModal(false)}
+          style={{ background: "rgba(33, 33, 47, 0.7)", backdropFilter: "blur(8px)" }}
         >
           <div
-            className="relative max-w-3xl max-h-[90vh] overflow-auto rounded-2xl bg-white shadow-2xl animate-fade-in"
+            className="relative max-w-3xl max-h-[90vh] overflow-auto rounded-2xl bg-white shadow-2xl animate-scale-in"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setReceiptModal(false)}
-              className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+              className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors cursor-pointer"
+              style={{ background: "rgba(33, 33, 47, 0.5)", color: "white" }}
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <img
-              src={expense.receiptUrl}
-              alt="Receipt full size"
-              className="max-w-full h-auto"
-            />
+            <img src={expense.receiptUrl} alt="Receipt full size" className="max-w-full h-auto" />
           </div>
         </div>
       )}
 
       {/* Approval History */}
       {expense.approvalActions.length > 0 && (
-        <div className="card">
-          <h2 className="text-sm font-semibold text-slate-900 mb-4">Approval History</h2>
+        <div
+          className="rounded-2xl bg-white p-6"
+          style={{ border: "1px solid rgba(33, 33, 47, 0.06)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+        >
+          <h2 className="text-sm font-bold text-text-primary mb-4">Approval History</h2>
           <div className="table-container">
             <table>
               <thead>
@@ -363,27 +365,21 @@ export default function ExpenseDetailPage() {
               <tbody>
                 {expense.approvalActions.map((action) => (
                   <tr key={action.id}>
-                    <td className="font-medium text-slate-900">
+                    <td className="font-semibold text-text-primary">
                       {action.approver.name ?? "Unknown"}
                       {action.approver.designation && (
-                        <span className="text-xs text-slate-400 ml-1">
+                        <span className="text-xs text-text-muted ml-1">
                           ({action.approver.designation})
                         </span>
                       )}
                     </td>
                     <td>
-                      <span
-                        className={`badge ${
-                          action.action === "APPROVED"
-                            ? "badge-approved"
-                            : "badge-rejected"
-                        }`}
-                      >
+                      <span className={`badge ${action.action === "APPROVED" ? "badge-approved" : "badge-rejected"}`}>
                         {action.action === "APPROVED" ? "✓ Approved" : "✗ Rejected"}
                       </span>
                     </td>
-                    <td className="text-slate-500">{action.comment ?? "—"}</td>
-                    <td className="text-slate-400 text-xs">
+                    <td className="text-text-secondary">{action.comment ?? "—"}</td>
+                    <td className="text-text-muted text-xs">
                       {new Date(action.createdAt).toLocaleString()}
                     </td>
                   </tr>
@@ -396,26 +392,31 @@ export default function ExpenseDetailPage() {
 
       {/* Approval Rule Info */}
       {expense.approvalRule && (
-        <div className="card">
-          <h2 className="text-sm font-semibold text-slate-900 mb-3">Approval Rule</h2>
-          <div className="text-sm text-slate-600">
-            <span className="font-medium">{expense.approvalRule.name}</span>
+        <div
+          className="rounded-2xl bg-white p-6"
+          style={{ border: "1px solid rgba(33, 33, 47, 0.06)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+        >
+          <h2 className="text-sm font-bold text-text-primary mb-3">Approval Rule</h2>
+          <div className="text-sm text-text-secondary">
+            <span className="font-semibold text-text-primary">{expense.approvalRule.name}</span>
             <span className="ml-2 badge badge-draft">{expense.approvalRule.ruleType}</span>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {expense.approvalRule.steps.map((step) => (
               <div
                 key={step.id}
-                className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-sm"
+                className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm"
+                style={{ background: "rgba(33, 33, 47, 0.02)", border: "1px solid rgba(33, 33, 47, 0.06)" }}
               >
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-100 text-xs font-bold text-brand-700">
+                <span
+                  className="flex h-6 w-6 items-center justify-center rounded-lg text-xs font-bold"
+                  style={{ background: "rgba(56, 114, 225, 0.08)", color: "#3872E1" }}
+                >
                   {step.stepOrder}
                 </span>
-                <span className="text-slate-700">{step.approver.name}</span>
+                <span className="text-text-primary font-medium">{step.approver.name}</span>
                 {step.approver.designation && (
-                  <span className="text-xs text-slate-400">
-                    ({step.approver.designation})
-                  </span>
+                  <span className="text-xs text-text-muted">({step.approver.designation})</span>
                 )}
               </div>
             ))}
@@ -429,8 +430,8 @@ export default function ExpenseDetailPage() {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-xs font-medium text-slate-500">{label}</div>
-      <div className="mt-1 text-sm text-slate-900">{value}</div>
+      <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{label}</div>
+      <div className="mt-1.5 text-sm text-text-primary">{value}</div>
     </div>
   );
 }

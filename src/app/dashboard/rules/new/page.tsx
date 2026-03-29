@@ -9,7 +9,7 @@ type RuleType = "SEQUENTIAL" | "PERCENTAGE" | "SPECIFIC" | "HYBRID";
 export default function NewRulePage() {
   const router = useRouter();
   const utils = api.useUtils();
-  
+
   const [form, setForm] = useState({
     name: "",
     ruleType: "SEQUENTIAL" as RuleType,
@@ -51,8 +51,7 @@ export default function NewRulePage() {
     if (!form.name) return setError("Rule name is required");
     if (steps.length === 0) return setError("Add at least one approver step");
     if (steps.some((s) => !s.approverId)) return setError("All steps must have an approver selected");
-    
-    // Check duplicates
+
     const approverIds = steps.map(s => s.approverId);
     if (new Set(approverIds).size !== approverIds.length) {
       return setError("Approvers cannot be duplicated in the steps");
@@ -77,23 +76,30 @@ export default function NewRulePage() {
       <div>
         <button
           onClick={() => router.back()}
-          className="mb-2 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+          className="mb-2 text-sm font-medium transition-colors duration-200 cursor-pointer"
+          style={{ color: "#3872E1" }}
         >
           ← Back to rules
         </button>
-        <h1 className="text-2xl font-bold text-slate-900">Create Approval Rule</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-3xl font-bold text-text-primary tracking-tight">Create Approval Rule</h1>
+        <p className="mt-2 text-sm text-text-secondary">
           Design the workflow expenses will follow to get approved.
         </p>
       </div>
 
-      <div className="card">
+      <div
+        className="relative overflow-hidden rounded-2xl bg-white p-7"
+        style={{ border: "1px solid rgba(33, 33, 47, 0.06)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+      >
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "linear-gradient(90deg, #3872E1, #00DDB0)" }} />
+
         <form onSubmit={handleSubmit} className="space-y-8">
-          
-          {/* Section 1: Basic Info */}
+          {/* Section 1 */}
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">1. Basic Details</h2>
-            
+            <h2 className="text-lg font-bold text-text-primary pb-3" style={{ borderBottom: "1px solid rgba(33, 33, 47, 0.06)" }}>
+              1. Basic Details
+            </h2>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="label">Rule Name</label>
@@ -105,14 +111,11 @@ export default function NewRulePage() {
                   className="input"
                 />
               </div>
-
               <div>
                 <label className="label">Rule Type</label>
                 <select
                   value={form.ruleType}
-                  onChange={(e) =>
-                    setForm({ ...form, ruleType: e.target.value as RuleType })
-                  }
+                  onChange={(e) => setForm({ ...form, ruleType: e.target.value as RuleType })}
                   className="select"
                 >
                   <option value="SEQUENTIAL">Sequential (Step 1 → Step 2 → Step 3)</option>
@@ -124,40 +127,42 @@ export default function NewRulePage() {
             </div>
 
             <div className="flex flex-col gap-3 pt-2">
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={form.isManagerFirst}
                   onChange={(e) => setForm({ ...form, isManagerFirst: e.target.checked })}
-                  className="h-5 w-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                  className="h-5 w-5 rounded-lg cursor-pointer accent-[#3872E1]"
                 />
                 <div>
-                  <div className="text-sm font-semibold text-slate-900">Manager Gate First</div>
-                  <div className="text-xs text-slate-500">Employee&apos;s direct manager must approve before this rule starts</div>
+                  <div className="text-sm font-bold text-text-primary">Manager Gate First</div>
+                  <div className="text-xs text-text-secondary">Employee&apos;s direct manager must approve before this rule starts</div>
                 </div>
               </label>
 
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={form.isDefault}
                   onChange={(e) => setForm({ ...form, isDefault: e.target.checked })}
-                  className="h-5 w-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                  className="h-5 w-5 rounded-lg cursor-pointer accent-[#3872E1]"
                 />
                 <div>
-                  <div className="text-sm font-semibold text-slate-900">Set as Default Workflow</div>
-                  <div className="text-xs text-slate-500">Apply this automatically to new expenses without a rule specified</div>
+                  <div className="text-sm font-bold text-text-primary">Set as Default Workflow</div>
+                  <div className="text-xs text-text-secondary">Apply this automatically to new expenses without a rule specified</div>
                 </div>
               </label>
             </div>
           </div>
 
-          {/* Section 2: Rule Configuration (Conditional based on type) */}
+          {/* Section 2: Rule Configuration */}
           {(form.ruleType !== "SEQUENTIAL") && (
-            <div className="space-y-4 animate-fade-in bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <h2 className="text-md font-semibold text-slate-800">Rule Parameters</h2>
+            <div
+              className="space-y-4 animate-fade-in p-5 rounded-xl"
+              style={{ background: "rgba(33, 33, 47, 0.02)", border: "1px solid rgba(33, 33, 47, 0.06)" }}
+            >
+              <h2 className="text-base font-bold text-text-primary">Rule Parameters</h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                
                 {["PERCENTAGE", "HYBRID"].includes(form.ruleType) && (
                   <div>
                     <label className="label">Required Percentage (%)</label>
@@ -169,17 +174,16 @@ export default function NewRulePage() {
                       onChange={(e) => setForm({ ...form, requiredPercent: Number(e.target.value) })}
                       className="input"
                     />
-                    <div className="text-xs text-slate-500 mt-1">What percentage of approvers below must approve?</div>
+                    <div className="text-xs text-text-muted mt-1.5">What percentage of approvers below must approve?</div>
                   </div>
                 )}
-
                 {["SPECIFIC", "HYBRID"].includes(form.ruleType) && (
                   <div>
                     <label className="label">Designated Override Approver</label>
                     <select
                       value={form.specificApproverId}
                       onChange={(e) => setForm({ ...form, specificApproverId: e.target.value })}
-                      className="select border-purple-200 focus:ring-purple-500"
+                      className="select"
                     >
                       <option value="">Select an approver...</option>
                       {managers?.map((m) => (
@@ -188,36 +192,42 @@ export default function NewRulePage() {
                         </option>
                       ))}
                     </select>
-                    <div className="text-xs text-slate-500 mt-1">If this person approves, the whole expense is approved instantly. Note: must also be included in the workflow steps below.</div>
+                    <div className="text-xs text-text-muted mt-1.5">If this person approves, the whole expense is approved instantly. Note: must also be included in the workflow steps below.</div>
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Section 3: Approvers / Steps */}
+          {/* Section 3: Approvers */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <h2 className="text-lg font-semibold text-slate-800">
+            <div className="flex items-center justify-between pb-3" style={{ borderBottom: "1px solid rgba(33, 33, 47, 0.06)" }}>
+              <h2 className="text-lg font-bold text-text-primary">
                 {form.ruleType === "SEQUENTIAL" ? "2. Sequential Steps" : "2. Assigned Approvers"}
               </h2>
-              <button type="button" onClick={handleAddStep} className="btn btn-secondary text-xs h-8">
+              <button type="button" onClick={handleAddStep} className="btn btn-secondary text-xs h-9">
                 + Add Approver
               </button>
             </div>
 
             {steps.length === 0 ? (
-              <div className="text-center py-6 text-sm text-slate-500 border border-dashed border-slate-300 rounded-lg">
+              <div
+                className="text-center py-8 text-sm text-text-muted rounded-xl"
+                style={{ border: "2px dashed rgba(33, 33, 47, 0.1)" }}
+              >
                 Click &quot;+ Add Approver&quot; to assign users to this workflow.
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 stagger-children">
                 {steps.map((step, idx) => (
-                  <div key={step.id} className="flex gap-3 items-center animate-fade-in group">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-bold text-slate-600">
+                  <div key={step.id} className="flex gap-3 items-center group">
+                    <div
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold"
+                      style={{ background: "rgba(56, 114, 225, 0.08)", color: "#3872E1" }}
+                    >
                       {form.ruleType === "SEQUENTIAL" ? idx + 1 : "•"}
                     </div>
-                    
+
                     <select
                       value={step.approverId}
                       onChange={(e) => handleStepChange(step.id, e.target.value)}
@@ -234,8 +244,11 @@ export default function NewRulePage() {
                     <button
                       type="button"
                       onClick={() => handleRemoveStep(step.id)}
-                      className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                      className="p-2 transition-all duration-200 rounded-lg cursor-pointer"
+                      style={{ color: "#9CA0B8" }}
                       title="Remove Step"
+                      onMouseEnter={(e) => { e.currentTarget.style.color = "#EF4444"; e.currentTarget.style.background = "rgba(239, 68, 68, 0.06)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = "#9CA0B8"; e.currentTarget.style.background = "transparent"; }}
                     >
                       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -248,10 +261,12 @@ export default function NewRulePage() {
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
+            <div className="rounded-xl p-3 text-sm font-medium" style={{ background: "rgba(239, 68, 68, 0.06)", color: "#EF4444", border: "1px solid rgba(239, 68, 68, 0.15)" }}>
+              {error}
+            </div>
           )}
 
-          <div className="flex gap-3 pt-4 border-t border-slate-100">
+          <div className="flex gap-3 pt-4" style={{ borderTop: "1px solid rgba(33, 33, 47, 0.06)" }}>
             <button
               type="submit"
               disabled={createMutation.isPending}

@@ -1,16 +1,7 @@
 "use client";
 
 /**
- * New Expense Page
- *
- * Employees create expense claims here. Supports two workflows:
- *   1. Smart Scan → OCR auto-fills fields from a receipt image
- *   2. Manual Entry → fill in all fields by hand
- *
- * Features:
- *   - Receipt scanning with OCR (Tesseract.js)
- *   - Auto-fill from OCR results
- *   - Receipt image stored as base64 in receiptUrl
+ * New Expense Page — Premium redesign
  */
 
 import { useState, useCallback } from "react";
@@ -18,8 +9,6 @@ import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import ReceiptScanner from "./receipt-scanner";
 import type { OcrResult } from "./ocr.service";
-
-// ─── Component ───
 
 export default function NewExpensePage() {
   const router = useRouter();
@@ -41,7 +30,6 @@ export default function NewExpensePage() {
   const { data: countries } = api.currency.listCountries.useQuery();
   const { data: company } = api.company.get.useQuery();
 
-  // Dedupe currencies from countries list
   const currencies = countries
     ? Array.from(
         new Map(
@@ -58,14 +46,11 @@ export default function NewExpensePage() {
     onError: (err) => setError(err.message),
   });
 
-  // ── Form Handlers ──
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const field = e.target.name;
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    // Clear scanned indicator when user manually edits
     setScannedFields((prev) => {
       const next = new Set(prev);
       next.delete(field);
@@ -73,34 +58,23 @@ export default function NewExpensePage() {
     });
   };
 
-  // ── OCR Result Handler ──
-
   const handleOcrResult = useCallback(
     (result: OcrResult, base64Image: string) => {
       const newScanned = new Set<string>();
-      const updates: Partial<typeof form> = {
-        receiptUrl: base64Image,
-      };
+      const updates: Partial<typeof form> = { receiptUrl: base64Image };
 
-      // Merchant name → Subject
       if (result.merchantName) {
         updates.subject = result.merchantName;
         newScanned.add("subject");
       }
-
-      // Total amount
       if (result.totalAmount) {
         updates.totalAmount = result.totalAmount.toFixed(2);
         newScanned.add("totalAmount");
       }
-
-      // Date
       if (result.date) {
         updates.expenseDate = result.date;
         newScanned.add("expenseDate");
       }
-
-      // Currency
       if (result.currency) {
         updates.currencyCode = result.currency;
         newScanned.add("currencyCode");
@@ -108,8 +82,6 @@ export default function NewExpensePage() {
         updates.currencyCode = company.baseCurrency.id;
         newScanned.add("currencyCode");
       }
-
-      // Category (match by name)
       if (result.suggestedCategory && categories) {
         const matchedCat = categories.find(
           (cat) => cat.name.toLowerCase() === result.suggestedCategory!.toLowerCase(),
@@ -122,13 +94,10 @@ export default function NewExpensePage() {
 
       setForm((prev) => ({ ...prev, ...updates }));
       setScannedFields(newScanned);
-
       setShowScanner(false);
     },
     [categories, company],
   );
-
-  // ── Submit ──
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,37 +124,45 @@ export default function NewExpensePage() {
     });
   };
 
-  // ─── Render ───
-
   return (
     <div className="animate-fade-in mx-auto max-w-2xl space-y-6">
       <div>
         <button
           onClick={() => router.back()}
-          className="mb-2 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+          className="mb-2 text-sm font-medium transition-colors duration-200 cursor-pointer"
+          style={{ color: "#3872E1" }}
         >
           ← Back to expenses
         </button>
-        <h1 className="text-2xl font-bold text-slate-900">New Expense</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-3xl font-bold text-text-primary tracking-tight">New Expense</h1>
+        <p className="mt-2 text-sm text-text-secondary">
           Scan a receipt or fill in the details manually. Save as draft and submit later.
         </p>
       </div>
 
-      {/* ── Receipt Scanner ── */}
+      {/* Receipt Scanner */}
       {showScanner ? (
         <ReceiptScanner onResult={handleOcrResult} />
       ) : (
-        <div className="card flex items-center justify-between py-3 px-5">
+        <div
+          className="flex items-center justify-between py-4 px-5 rounded-2xl"
+          style={{
+            background: "rgba(0, 221, 176, 0.04)",
+            border: "1px solid rgba(0, 221, 176, 0.15)",
+          }}
+        >
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100">
-              <svg className="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-xl"
+              style={{ background: "rgba(0, 221, 176, 0.1)" }}
+            >
+              <svg className="h-4 w-4" style={{ color: "#00DDB0" }} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
               </svg>
             </div>
             <div>
-              <div className="text-sm font-medium text-slate-900">Receipt scanned successfully</div>
-              <div className="text-xs text-slate-500">Fields have been auto-filled from the receipt</div>
+              <div className="text-sm font-semibold text-text-primary">Receipt scanned successfully</div>
+              <div className="text-xs text-text-secondary">Fields have been auto-filled from the receipt</div>
             </div>
           </div>
           <button
@@ -198,13 +175,15 @@ export default function NewExpensePage() {
         </div>
       )}
 
-      {/* ── Expense Form ── */}
-      <div className="card">
+      {/* Expense Form */}
+      <div
+        className="relative overflow-hidden rounded-2xl bg-white p-7"
+        style={{ border: "1px solid rgba(33, 33, 47, 0.06)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+      >
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Subject */}
           <div>
             <label htmlFor="subject" className="label">
-              Subject <span className="text-red-500">*</span>
+              Subject <span style={{ color: "#EF4444" }}>*</span>
               {scannedFields.has("subject") && <ScannedBadge />}
             </label>
             <input
@@ -219,7 +198,6 @@ export default function NewExpensePage() {
             />
           </div>
 
-          {/* Description */}
           <div>
             <label htmlFor="description" className="label">Description</label>
             <textarea
@@ -234,10 +212,9 @@ export default function NewExpensePage() {
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            {/* Expense Date */}
             <div>
               <label htmlFor="expenseDate" className="label">
-                Expense Date <span className="text-red-500">*</span>
+                Expense Date <span style={{ color: "#EF4444" }}>*</span>
                 {scannedFields.has("expenseDate") && <ScannedBadge />}
               </label>
               <input
@@ -250,10 +227,9 @@ export default function NewExpensePage() {
               />
             </div>
 
-            {/* Category */}
             <div>
               <label htmlFor="categoryId" className="label">
-                Category <span className="text-red-500">*</span>
+                Category <span style={{ color: "#EF4444" }}>*</span>
                 {scannedFields.has("categoryId") && <ScannedBadge />}
               </label>
               <select
@@ -265,19 +241,16 @@ export default function NewExpensePage() {
               >
                 <option value="">Select category...</option>
                 {categories?.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
             </div>
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            {/* Total Amount */}
             <div>
               <label htmlFor="totalAmount" className="label">
-                Total Amount <span className="text-red-500">*</span>
+                Total Amount <span style={{ color: "#EF4444" }}>*</span>
                 {scannedFields.has("totalAmount") && <ScannedBadge />}
               </label>
               <input
@@ -293,10 +266,9 @@ export default function NewExpensePage() {
               />
             </div>
 
-            {/* Currency */}
             <div>
               <label htmlFor="currencyCode" className="label">
-                Currency <span className="text-red-500">*</span>
+                Currency <span style={{ color: "#EF4444" }}>*</span>
                 {scannedFields.has("currencyCode") && <ScannedBadge />}
               </label>
               <select
@@ -323,7 +295,6 @@ export default function NewExpensePage() {
             </div>
           </div>
 
-          {/* Remarks */}
           <div>
             <label htmlFor="remarks" className="label">Remarks</label>
             <textarea
@@ -337,26 +308,23 @@ export default function NewExpensePage() {
             />
           </div>
 
-          {/* Receipt preview thumbnail */}
           {form.receiptUrl && (
             <div>
               <label className="label">Attached Receipt</label>
               <div className="flex items-center gap-3">
-                <div className="w-16 h-20 rounded-lg overflow-hidden border border-slate-200 shadow-sm flex-shrink-0">
-                  <img
-                    src={form.receiptUrl}
-                    alt="Receipt"
-                    className="w-full h-full object-cover"
-                  />
+                <div
+                  className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0"
+                  style={{ border: "1px solid rgba(33, 33, 47, 0.08)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+                >
+                  <img src={form.receiptUrl} alt="Receipt" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Receipt image attached</p>
+                  <p className="text-xs text-text-secondary">Receipt image attached</p>
                   <button
                     type="button"
-                    onClick={() => {
-                      setForm((prev) => ({ ...prev, receiptUrl: "" }));
-                    }}
-                    className="text-xs text-red-500 hover:text-red-600 mt-1 transition-colors"
+                    onClick={() => setForm((prev) => ({ ...prev, receiptUrl: "" }))}
+                    className="text-xs font-semibold mt-1 transition-colors cursor-pointer"
+                    style={{ color: "#EF4444" }}
                   >
                     Remove
                   </button>
@@ -366,22 +334,16 @@ export default function NewExpensePage() {
           )}
 
           {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
+            <div className="rounded-xl p-3 text-sm font-medium" style={{ background: "rgba(239, 68, 68, 0.06)", color: "#EF4444", border: "1px solid rgba(239, 68, 68, 0.15)" }}>
+              {error}
+            </div>
           )}
 
-          <div className="flex gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={createMutation.isPending}
-              className="btn btn-primary flex-1"
-            >
+          <div className="flex gap-3 pt-3">
+            <button type="submit" disabled={createMutation.isPending} className="btn btn-primary flex-1">
               {createMutation.isPending ? "Saving..." : "Save as Draft"}
             </button>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="btn btn-secondary"
-            >
+            <button type="button" onClick={() => router.back()} className="btn btn-secondary">
               Cancel
             </button>
           </div>
@@ -391,11 +353,12 @@ export default function NewExpensePage() {
   );
 }
 
-// ─── Sub-components ───
-
 function ScannedBadge() {
   return (
-    <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-semibold text-brand-600">
+    <span
+      className="ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+      style={{ background: "rgba(56, 114, 225, 0.06)", color: "#3872E1" }}
+    >
       <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
       </svg>
