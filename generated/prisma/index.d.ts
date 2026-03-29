@@ -46,12 +46,6 @@ export type ExpenseCategory = $Result.DefaultSelection<Prisma.$ExpenseCategoryPa
  */
 export type Expense = $Result.DefaultSelection<Prisma.$ExpensePayload>
 /**
- * Model ExpenseLine
- * Individual line items within an expense.
- * Populated manually or auto-filled by OCR.
- */
-export type ExpenseLine = $Result.DefaultSelection<Prisma.$ExpenseLinePayload>
-/**
  * Model ApprovalRule
  * Configurable approval policy. The admin creates these and
  * assigns them to expenses (or sets a default for the company).
@@ -126,14 +120,6 @@ export const ApprovalRuleType: {
 
 export type ApprovalRuleType = (typeof ApprovalRuleType)[keyof typeof ApprovalRuleType]
 
-
-export const PaidBy: {
-  EMPLOYEE: 'EMPLOYEE',
-  COMPANY: 'COMPANY'
-};
-
-export type PaidBy = (typeof PaidBy)[keyof typeof PaidBy]
-
 }
 
 export type Role = $Enums.Role
@@ -151,10 +137,6 @@ export const ApprovalActionType: typeof $Enums.ApprovalActionType
 export type ApprovalRuleType = $Enums.ApprovalRuleType
 
 export const ApprovalRuleType: typeof $Enums.ApprovalRuleType
-
-export type PaidBy = $Enums.PaidBy
-
-export const PaidBy: typeof $Enums.PaidBy
 
 /**
  * ##  Prisma Client ʲˢ
@@ -336,16 +318,6 @@ export class PrismaClient<
     * ```
     */
   get expense(): Prisma.ExpenseDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.expenseLine`: Exposes CRUD operations for the **ExpenseLine** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more ExpenseLines
-    * const expenseLines = await prisma.expenseLine.findMany()
-    * ```
-    */
-  get expenseLine(): Prisma.ExpenseLineDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.approvalRule`: Exposes CRUD operations for the **ApprovalRule** model.
@@ -846,7 +818,6 @@ export namespace Prisma {
     User: 'User',
     ExpenseCategory: 'ExpenseCategory',
     Expense: 'Expense',
-    ExpenseLine: 'ExpenseLine',
     ApprovalRule: 'ApprovalRule',
     ApprovalStep: 'ApprovalStep',
     ApprovalAction: 'ApprovalAction',
@@ -868,7 +839,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "currency" | "exchangeRateCache" | "company" | "user" | "expenseCategory" | "expense" | "expenseLine" | "approvalRule" | "approvalStep" | "approvalAction" | "account" | "session" | "verificationToken"
+      modelProps: "currency" | "exchangeRateCache" | "company" | "user" | "expenseCategory" | "expense" | "approvalRule" | "approvalStep" | "approvalAction" | "account" | "session" | "verificationToken"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1313,80 +1284,6 @@ export namespace Prisma {
           count: {
             args: Prisma.ExpenseCountArgs<ExtArgs>
             result: $Utils.Optional<ExpenseCountAggregateOutputType> | number
-          }
-        }
-      }
-      ExpenseLine: {
-        payload: Prisma.$ExpenseLinePayload<ExtArgs>
-        fields: Prisma.ExpenseLineFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.ExpenseLineFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.ExpenseLineFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>
-          }
-          findFirst: {
-            args: Prisma.ExpenseLineFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.ExpenseLineFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>
-          }
-          findMany: {
-            args: Prisma.ExpenseLineFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>[]
-          }
-          create: {
-            args: Prisma.ExpenseLineCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>
-          }
-          createMany: {
-            args: Prisma.ExpenseLineCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.ExpenseLineCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>[]
-          }
-          delete: {
-            args: Prisma.ExpenseLineDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>
-          }
-          update: {
-            args: Prisma.ExpenseLineUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>
-          }
-          deleteMany: {
-            args: Prisma.ExpenseLineDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.ExpenseLineUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.ExpenseLineUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>[]
-          }
-          upsert: {
-            args: Prisma.ExpenseLineUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ExpenseLinePayload>
-          }
-          aggregate: {
-            args: Prisma.ExpenseLineAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateExpenseLine>
-          }
-          groupBy: {
-            args: Prisma.ExpenseLineGroupByArgs<ExtArgs>
-            result: $Utils.Optional<ExpenseLineGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.ExpenseLineCountArgs<ExtArgs>
-            result: $Utils.Optional<ExpenseLineCountAggregateOutputType> | number
           }
         }
       }
@@ -1948,7 +1845,6 @@ export namespace Prisma {
     user?: UserOmit
     expenseCategory?: ExpenseCategoryOmit
     expense?: ExpenseOmit
-    expenseLine?: ExpenseLineOmit
     approvalRule?: ApprovalRuleOmit
     approvalStep?: ApprovalStepOmit
     approvalAction?: ApprovalActionOmit
@@ -2249,12 +2145,10 @@ export namespace Prisma {
    */
 
   export type ExpenseCountOutputType = {
-    lines: number
     approvalActions: number
   }
 
   export type ExpenseCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    lines?: boolean | ExpenseCountOutputTypeCountLinesArgs
     approvalActions?: boolean | ExpenseCountOutputTypeCountApprovalActionsArgs
   }
 
@@ -2267,13 +2161,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExpenseCountOutputType
      */
     select?: ExpenseCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * ExpenseCountOutputType without action
-   */
-  export type ExpenseCountOutputTypeCountLinesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ExpenseLineWhereInput
   }
 
   /**
@@ -8179,7 +8066,6 @@ export namespace Prisma {
     currencyId: string | null
     convertedAmount: Decimal | null
     exchangeRate: Decimal | null
-    paidBy: $Enums.PaidBy | null
     status: $Enums.ExpenseStatus | null
     remarks: string | null
     receiptUrl: string | null
@@ -8201,7 +8087,6 @@ export namespace Prisma {
     currencyId: string | null
     convertedAmount: Decimal | null
     exchangeRate: Decimal | null
-    paidBy: $Enums.PaidBy | null
     status: $Enums.ExpenseStatus | null
     remarks: string | null
     receiptUrl: string | null
@@ -8223,7 +8108,6 @@ export namespace Prisma {
     currencyId: number
     convertedAmount: number
     exchangeRate: number
-    paidBy: number
     status: number
     remarks: number
     receiptUrl: number
@@ -8261,7 +8145,6 @@ export namespace Prisma {
     currencyId?: true
     convertedAmount?: true
     exchangeRate?: true
-    paidBy?: true
     status?: true
     remarks?: true
     receiptUrl?: true
@@ -8283,7 +8166,6 @@ export namespace Prisma {
     currencyId?: true
     convertedAmount?: true
     exchangeRate?: true
-    paidBy?: true
     status?: true
     remarks?: true
     receiptUrl?: true
@@ -8305,7 +8187,6 @@ export namespace Prisma {
     currencyId?: true
     convertedAmount?: true
     exchangeRate?: true
-    paidBy?: true
     status?: true
     remarks?: true
     receiptUrl?: true
@@ -8414,7 +8295,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount: Decimal | null
     exchangeRate: Decimal | null
-    paidBy: $Enums.PaidBy
     status: $Enums.ExpenseStatus
     remarks: string | null
     receiptUrl: string | null
@@ -8455,7 +8335,6 @@ export namespace Prisma {
     currencyId?: boolean
     convertedAmount?: boolean
     exchangeRate?: boolean
-    paidBy?: boolean
     status?: boolean
     remarks?: boolean
     receiptUrl?: boolean
@@ -8470,7 +8349,6 @@ export namespace Prisma {
     submitter?: boolean | UserDefaultArgs<ExtArgs>
     currency?: boolean | CurrencyDefaultArgs<ExtArgs>
     approvalRule?: boolean | Expense$approvalRuleArgs<ExtArgs>
-    lines?: boolean | Expense$linesArgs<ExtArgs>
     approvalActions?: boolean | Expense$approvalActionsArgs<ExtArgs>
     _count?: boolean | ExpenseCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["expense"]>
@@ -8484,7 +8362,6 @@ export namespace Prisma {
     currencyId?: boolean
     convertedAmount?: boolean
     exchangeRate?: boolean
-    paidBy?: boolean
     status?: boolean
     remarks?: boolean
     receiptUrl?: boolean
@@ -8510,7 +8387,6 @@ export namespace Prisma {
     currencyId?: boolean
     convertedAmount?: boolean
     exchangeRate?: boolean
-    paidBy?: boolean
     status?: boolean
     remarks?: boolean
     receiptUrl?: boolean
@@ -8536,7 +8412,6 @@ export namespace Prisma {
     currencyId?: boolean
     convertedAmount?: boolean
     exchangeRate?: boolean
-    paidBy?: boolean
     status?: boolean
     remarks?: boolean
     receiptUrl?: boolean
@@ -8549,13 +8424,12 @@ export namespace Prisma {
     submittedAt?: boolean
   }
 
-  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "subject" | "description" | "expenseDate" | "totalAmount" | "currencyId" | "convertedAmount" | "exchangeRate" | "paidBy" | "status" | "remarks" | "receiptUrl" | "categoryId" | "submitterId" | "approvalRuleId" | "currentStepOrder" | "createdAt" | "updatedAt" | "submittedAt", ExtArgs["result"]["expense"]>
+  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "subject" | "description" | "expenseDate" | "totalAmount" | "currencyId" | "convertedAmount" | "exchangeRate" | "status" | "remarks" | "receiptUrl" | "categoryId" | "submitterId" | "approvalRuleId" | "currentStepOrder" | "createdAt" | "updatedAt" | "submittedAt", ExtArgs["result"]["expense"]>
   export type ExpenseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     category?: boolean | ExpenseCategoryDefaultArgs<ExtArgs>
     submitter?: boolean | UserDefaultArgs<ExtArgs>
     currency?: boolean | CurrencyDefaultArgs<ExtArgs>
     approvalRule?: boolean | Expense$approvalRuleArgs<ExtArgs>
-    lines?: boolean | Expense$linesArgs<ExtArgs>
     approvalActions?: boolean | Expense$approvalActionsArgs<ExtArgs>
     _count?: boolean | ExpenseCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -8579,7 +8453,6 @@ export namespace Prisma {
       submitter: Prisma.$UserPayload<ExtArgs>
       currency: Prisma.$CurrencyPayload<ExtArgs>
       approvalRule: Prisma.$ApprovalRulePayload<ExtArgs> | null
-      lines: Prisma.$ExpenseLinePayload<ExtArgs>[]
       approvalActions: Prisma.$ApprovalActionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -8591,7 +8464,6 @@ export namespace Prisma {
       currencyId: string
       convertedAmount: Prisma.Decimal | null
       exchangeRate: Prisma.Decimal | null
-      paidBy: $Enums.PaidBy
       status: $Enums.ExpenseStatus
       remarks: string | null
       receiptUrl: string | null
@@ -9000,7 +8872,6 @@ export namespace Prisma {
     submitter<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     currency<T extends CurrencyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CurrencyDefaultArgs<ExtArgs>>): Prisma__CurrencyClient<$Result.GetResult<Prisma.$CurrencyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     approvalRule<T extends Expense$approvalRuleArgs<ExtArgs> = {}>(args?: Subset<T, Expense$approvalRuleArgs<ExtArgs>>): Prisma__ApprovalRuleClient<$Result.GetResult<Prisma.$ApprovalRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    lines<T extends Expense$linesArgs<ExtArgs> = {}>(args?: Subset<T, Expense$linesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     approvalActions<T extends Expense$approvalActionsArgs<ExtArgs> = {}>(args?: Subset<T, Expense$approvalActionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -9039,7 +8910,6 @@ export namespace Prisma {
     readonly currencyId: FieldRef<"Expense", 'String'>
     readonly convertedAmount: FieldRef<"Expense", 'Decimal'>
     readonly exchangeRate: FieldRef<"Expense", 'Decimal'>
-    readonly paidBy: FieldRef<"Expense", 'PaidBy'>
     readonly status: FieldRef<"Expense", 'ExpenseStatus'>
     readonly remarks: FieldRef<"Expense", 'String'>
     readonly receiptUrl: FieldRef<"Expense", 'String'>
@@ -9470,30 +9340,6 @@ export namespace Prisma {
   }
 
   /**
-   * Expense.lines
-   */
-  export type Expense$linesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    where?: ExpenseLineWhereInput
-    orderBy?: ExpenseLineOrderByWithRelationInput | ExpenseLineOrderByWithRelationInput[]
-    cursor?: ExpenseLineWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ExpenseLineScalarFieldEnum | ExpenseLineScalarFieldEnum[]
-  }
-
-  /**
    * Expense.approvalActions
    */
   export type Expense$approvalActionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9533,1090 +9379,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ExpenseInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model ExpenseLine
-   */
-
-  export type AggregateExpenseLine = {
-    _count: ExpenseLineCountAggregateOutputType | null
-    _avg: ExpenseLineAvgAggregateOutputType | null
-    _sum: ExpenseLineSumAggregateOutputType | null
-    _min: ExpenseLineMinAggregateOutputType | null
-    _max: ExpenseLineMaxAggregateOutputType | null
-  }
-
-  export type ExpenseLineAvgAggregateOutputType = {
-    amount: Decimal | null
-  }
-
-  export type ExpenseLineSumAggregateOutputType = {
-    amount: Decimal | null
-  }
-
-  export type ExpenseLineMinAggregateOutputType = {
-    id: string | null
-    expenseId: string | null
-    description: string | null
-    amount: Decimal | null
-  }
-
-  export type ExpenseLineMaxAggregateOutputType = {
-    id: string | null
-    expenseId: string | null
-    description: string | null
-    amount: Decimal | null
-  }
-
-  export type ExpenseLineCountAggregateOutputType = {
-    id: number
-    expenseId: number
-    description: number
-    amount: number
-    _all: number
-  }
-
-
-  export type ExpenseLineAvgAggregateInputType = {
-    amount?: true
-  }
-
-  export type ExpenseLineSumAggregateInputType = {
-    amount?: true
-  }
-
-  export type ExpenseLineMinAggregateInputType = {
-    id?: true
-    expenseId?: true
-    description?: true
-    amount?: true
-  }
-
-  export type ExpenseLineMaxAggregateInputType = {
-    id?: true
-    expenseId?: true
-    description?: true
-    amount?: true
-  }
-
-  export type ExpenseLineCountAggregateInputType = {
-    id?: true
-    expenseId?: true
-    description?: true
-    amount?: true
-    _all?: true
-  }
-
-  export type ExpenseLineAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which ExpenseLine to aggregate.
-     */
-    where?: ExpenseLineWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ExpenseLines to fetch.
-     */
-    orderBy?: ExpenseLineOrderByWithRelationInput | ExpenseLineOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: ExpenseLineWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ExpenseLines from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ExpenseLines.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned ExpenseLines
-    **/
-    _count?: true | ExpenseLineCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: ExpenseLineAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: ExpenseLineSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: ExpenseLineMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: ExpenseLineMaxAggregateInputType
-  }
-
-  export type GetExpenseLineAggregateType<T extends ExpenseLineAggregateArgs> = {
-        [P in keyof T & keyof AggregateExpenseLine]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateExpenseLine[P]>
-      : GetScalarType<T[P], AggregateExpenseLine[P]>
-  }
-
-
-
-
-  export type ExpenseLineGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ExpenseLineWhereInput
-    orderBy?: ExpenseLineOrderByWithAggregationInput | ExpenseLineOrderByWithAggregationInput[]
-    by: ExpenseLineScalarFieldEnum[] | ExpenseLineScalarFieldEnum
-    having?: ExpenseLineScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: ExpenseLineCountAggregateInputType | true
-    _avg?: ExpenseLineAvgAggregateInputType
-    _sum?: ExpenseLineSumAggregateInputType
-    _min?: ExpenseLineMinAggregateInputType
-    _max?: ExpenseLineMaxAggregateInputType
-  }
-
-  export type ExpenseLineGroupByOutputType = {
-    id: string
-    expenseId: string
-    description: string
-    amount: Decimal
-    _count: ExpenseLineCountAggregateOutputType | null
-    _avg: ExpenseLineAvgAggregateOutputType | null
-    _sum: ExpenseLineSumAggregateOutputType | null
-    _min: ExpenseLineMinAggregateOutputType | null
-    _max: ExpenseLineMaxAggregateOutputType | null
-  }
-
-  type GetExpenseLineGroupByPayload<T extends ExpenseLineGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<ExpenseLineGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof ExpenseLineGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], ExpenseLineGroupByOutputType[P]>
-            : GetScalarType<T[P], ExpenseLineGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type ExpenseLineSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    expenseId?: boolean
-    description?: boolean
-    amount?: boolean
-    expense?: boolean | ExpenseDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["expenseLine"]>
-
-  export type ExpenseLineSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    expenseId?: boolean
-    description?: boolean
-    amount?: boolean
-    expense?: boolean | ExpenseDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["expenseLine"]>
-
-  export type ExpenseLineSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    expenseId?: boolean
-    description?: boolean
-    amount?: boolean
-    expense?: boolean | ExpenseDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["expenseLine"]>
-
-  export type ExpenseLineSelectScalar = {
-    id?: boolean
-    expenseId?: boolean
-    description?: boolean
-    amount?: boolean
-  }
-
-  export type ExpenseLineOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "expenseId" | "description" | "amount", ExtArgs["result"]["expenseLine"]>
-  export type ExpenseLineInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    expense?: boolean | ExpenseDefaultArgs<ExtArgs>
-  }
-  export type ExpenseLineIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    expense?: boolean | ExpenseDefaultArgs<ExtArgs>
-  }
-  export type ExpenseLineIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    expense?: boolean | ExpenseDefaultArgs<ExtArgs>
-  }
-
-  export type $ExpenseLinePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "ExpenseLine"
-    objects: {
-      expense: Prisma.$ExpensePayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      expenseId: string
-      description: string
-      amount: Prisma.Decimal
-    }, ExtArgs["result"]["expenseLine"]>
-    composites: {}
-  }
-
-  type ExpenseLineGetPayload<S extends boolean | null | undefined | ExpenseLineDefaultArgs> = $Result.GetResult<Prisma.$ExpenseLinePayload, S>
-
-  type ExpenseLineCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<ExpenseLineFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: ExpenseLineCountAggregateInputType | true
-    }
-
-  export interface ExpenseLineDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ExpenseLine'], meta: { name: 'ExpenseLine' } }
-    /**
-     * Find zero or one ExpenseLine that matches the filter.
-     * @param {ExpenseLineFindUniqueArgs} args - Arguments to find a ExpenseLine
-     * @example
-     * // Get one ExpenseLine
-     * const expenseLine = await prisma.expenseLine.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends ExpenseLineFindUniqueArgs>(args: SelectSubset<T, ExpenseLineFindUniqueArgs<ExtArgs>>): Prisma__ExpenseLineClient<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one ExpenseLine that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {ExpenseLineFindUniqueOrThrowArgs} args - Arguments to find a ExpenseLine
-     * @example
-     * // Get one ExpenseLine
-     * const expenseLine = await prisma.expenseLine.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends ExpenseLineFindUniqueOrThrowArgs>(args: SelectSubset<T, ExpenseLineFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ExpenseLineClient<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first ExpenseLine that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ExpenseLineFindFirstArgs} args - Arguments to find a ExpenseLine
-     * @example
-     * // Get one ExpenseLine
-     * const expenseLine = await prisma.expenseLine.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends ExpenseLineFindFirstArgs>(args?: SelectSubset<T, ExpenseLineFindFirstArgs<ExtArgs>>): Prisma__ExpenseLineClient<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first ExpenseLine that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ExpenseLineFindFirstOrThrowArgs} args - Arguments to find a ExpenseLine
-     * @example
-     * // Get one ExpenseLine
-     * const expenseLine = await prisma.expenseLine.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends ExpenseLineFindFirstOrThrowArgs>(args?: SelectSubset<T, ExpenseLineFindFirstOrThrowArgs<ExtArgs>>): Prisma__ExpenseLineClient<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more ExpenseLines that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ExpenseLineFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all ExpenseLines
-     * const expenseLines = await prisma.expenseLine.findMany()
-     * 
-     * // Get first 10 ExpenseLines
-     * const expenseLines = await prisma.expenseLine.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const expenseLineWithIdOnly = await prisma.expenseLine.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends ExpenseLineFindManyArgs>(args?: SelectSubset<T, ExpenseLineFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a ExpenseLine.
-     * @param {ExpenseLineCreateArgs} args - Arguments to create a ExpenseLine.
-     * @example
-     * // Create one ExpenseLine
-     * const ExpenseLine = await prisma.expenseLine.create({
-     *   data: {
-     *     // ... data to create a ExpenseLine
-     *   }
-     * })
-     * 
-     */
-    create<T extends ExpenseLineCreateArgs>(args: SelectSubset<T, ExpenseLineCreateArgs<ExtArgs>>): Prisma__ExpenseLineClient<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many ExpenseLines.
-     * @param {ExpenseLineCreateManyArgs} args - Arguments to create many ExpenseLines.
-     * @example
-     * // Create many ExpenseLines
-     * const expenseLine = await prisma.expenseLine.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends ExpenseLineCreateManyArgs>(args?: SelectSubset<T, ExpenseLineCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many ExpenseLines and returns the data saved in the database.
-     * @param {ExpenseLineCreateManyAndReturnArgs} args - Arguments to create many ExpenseLines.
-     * @example
-     * // Create many ExpenseLines
-     * const expenseLine = await prisma.expenseLine.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many ExpenseLines and only return the `id`
-     * const expenseLineWithIdOnly = await prisma.expenseLine.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends ExpenseLineCreateManyAndReturnArgs>(args?: SelectSubset<T, ExpenseLineCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a ExpenseLine.
-     * @param {ExpenseLineDeleteArgs} args - Arguments to delete one ExpenseLine.
-     * @example
-     * // Delete one ExpenseLine
-     * const ExpenseLine = await prisma.expenseLine.delete({
-     *   where: {
-     *     // ... filter to delete one ExpenseLine
-     *   }
-     * })
-     * 
-     */
-    delete<T extends ExpenseLineDeleteArgs>(args: SelectSubset<T, ExpenseLineDeleteArgs<ExtArgs>>): Prisma__ExpenseLineClient<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one ExpenseLine.
-     * @param {ExpenseLineUpdateArgs} args - Arguments to update one ExpenseLine.
-     * @example
-     * // Update one ExpenseLine
-     * const expenseLine = await prisma.expenseLine.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends ExpenseLineUpdateArgs>(args: SelectSubset<T, ExpenseLineUpdateArgs<ExtArgs>>): Prisma__ExpenseLineClient<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more ExpenseLines.
-     * @param {ExpenseLineDeleteManyArgs} args - Arguments to filter ExpenseLines to delete.
-     * @example
-     * // Delete a few ExpenseLines
-     * const { count } = await prisma.expenseLine.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends ExpenseLineDeleteManyArgs>(args?: SelectSubset<T, ExpenseLineDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more ExpenseLines.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ExpenseLineUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many ExpenseLines
-     * const expenseLine = await prisma.expenseLine.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends ExpenseLineUpdateManyArgs>(args: SelectSubset<T, ExpenseLineUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more ExpenseLines and returns the data updated in the database.
-     * @param {ExpenseLineUpdateManyAndReturnArgs} args - Arguments to update many ExpenseLines.
-     * @example
-     * // Update many ExpenseLines
-     * const expenseLine = await prisma.expenseLine.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more ExpenseLines and only return the `id`
-     * const expenseLineWithIdOnly = await prisma.expenseLine.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends ExpenseLineUpdateManyAndReturnArgs>(args: SelectSubset<T, ExpenseLineUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one ExpenseLine.
-     * @param {ExpenseLineUpsertArgs} args - Arguments to update or create a ExpenseLine.
-     * @example
-     * // Update or create a ExpenseLine
-     * const expenseLine = await prisma.expenseLine.upsert({
-     *   create: {
-     *     // ... data to create a ExpenseLine
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the ExpenseLine we want to update
-     *   }
-     * })
-     */
-    upsert<T extends ExpenseLineUpsertArgs>(args: SelectSubset<T, ExpenseLineUpsertArgs<ExtArgs>>): Prisma__ExpenseLineClient<$Result.GetResult<Prisma.$ExpenseLinePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of ExpenseLines.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ExpenseLineCountArgs} args - Arguments to filter ExpenseLines to count.
-     * @example
-     * // Count the number of ExpenseLines
-     * const count = await prisma.expenseLine.count({
-     *   where: {
-     *     // ... the filter for the ExpenseLines we want to count
-     *   }
-     * })
-    **/
-    count<T extends ExpenseLineCountArgs>(
-      args?: Subset<T, ExpenseLineCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], ExpenseLineCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a ExpenseLine.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ExpenseLineAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends ExpenseLineAggregateArgs>(args: Subset<T, ExpenseLineAggregateArgs>): Prisma.PrismaPromise<GetExpenseLineAggregateType<T>>
-
-    /**
-     * Group by ExpenseLine.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ExpenseLineGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends ExpenseLineGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: ExpenseLineGroupByArgs['orderBy'] }
-        : { orderBy?: ExpenseLineGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, ExpenseLineGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetExpenseLineGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the ExpenseLine model
-   */
-  readonly fields: ExpenseLineFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for ExpenseLine.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__ExpenseLineClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    expense<T extends ExpenseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ExpenseDefaultArgs<ExtArgs>>): Prisma__ExpenseClient<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the ExpenseLine model
-   */
-  interface ExpenseLineFieldRefs {
-    readonly id: FieldRef<"ExpenseLine", 'String'>
-    readonly expenseId: FieldRef<"ExpenseLine", 'String'>
-    readonly description: FieldRef<"ExpenseLine", 'String'>
-    readonly amount: FieldRef<"ExpenseLine", 'Decimal'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * ExpenseLine findUnique
-   */
-  export type ExpenseLineFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * Filter, which ExpenseLine to fetch.
-     */
-    where: ExpenseLineWhereUniqueInput
-  }
-
-  /**
-   * ExpenseLine findUniqueOrThrow
-   */
-  export type ExpenseLineFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * Filter, which ExpenseLine to fetch.
-     */
-    where: ExpenseLineWhereUniqueInput
-  }
-
-  /**
-   * ExpenseLine findFirst
-   */
-  export type ExpenseLineFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * Filter, which ExpenseLine to fetch.
-     */
-    where?: ExpenseLineWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ExpenseLines to fetch.
-     */
-    orderBy?: ExpenseLineOrderByWithRelationInput | ExpenseLineOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for ExpenseLines.
-     */
-    cursor?: ExpenseLineWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ExpenseLines from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ExpenseLines.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of ExpenseLines.
-     */
-    distinct?: ExpenseLineScalarFieldEnum | ExpenseLineScalarFieldEnum[]
-  }
-
-  /**
-   * ExpenseLine findFirstOrThrow
-   */
-  export type ExpenseLineFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * Filter, which ExpenseLine to fetch.
-     */
-    where?: ExpenseLineWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ExpenseLines to fetch.
-     */
-    orderBy?: ExpenseLineOrderByWithRelationInput | ExpenseLineOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for ExpenseLines.
-     */
-    cursor?: ExpenseLineWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ExpenseLines from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ExpenseLines.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of ExpenseLines.
-     */
-    distinct?: ExpenseLineScalarFieldEnum | ExpenseLineScalarFieldEnum[]
-  }
-
-  /**
-   * ExpenseLine findMany
-   */
-  export type ExpenseLineFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * Filter, which ExpenseLines to fetch.
-     */
-    where?: ExpenseLineWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ExpenseLines to fetch.
-     */
-    orderBy?: ExpenseLineOrderByWithRelationInput | ExpenseLineOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing ExpenseLines.
-     */
-    cursor?: ExpenseLineWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ExpenseLines from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ExpenseLines.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of ExpenseLines.
-     */
-    distinct?: ExpenseLineScalarFieldEnum | ExpenseLineScalarFieldEnum[]
-  }
-
-  /**
-   * ExpenseLine create
-   */
-  export type ExpenseLineCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * The data needed to create a ExpenseLine.
-     */
-    data: XOR<ExpenseLineCreateInput, ExpenseLineUncheckedCreateInput>
-  }
-
-  /**
-   * ExpenseLine createMany
-   */
-  export type ExpenseLineCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many ExpenseLines.
-     */
-    data: ExpenseLineCreateManyInput | ExpenseLineCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * ExpenseLine createManyAndReturn
-   */
-  export type ExpenseLineCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * The data used to create many ExpenseLines.
-     */
-    data: ExpenseLineCreateManyInput | ExpenseLineCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * ExpenseLine update
-   */
-  export type ExpenseLineUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * The data needed to update a ExpenseLine.
-     */
-    data: XOR<ExpenseLineUpdateInput, ExpenseLineUncheckedUpdateInput>
-    /**
-     * Choose, which ExpenseLine to update.
-     */
-    where: ExpenseLineWhereUniqueInput
-  }
-
-  /**
-   * ExpenseLine updateMany
-   */
-  export type ExpenseLineUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update ExpenseLines.
-     */
-    data: XOR<ExpenseLineUpdateManyMutationInput, ExpenseLineUncheckedUpdateManyInput>
-    /**
-     * Filter which ExpenseLines to update
-     */
-    where?: ExpenseLineWhereInput
-    /**
-     * Limit how many ExpenseLines to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * ExpenseLine updateManyAndReturn
-   */
-  export type ExpenseLineUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * The data used to update ExpenseLines.
-     */
-    data: XOR<ExpenseLineUpdateManyMutationInput, ExpenseLineUncheckedUpdateManyInput>
-    /**
-     * Filter which ExpenseLines to update
-     */
-    where?: ExpenseLineWhereInput
-    /**
-     * Limit how many ExpenseLines to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * ExpenseLine upsert
-   */
-  export type ExpenseLineUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * The filter to search for the ExpenseLine to update in case it exists.
-     */
-    where: ExpenseLineWhereUniqueInput
-    /**
-     * In case the ExpenseLine found by the `where` argument doesn't exist, create a new ExpenseLine with this data.
-     */
-    create: XOR<ExpenseLineCreateInput, ExpenseLineUncheckedCreateInput>
-    /**
-     * In case the ExpenseLine was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<ExpenseLineUpdateInput, ExpenseLineUncheckedUpdateInput>
-  }
-
-  /**
-   * ExpenseLine delete
-   */
-  export type ExpenseLineDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
-    /**
-     * Filter which ExpenseLine to delete.
-     */
-    where: ExpenseLineWhereUniqueInput
-  }
-
-  /**
-   * ExpenseLine deleteMany
-   */
-  export type ExpenseLineDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which ExpenseLines to delete
-     */
-    where?: ExpenseLineWhereInput
-    /**
-     * Limit how many ExpenseLines to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * ExpenseLine without action
-   */
-  export type ExpenseLineDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ExpenseLine
-     */
-    select?: ExpenseLineSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ExpenseLine
-     */
-    omit?: ExpenseLineOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ExpenseLineInclude<ExtArgs> | null
   }
 
 
@@ -17413,7 +16175,6 @@ export namespace Prisma {
     currencyId: 'currencyId',
     convertedAmount: 'convertedAmount',
     exchangeRate: 'exchangeRate',
-    paidBy: 'paidBy',
     status: 'status',
     remarks: 'remarks',
     receiptUrl: 'receiptUrl',
@@ -17427,16 +16188,6 @@ export namespace Prisma {
   };
 
   export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
-
-
-  export const ExpenseLineScalarFieldEnum: {
-    id: 'id',
-    expenseId: 'expenseId',
-    description: 'description',
-    amount: 'amount'
-  };
-
-  export type ExpenseLineScalarFieldEnum = (typeof ExpenseLineScalarFieldEnum)[keyof typeof ExpenseLineScalarFieldEnum]
 
 
   export const ApprovalRuleScalarFieldEnum: {
@@ -17606,20 +16357,6 @@ export namespace Prisma {
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-  /**
-   * Reference to a field of type 'PaidBy'
-   */
-  export type EnumPaidByFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaidBy'>
-    
-
-
-  /**
-   * Reference to a field of type 'PaidBy[]'
-   */
-  export type ListEnumPaidByFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaidBy[]'>
     
 
 
@@ -18044,7 +16781,6 @@ export namespace Prisma {
     currencyId?: StringFilter<"Expense"> | string
     convertedAmount?: DecimalNullableFilter<"Expense"> | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: DecimalNullableFilter<"Expense"> | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFilter<"Expense"> | $Enums.PaidBy
     status?: EnumExpenseStatusFilter<"Expense"> | $Enums.ExpenseStatus
     remarks?: StringNullableFilter<"Expense"> | string | null
     receiptUrl?: StringNullableFilter<"Expense"> | string | null
@@ -18059,7 +16795,6 @@ export namespace Prisma {
     submitter?: XOR<UserScalarRelationFilter, UserWhereInput>
     currency?: XOR<CurrencyScalarRelationFilter, CurrencyWhereInput>
     approvalRule?: XOR<ApprovalRuleNullableScalarRelationFilter, ApprovalRuleWhereInput> | null
-    lines?: ExpenseLineListRelationFilter
     approvalActions?: ApprovalActionListRelationFilter
   }
 
@@ -18072,7 +16807,6 @@ export namespace Prisma {
     currencyId?: SortOrder
     convertedAmount?: SortOrderInput | SortOrder
     exchangeRate?: SortOrderInput | SortOrder
-    paidBy?: SortOrder
     status?: SortOrder
     remarks?: SortOrderInput | SortOrder
     receiptUrl?: SortOrderInput | SortOrder
@@ -18087,7 +16821,6 @@ export namespace Prisma {
     submitter?: UserOrderByWithRelationInput
     currency?: CurrencyOrderByWithRelationInput
     approvalRule?: ApprovalRuleOrderByWithRelationInput
-    lines?: ExpenseLineOrderByRelationAggregateInput
     approvalActions?: ApprovalActionOrderByRelationAggregateInput
   }
 
@@ -18103,7 +16836,6 @@ export namespace Prisma {
     currencyId?: StringFilter<"Expense"> | string
     convertedAmount?: DecimalNullableFilter<"Expense"> | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: DecimalNullableFilter<"Expense"> | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFilter<"Expense"> | $Enums.PaidBy
     status?: EnumExpenseStatusFilter<"Expense"> | $Enums.ExpenseStatus
     remarks?: StringNullableFilter<"Expense"> | string | null
     receiptUrl?: StringNullableFilter<"Expense"> | string | null
@@ -18118,7 +16850,6 @@ export namespace Prisma {
     submitter?: XOR<UserScalarRelationFilter, UserWhereInput>
     currency?: XOR<CurrencyScalarRelationFilter, CurrencyWhereInput>
     approvalRule?: XOR<ApprovalRuleNullableScalarRelationFilter, ApprovalRuleWhereInput> | null
-    lines?: ExpenseLineListRelationFilter
     approvalActions?: ApprovalActionListRelationFilter
   }, "id">
 
@@ -18131,7 +16862,6 @@ export namespace Prisma {
     currencyId?: SortOrder
     convertedAmount?: SortOrderInput | SortOrder
     exchangeRate?: SortOrderInput | SortOrder
-    paidBy?: SortOrder
     status?: SortOrder
     remarks?: SortOrderInput | SortOrder
     receiptUrl?: SortOrderInput | SortOrder
@@ -18161,7 +16891,6 @@ export namespace Prisma {
     currencyId?: StringWithAggregatesFilter<"Expense"> | string
     convertedAmount?: DecimalNullableWithAggregatesFilter<"Expense"> | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: DecimalNullableWithAggregatesFilter<"Expense"> | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByWithAggregatesFilter<"Expense"> | $Enums.PaidBy
     status?: EnumExpenseStatusWithAggregatesFilter<"Expense"> | $Enums.ExpenseStatus
     remarks?: StringNullableWithAggregatesFilter<"Expense"> | string | null
     receiptUrl?: StringNullableWithAggregatesFilter<"Expense"> | string | null
@@ -18172,58 +16901,6 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Expense"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Expense"> | Date | string
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Expense"> | Date | string | null
-  }
-
-  export type ExpenseLineWhereInput = {
-    AND?: ExpenseLineWhereInput | ExpenseLineWhereInput[]
-    OR?: ExpenseLineWhereInput[]
-    NOT?: ExpenseLineWhereInput | ExpenseLineWhereInput[]
-    id?: StringFilter<"ExpenseLine"> | string
-    expenseId?: StringFilter<"ExpenseLine"> | string
-    description?: StringFilter<"ExpenseLine"> | string
-    amount?: DecimalFilter<"ExpenseLine"> | Decimal | DecimalJsLike | number | string
-    expense?: XOR<ExpenseScalarRelationFilter, ExpenseWhereInput>
-  }
-
-  export type ExpenseLineOrderByWithRelationInput = {
-    id?: SortOrder
-    expenseId?: SortOrder
-    description?: SortOrder
-    amount?: SortOrder
-    expense?: ExpenseOrderByWithRelationInput
-  }
-
-  export type ExpenseLineWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: ExpenseLineWhereInput | ExpenseLineWhereInput[]
-    OR?: ExpenseLineWhereInput[]
-    NOT?: ExpenseLineWhereInput | ExpenseLineWhereInput[]
-    expenseId?: StringFilter<"ExpenseLine"> | string
-    description?: StringFilter<"ExpenseLine"> | string
-    amount?: DecimalFilter<"ExpenseLine"> | Decimal | DecimalJsLike | number | string
-    expense?: XOR<ExpenseScalarRelationFilter, ExpenseWhereInput>
-  }, "id">
-
-  export type ExpenseLineOrderByWithAggregationInput = {
-    id?: SortOrder
-    expenseId?: SortOrder
-    description?: SortOrder
-    amount?: SortOrder
-    _count?: ExpenseLineCountOrderByAggregateInput
-    _avg?: ExpenseLineAvgOrderByAggregateInput
-    _max?: ExpenseLineMaxOrderByAggregateInput
-    _min?: ExpenseLineMinOrderByAggregateInput
-    _sum?: ExpenseLineSumOrderByAggregateInput
-  }
-
-  export type ExpenseLineScalarWhereWithAggregatesInput = {
-    AND?: ExpenseLineScalarWhereWithAggregatesInput | ExpenseLineScalarWhereWithAggregatesInput[]
-    OR?: ExpenseLineScalarWhereWithAggregatesInput[]
-    NOT?: ExpenseLineScalarWhereWithAggregatesInput | ExpenseLineScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"ExpenseLine"> | string
-    expenseId?: StringWithAggregatesFilter<"ExpenseLine"> | string
-    description?: StringWithAggregatesFilter<"ExpenseLine"> | string
-    amount?: DecimalWithAggregatesFilter<"ExpenseLine"> | Decimal | DecimalJsLike | number | string
   }
 
   export type ApprovalRuleWhereInput = {
@@ -19000,7 +17677,6 @@ export namespace Prisma {
     totalAmount: Decimal | DecimalJsLike | number | string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -19012,7 +17688,6 @@ export namespace Prisma {
     submitter: UserCreateNestedOneWithoutExpensesInput
     currency: CurrencyCreateNestedOneWithoutExpensesInput
     approvalRule?: ApprovalRuleCreateNestedOneWithoutExpensesInput
-    lines?: ExpenseLineCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionCreateNestedManyWithoutExpenseInput
   }
 
@@ -19025,7 +17700,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -19036,7 +17710,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
-    lines?: ExpenseLineUncheckedCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionUncheckedCreateNestedManyWithoutExpenseInput
   }
 
@@ -19048,7 +17721,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19060,7 +17732,6 @@ export namespace Prisma {
     submitter?: UserUpdateOneRequiredWithoutExpensesNestedInput
     currency?: CurrencyUpdateOneRequiredWithoutExpensesNestedInput
     approvalRule?: ApprovalRuleUpdateOneWithoutExpensesNestedInput
-    lines?: ExpenseLineUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUpdateManyWithoutExpenseNestedInput
   }
 
@@ -19073,7 +17744,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19084,7 +17754,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lines?: ExpenseLineUncheckedUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUncheckedUpdateManyWithoutExpenseNestedInput
   }
 
@@ -19097,7 +17766,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -19118,7 +17786,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19137,7 +17804,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19148,54 +17814,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type ExpenseLineCreateInput = {
-    id?: string
-    description: string
-    amount: Decimal | DecimalJsLike | number | string
-    expense: ExpenseCreateNestedOneWithoutLinesInput
-  }
-
-  export type ExpenseLineUncheckedCreateInput = {
-    id?: string
-    expenseId: string
-    description: string
-    amount: Decimal | DecimalJsLike | number | string
-  }
-
-  export type ExpenseLineUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    expense?: ExpenseUpdateOneRequiredWithoutLinesNestedInput
-  }
-
-  export type ExpenseLineUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    expenseId?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-  }
-
-  export type ExpenseLineCreateManyInput = {
-    id?: string
-    expenseId: string
-    description: string
-    amount: Decimal | DecimalJsLike | number | string
-  }
-
-  export type ExpenseLineUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-  }
-
-  export type ExpenseLineUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    expenseId?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
 
   export type ApprovalRuleCreateInput = {
@@ -20074,13 +18692,6 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
-  export type EnumPaidByFilter<$PrismaModel = never> = {
-    equals?: $Enums.PaidBy | EnumPaidByFieldRefInput<$PrismaModel>
-    in?: $Enums.PaidBy[] | ListEnumPaidByFieldRefInput<$PrismaModel>
-    notIn?: $Enums.PaidBy[] | ListEnumPaidByFieldRefInput<$PrismaModel>
-    not?: NestedEnumPaidByFilter<$PrismaModel> | $Enums.PaidBy
-  }
-
   export type EnumExpenseStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ExpenseStatus | EnumExpenseStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ExpenseStatus[] | ListEnumExpenseStatusFieldRefInput<$PrismaModel>
@@ -20114,16 +18725,6 @@ export namespace Prisma {
     isNot?: ApprovalRuleWhereInput | null
   }
 
-  export type ExpenseLineListRelationFilter = {
-    every?: ExpenseLineWhereInput
-    some?: ExpenseLineWhereInput
-    none?: ExpenseLineWhereInput
-  }
-
-  export type ExpenseLineOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type ExpenseCountOrderByAggregateInput = {
     id?: SortOrder
     subject?: SortOrder
@@ -20133,7 +18734,6 @@ export namespace Prisma {
     currencyId?: SortOrder
     convertedAmount?: SortOrder
     exchangeRate?: SortOrder
-    paidBy?: SortOrder
     status?: SortOrder
     remarks?: SortOrder
     receiptUrl?: SortOrder
@@ -20162,7 +18762,6 @@ export namespace Prisma {
     currencyId?: SortOrder
     convertedAmount?: SortOrder
     exchangeRate?: SortOrder
-    paidBy?: SortOrder
     status?: SortOrder
     remarks?: SortOrder
     receiptUrl?: SortOrder
@@ -20184,7 +18783,6 @@ export namespace Prisma {
     currencyId?: SortOrder
     convertedAmount?: SortOrder
     exchangeRate?: SortOrder
-    paidBy?: SortOrder
     status?: SortOrder
     remarks?: SortOrder
     receiptUrl?: SortOrder
@@ -20220,16 +18818,6 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
-  export type EnumPaidByWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.PaidBy | EnumPaidByFieldRefInput<$PrismaModel>
-    in?: $Enums.PaidBy[] | ListEnumPaidByFieldRefInput<$PrismaModel>
-    notIn?: $Enums.PaidBy[] | ListEnumPaidByFieldRefInput<$PrismaModel>
-    not?: NestedEnumPaidByWithAggregatesFilter<$PrismaModel> | $Enums.PaidBy
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumPaidByFilter<$PrismaModel>
-    _max?: NestedEnumPaidByFilter<$PrismaModel>
-  }
-
   export type EnumExpenseStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ExpenseStatus | EnumExpenseStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ExpenseStatus[] | ListEnumExpenseStatusFieldRefInput<$PrismaModel>
@@ -20254,40 +18842,6 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type ExpenseScalarRelationFilter = {
-    is?: ExpenseWhereInput
-    isNot?: ExpenseWhereInput
-  }
-
-  export type ExpenseLineCountOrderByAggregateInput = {
-    id?: SortOrder
-    expenseId?: SortOrder
-    description?: SortOrder
-    amount?: SortOrder
-  }
-
-  export type ExpenseLineAvgOrderByAggregateInput = {
-    amount?: SortOrder
-  }
-
-  export type ExpenseLineMaxOrderByAggregateInput = {
-    id?: SortOrder
-    expenseId?: SortOrder
-    description?: SortOrder
-    amount?: SortOrder
-  }
-
-  export type ExpenseLineMinOrderByAggregateInput = {
-    id?: SortOrder
-    expenseId?: SortOrder
-    description?: SortOrder
-    amount?: SortOrder
-  }
-
-  export type ExpenseLineSumOrderByAggregateInput = {
-    amount?: SortOrder
   }
 
   export type EnumApprovalRuleTypeFilter<$PrismaModel = never> = {
@@ -20433,6 +18987,11 @@ export namespace Prisma {
     in?: $Enums.ApprovalActionType[] | ListEnumApprovalActionTypeFieldRefInput<$PrismaModel>
     notIn?: $Enums.ApprovalActionType[] | ListEnumApprovalActionTypeFieldRefInput<$PrismaModel>
     not?: NestedEnumApprovalActionTypeFilter<$PrismaModel> | $Enums.ApprovalActionType
+  }
+
+  export type ExpenseScalarRelationFilter = {
+    is?: ExpenseWhereInput
+    isNot?: ExpenseWhereInput
   }
 
   export type ApprovalActionCountOrderByAggregateInput = {
@@ -21308,25 +19867,11 @@ export namespace Prisma {
     connect?: ApprovalRuleWhereUniqueInput
   }
 
-  export type ExpenseLineCreateNestedManyWithoutExpenseInput = {
-    create?: XOR<ExpenseLineCreateWithoutExpenseInput, ExpenseLineUncheckedCreateWithoutExpenseInput> | ExpenseLineCreateWithoutExpenseInput[] | ExpenseLineUncheckedCreateWithoutExpenseInput[]
-    connectOrCreate?: ExpenseLineCreateOrConnectWithoutExpenseInput | ExpenseLineCreateOrConnectWithoutExpenseInput[]
-    createMany?: ExpenseLineCreateManyExpenseInputEnvelope
-    connect?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-  }
-
   export type ApprovalActionCreateNestedManyWithoutExpenseInput = {
     create?: XOR<ApprovalActionCreateWithoutExpenseInput, ApprovalActionUncheckedCreateWithoutExpenseInput> | ApprovalActionCreateWithoutExpenseInput[] | ApprovalActionUncheckedCreateWithoutExpenseInput[]
     connectOrCreate?: ApprovalActionCreateOrConnectWithoutExpenseInput | ApprovalActionCreateOrConnectWithoutExpenseInput[]
     createMany?: ApprovalActionCreateManyExpenseInputEnvelope
     connect?: ApprovalActionWhereUniqueInput | ApprovalActionWhereUniqueInput[]
-  }
-
-  export type ExpenseLineUncheckedCreateNestedManyWithoutExpenseInput = {
-    create?: XOR<ExpenseLineCreateWithoutExpenseInput, ExpenseLineUncheckedCreateWithoutExpenseInput> | ExpenseLineCreateWithoutExpenseInput[] | ExpenseLineUncheckedCreateWithoutExpenseInput[]
-    connectOrCreate?: ExpenseLineCreateOrConnectWithoutExpenseInput | ExpenseLineCreateOrConnectWithoutExpenseInput[]
-    createMany?: ExpenseLineCreateManyExpenseInputEnvelope
-    connect?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
   }
 
   export type ApprovalActionUncheckedCreateNestedManyWithoutExpenseInput = {
@@ -21342,10 +19887,6 @@ export namespace Prisma {
     decrement?: Decimal | DecimalJsLike | number | string
     multiply?: Decimal | DecimalJsLike | number | string
     divide?: Decimal | DecimalJsLike | number | string
-  }
-
-  export type EnumPaidByFieldUpdateOperationsInput = {
-    set?: $Enums.PaidBy
   }
 
   export type EnumExpenseStatusFieldUpdateOperationsInput = {
@@ -21394,20 +19935,6 @@ export namespace Prisma {
     update?: XOR<XOR<ApprovalRuleUpdateToOneWithWhereWithoutExpensesInput, ApprovalRuleUpdateWithoutExpensesInput>, ApprovalRuleUncheckedUpdateWithoutExpensesInput>
   }
 
-  export type ExpenseLineUpdateManyWithoutExpenseNestedInput = {
-    create?: XOR<ExpenseLineCreateWithoutExpenseInput, ExpenseLineUncheckedCreateWithoutExpenseInput> | ExpenseLineCreateWithoutExpenseInput[] | ExpenseLineUncheckedCreateWithoutExpenseInput[]
-    connectOrCreate?: ExpenseLineCreateOrConnectWithoutExpenseInput | ExpenseLineCreateOrConnectWithoutExpenseInput[]
-    upsert?: ExpenseLineUpsertWithWhereUniqueWithoutExpenseInput | ExpenseLineUpsertWithWhereUniqueWithoutExpenseInput[]
-    createMany?: ExpenseLineCreateManyExpenseInputEnvelope
-    set?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-    disconnect?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-    delete?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-    connect?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-    update?: ExpenseLineUpdateWithWhereUniqueWithoutExpenseInput | ExpenseLineUpdateWithWhereUniqueWithoutExpenseInput[]
-    updateMany?: ExpenseLineUpdateManyWithWhereWithoutExpenseInput | ExpenseLineUpdateManyWithWhereWithoutExpenseInput[]
-    deleteMany?: ExpenseLineScalarWhereInput | ExpenseLineScalarWhereInput[]
-  }
-
   export type ApprovalActionUpdateManyWithoutExpenseNestedInput = {
     create?: XOR<ApprovalActionCreateWithoutExpenseInput, ApprovalActionUncheckedCreateWithoutExpenseInput> | ApprovalActionCreateWithoutExpenseInput[] | ApprovalActionUncheckedCreateWithoutExpenseInput[]
     connectOrCreate?: ApprovalActionCreateOrConnectWithoutExpenseInput | ApprovalActionCreateOrConnectWithoutExpenseInput[]
@@ -21422,20 +19949,6 @@ export namespace Prisma {
     deleteMany?: ApprovalActionScalarWhereInput | ApprovalActionScalarWhereInput[]
   }
 
-  export type ExpenseLineUncheckedUpdateManyWithoutExpenseNestedInput = {
-    create?: XOR<ExpenseLineCreateWithoutExpenseInput, ExpenseLineUncheckedCreateWithoutExpenseInput> | ExpenseLineCreateWithoutExpenseInput[] | ExpenseLineUncheckedCreateWithoutExpenseInput[]
-    connectOrCreate?: ExpenseLineCreateOrConnectWithoutExpenseInput | ExpenseLineCreateOrConnectWithoutExpenseInput[]
-    upsert?: ExpenseLineUpsertWithWhereUniqueWithoutExpenseInput | ExpenseLineUpsertWithWhereUniqueWithoutExpenseInput[]
-    createMany?: ExpenseLineCreateManyExpenseInputEnvelope
-    set?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-    disconnect?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-    delete?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-    connect?: ExpenseLineWhereUniqueInput | ExpenseLineWhereUniqueInput[]
-    update?: ExpenseLineUpdateWithWhereUniqueWithoutExpenseInput | ExpenseLineUpdateWithWhereUniqueWithoutExpenseInput[]
-    updateMany?: ExpenseLineUpdateManyWithWhereWithoutExpenseInput | ExpenseLineUpdateManyWithWhereWithoutExpenseInput[]
-    deleteMany?: ExpenseLineScalarWhereInput | ExpenseLineScalarWhereInput[]
-  }
-
   export type ApprovalActionUncheckedUpdateManyWithoutExpenseNestedInput = {
     create?: XOR<ApprovalActionCreateWithoutExpenseInput, ApprovalActionUncheckedCreateWithoutExpenseInput> | ApprovalActionCreateWithoutExpenseInput[] | ApprovalActionUncheckedCreateWithoutExpenseInput[]
     connectOrCreate?: ApprovalActionCreateOrConnectWithoutExpenseInput | ApprovalActionCreateOrConnectWithoutExpenseInput[]
@@ -21448,20 +19961,6 @@ export namespace Prisma {
     update?: ApprovalActionUpdateWithWhereUniqueWithoutExpenseInput | ApprovalActionUpdateWithWhereUniqueWithoutExpenseInput[]
     updateMany?: ApprovalActionUpdateManyWithWhereWithoutExpenseInput | ApprovalActionUpdateManyWithWhereWithoutExpenseInput[]
     deleteMany?: ApprovalActionScalarWhereInput | ApprovalActionScalarWhereInput[]
-  }
-
-  export type ExpenseCreateNestedOneWithoutLinesInput = {
-    create?: XOR<ExpenseCreateWithoutLinesInput, ExpenseUncheckedCreateWithoutLinesInput>
-    connectOrCreate?: ExpenseCreateOrConnectWithoutLinesInput
-    connect?: ExpenseWhereUniqueInput
-  }
-
-  export type ExpenseUpdateOneRequiredWithoutLinesNestedInput = {
-    create?: XOR<ExpenseCreateWithoutLinesInput, ExpenseUncheckedCreateWithoutLinesInput>
-    connectOrCreate?: ExpenseCreateOrConnectWithoutLinesInput
-    upsert?: ExpenseUpsertWithoutLinesInput
-    connect?: ExpenseWhereUniqueInput
-    update?: XOR<XOR<ExpenseUpdateToOneWithWhereWithoutLinesInput, ExpenseUpdateWithoutLinesInput>, ExpenseUncheckedUpdateWithoutLinesInput>
   }
 
   export type CompanyCreateNestedOneWithoutApprovalRulesInput = {
@@ -21880,13 +20379,6 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
-  export type NestedEnumPaidByFilter<$PrismaModel = never> = {
-    equals?: $Enums.PaidBy | EnumPaidByFieldRefInput<$PrismaModel>
-    in?: $Enums.PaidBy[] | ListEnumPaidByFieldRefInput<$PrismaModel>
-    notIn?: $Enums.PaidBy[] | ListEnumPaidByFieldRefInput<$PrismaModel>
-    not?: NestedEnumPaidByFilter<$PrismaModel> | $Enums.PaidBy
-  }
-
   export type NestedEnumExpenseStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ExpenseStatus | EnumExpenseStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ExpenseStatus[] | ListEnumExpenseStatusFieldRefInput<$PrismaModel>
@@ -21908,16 +20400,6 @@ export namespace Prisma {
     _sum?: NestedDecimalNullableFilter<$PrismaModel>
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-
-  export type NestedEnumPaidByWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.PaidBy | EnumPaidByFieldRefInput<$PrismaModel>
-    in?: $Enums.PaidBy[] | ListEnumPaidByFieldRefInput<$PrismaModel>
-    notIn?: $Enums.PaidBy[] | ListEnumPaidByFieldRefInput<$PrismaModel>
-    not?: NestedEnumPaidByWithAggregatesFilter<$PrismaModel> | $Enums.PaidBy
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumPaidByFilter<$PrismaModel>
-    _max?: NestedEnumPaidByFilter<$PrismaModel>
   }
 
   export type NestedEnumExpenseStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -22058,7 +20540,6 @@ export namespace Prisma {
     totalAmount: Decimal | DecimalJsLike | number | string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -22069,7 +20550,6 @@ export namespace Prisma {
     category: ExpenseCategoryCreateNestedOneWithoutExpensesInput
     submitter: UserCreateNestedOneWithoutExpensesInput
     approvalRule?: ApprovalRuleCreateNestedOneWithoutExpensesInput
-    lines?: ExpenseLineCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionCreateNestedManyWithoutExpenseInput
   }
 
@@ -22081,7 +20561,6 @@ export namespace Prisma {
     totalAmount: Decimal | DecimalJsLike | number | string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -22092,7 +20571,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
-    lines?: ExpenseLineUncheckedCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionUncheckedCreateNestedManyWithoutExpenseInput
   }
 
@@ -22186,7 +20664,6 @@ export namespace Prisma {
     currencyId?: StringFilter<"Expense"> | string
     convertedAmount?: DecimalNullableFilter<"Expense"> | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: DecimalNullableFilter<"Expense"> | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFilter<"Expense"> | $Enums.PaidBy
     status?: EnumExpenseStatusFilter<"Expense"> | $Enums.ExpenseStatus
     remarks?: StringNullableFilter<"Expense"> | string | null
     receiptUrl?: StringNullableFilter<"Expense"> | string | null
@@ -22709,7 +21186,6 @@ export namespace Prisma {
     totalAmount: Decimal | DecimalJsLike | number | string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -22720,7 +21196,6 @@ export namespace Prisma {
     category: ExpenseCategoryCreateNestedOneWithoutExpensesInput
     currency: CurrencyCreateNestedOneWithoutExpensesInput
     approvalRule?: ApprovalRuleCreateNestedOneWithoutExpensesInput
-    lines?: ExpenseLineCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionCreateNestedManyWithoutExpenseInput
   }
 
@@ -22733,7 +21208,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -22743,7 +21217,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
-    lines?: ExpenseLineUncheckedCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionUncheckedCreateNestedManyWithoutExpenseInput
   }
 
@@ -23126,7 +21599,6 @@ export namespace Prisma {
     totalAmount: Decimal | DecimalJsLike | number | string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -23137,7 +21609,6 @@ export namespace Prisma {
     submitter: UserCreateNestedOneWithoutExpensesInput
     currency: CurrencyCreateNestedOneWithoutExpensesInput
     approvalRule?: ApprovalRuleCreateNestedOneWithoutExpensesInput
-    lines?: ExpenseLineCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionCreateNestedManyWithoutExpenseInput
   }
 
@@ -23150,7 +21621,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -23160,7 +21630,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
-    lines?: ExpenseLineUncheckedCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionUncheckedCreateNestedManyWithoutExpenseInput
   }
 
@@ -23341,28 +21810,6 @@ export namespace Prisma {
     create: XOR<ApprovalRuleCreateWithoutExpensesInput, ApprovalRuleUncheckedCreateWithoutExpensesInput>
   }
 
-  export type ExpenseLineCreateWithoutExpenseInput = {
-    id?: string
-    description: string
-    amount: Decimal | DecimalJsLike | number | string
-  }
-
-  export type ExpenseLineUncheckedCreateWithoutExpenseInput = {
-    id?: string
-    description: string
-    amount: Decimal | DecimalJsLike | number | string
-  }
-
-  export type ExpenseLineCreateOrConnectWithoutExpenseInput = {
-    where: ExpenseLineWhereUniqueInput
-    create: XOR<ExpenseLineCreateWithoutExpenseInput, ExpenseLineUncheckedCreateWithoutExpenseInput>
-  }
-
-  export type ExpenseLineCreateManyExpenseInputEnvelope = {
-    data: ExpenseLineCreateManyExpenseInput | ExpenseLineCreateManyExpenseInput[]
-    skipDuplicates?: boolean
-  }
-
   export type ApprovalActionCreateWithoutExpenseInput = {
     id?: string
     action: $Enums.ApprovalActionType
@@ -23533,32 +21980,6 @@ export namespace Prisma {
     steps?: ApprovalStepUncheckedUpdateManyWithoutApprovalRuleNestedInput
   }
 
-  export type ExpenseLineUpsertWithWhereUniqueWithoutExpenseInput = {
-    where: ExpenseLineWhereUniqueInput
-    update: XOR<ExpenseLineUpdateWithoutExpenseInput, ExpenseLineUncheckedUpdateWithoutExpenseInput>
-    create: XOR<ExpenseLineCreateWithoutExpenseInput, ExpenseLineUncheckedCreateWithoutExpenseInput>
-  }
-
-  export type ExpenseLineUpdateWithWhereUniqueWithoutExpenseInput = {
-    where: ExpenseLineWhereUniqueInput
-    data: XOR<ExpenseLineUpdateWithoutExpenseInput, ExpenseLineUncheckedUpdateWithoutExpenseInput>
-  }
-
-  export type ExpenseLineUpdateManyWithWhereWithoutExpenseInput = {
-    where: ExpenseLineScalarWhereInput
-    data: XOR<ExpenseLineUpdateManyMutationInput, ExpenseLineUncheckedUpdateManyWithoutExpenseInput>
-  }
-
-  export type ExpenseLineScalarWhereInput = {
-    AND?: ExpenseLineScalarWhereInput | ExpenseLineScalarWhereInput[]
-    OR?: ExpenseLineScalarWhereInput[]
-    NOT?: ExpenseLineScalarWhereInput | ExpenseLineScalarWhereInput[]
-    id?: StringFilter<"ExpenseLine"> | string
-    expenseId?: StringFilter<"ExpenseLine"> | string
-    description?: StringFilter<"ExpenseLine"> | string
-    amount?: DecimalFilter<"ExpenseLine"> | Decimal | DecimalJsLike | number | string
-  }
-
   export type ApprovalActionUpsertWithWhereUniqueWithoutExpenseInput = {
     where: ApprovalActionWhereUniqueInput
     update: XOR<ApprovalActionUpdateWithoutExpenseInput, ApprovalActionUncheckedUpdateWithoutExpenseInput>
@@ -23573,114 +21994,6 @@ export namespace Prisma {
   export type ApprovalActionUpdateManyWithWhereWithoutExpenseInput = {
     where: ApprovalActionScalarWhereInput
     data: XOR<ApprovalActionUpdateManyMutationInput, ApprovalActionUncheckedUpdateManyWithoutExpenseInput>
-  }
-
-  export type ExpenseCreateWithoutLinesInput = {
-    id?: string
-    subject: string
-    description?: string | null
-    expenseDate: Date | string
-    totalAmount: Decimal | DecimalJsLike | number | string
-    convertedAmount?: Decimal | DecimalJsLike | number | string | null
-    exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
-    status?: $Enums.ExpenseStatus
-    remarks?: string | null
-    receiptUrl?: string | null
-    currentStepOrder?: number | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    submittedAt?: Date | string | null
-    category: ExpenseCategoryCreateNestedOneWithoutExpensesInput
-    submitter: UserCreateNestedOneWithoutExpensesInput
-    currency: CurrencyCreateNestedOneWithoutExpensesInput
-    approvalRule?: ApprovalRuleCreateNestedOneWithoutExpensesInput
-    approvalActions?: ApprovalActionCreateNestedManyWithoutExpenseInput
-  }
-
-  export type ExpenseUncheckedCreateWithoutLinesInput = {
-    id?: string
-    subject: string
-    description?: string | null
-    expenseDate: Date | string
-    totalAmount: Decimal | DecimalJsLike | number | string
-    currencyId: string
-    convertedAmount?: Decimal | DecimalJsLike | number | string | null
-    exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
-    status?: $Enums.ExpenseStatus
-    remarks?: string | null
-    receiptUrl?: string | null
-    categoryId: string
-    submitterId: string
-    approvalRuleId?: string | null
-    currentStepOrder?: number | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    submittedAt?: Date | string | null
-    approvalActions?: ApprovalActionUncheckedCreateNestedManyWithoutExpenseInput
-  }
-
-  export type ExpenseCreateOrConnectWithoutLinesInput = {
-    where: ExpenseWhereUniqueInput
-    create: XOR<ExpenseCreateWithoutLinesInput, ExpenseUncheckedCreateWithoutLinesInput>
-  }
-
-  export type ExpenseUpsertWithoutLinesInput = {
-    update: XOR<ExpenseUpdateWithoutLinesInput, ExpenseUncheckedUpdateWithoutLinesInput>
-    create: XOR<ExpenseCreateWithoutLinesInput, ExpenseUncheckedCreateWithoutLinesInput>
-    where?: ExpenseWhereInput
-  }
-
-  export type ExpenseUpdateToOneWithWhereWithoutLinesInput = {
-    where?: ExpenseWhereInput
-    data: XOR<ExpenseUpdateWithoutLinesInput, ExpenseUncheckedUpdateWithoutLinesInput>
-  }
-
-  export type ExpenseUpdateWithoutLinesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    subject?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    expenseDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
-    status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    currentStepOrder?: NullableIntFieldUpdateOperationsInput | number | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    category?: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
-    submitter?: UserUpdateOneRequiredWithoutExpensesNestedInput
-    currency?: CurrencyUpdateOneRequiredWithoutExpensesNestedInput
-    approvalRule?: ApprovalRuleUpdateOneWithoutExpensesNestedInput
-    approvalActions?: ApprovalActionUpdateManyWithoutExpenseNestedInput
-  }
-
-  export type ExpenseUncheckedUpdateWithoutLinesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    subject?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    expenseDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    currencyId?: StringFieldUpdateOperationsInput | string
-    convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
-    status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    categoryId?: StringFieldUpdateOperationsInput | string
-    submitterId?: StringFieldUpdateOperationsInput | string
-    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
-    currentStepOrder?: NullableIntFieldUpdateOperationsInput | number | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    approvalActions?: ApprovalActionUncheckedUpdateManyWithoutExpenseNestedInput
   }
 
   export type CompanyCreateWithoutApprovalRulesInput = {
@@ -23781,7 +22094,6 @@ export namespace Prisma {
     totalAmount: Decimal | DecimalJsLike | number | string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -23792,7 +22104,6 @@ export namespace Prisma {
     category: ExpenseCategoryCreateNestedOneWithoutExpensesInput
     submitter: UserCreateNestedOneWithoutExpensesInput
     currency: CurrencyCreateNestedOneWithoutExpensesInput
-    lines?: ExpenseLineCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionCreateNestedManyWithoutExpenseInput
   }
 
@@ -23805,7 +22116,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -23815,7 +22125,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
-    lines?: ExpenseLineUncheckedCreateNestedManyWithoutExpenseInput
     approvalActions?: ApprovalActionUncheckedCreateNestedManyWithoutExpenseInput
   }
 
@@ -24113,7 +22422,6 @@ export namespace Prisma {
     totalAmount: Decimal | DecimalJsLike | number | string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -24125,7 +22433,6 @@ export namespace Prisma {
     submitter: UserCreateNestedOneWithoutExpensesInput
     currency: CurrencyCreateNestedOneWithoutExpensesInput
     approvalRule?: ApprovalRuleCreateNestedOneWithoutExpensesInput
-    lines?: ExpenseLineCreateNestedManyWithoutExpenseInput
   }
 
   export type ExpenseUncheckedCreateWithoutApprovalActionsInput = {
@@ -24137,7 +22444,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -24148,7 +22454,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
-    lines?: ExpenseLineUncheckedCreateNestedManyWithoutExpenseInput
   }
 
   export type ExpenseCreateOrConnectWithoutApprovalActionsInput = {
@@ -24216,7 +22521,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24228,7 +22532,6 @@ export namespace Prisma {
     submitter?: UserUpdateOneRequiredWithoutExpensesNestedInput
     currency?: CurrencyUpdateOneRequiredWithoutExpensesNestedInput
     approvalRule?: ApprovalRuleUpdateOneWithoutExpensesNestedInput
-    lines?: ExpenseLineUpdateManyWithoutExpenseNestedInput
   }
 
   export type ExpenseUncheckedUpdateWithoutApprovalActionsInput = {
@@ -24240,7 +22543,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24251,7 +22553,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lines?: ExpenseLineUncheckedUpdateManyWithoutExpenseNestedInput
   }
 
   export type UserUpsertWithoutApprovalActionsInput = {
@@ -24493,7 +22794,6 @@ export namespace Prisma {
     totalAmount: Decimal | DecimalJsLike | number | string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -24551,7 +22851,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24562,7 +22861,6 @@ export namespace Prisma {
     category?: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
     submitter?: UserUpdateOneRequiredWithoutExpensesNestedInput
     approvalRule?: ApprovalRuleUpdateOneWithoutExpensesNestedInput
-    lines?: ExpenseLineUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUpdateManyWithoutExpenseNestedInput
   }
 
@@ -24574,7 +22872,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24585,7 +22882,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lines?: ExpenseLineUncheckedUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUncheckedUpdateManyWithoutExpenseNestedInput
   }
 
@@ -24597,7 +22893,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24816,7 +23111,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -24974,7 +23268,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24985,7 +23278,6 @@ export namespace Prisma {
     category?: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
     currency?: CurrencyUpdateOneRequiredWithoutExpensesNestedInput
     approvalRule?: ApprovalRuleUpdateOneWithoutExpensesNestedInput
-    lines?: ExpenseLineUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUpdateManyWithoutExpenseNestedInput
   }
 
@@ -24998,7 +23290,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25008,7 +23299,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lines?: ExpenseLineUncheckedUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUncheckedUpdateManyWithoutExpenseNestedInput
   }
 
@@ -25021,7 +23311,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25130,7 +23419,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -25150,7 +23438,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25161,7 +23448,6 @@ export namespace Prisma {
     submitter?: UserUpdateOneRequiredWithoutExpensesNestedInput
     currency?: CurrencyUpdateOneRequiredWithoutExpensesNestedInput
     approvalRule?: ApprovalRuleUpdateOneWithoutExpensesNestedInput
-    lines?: ExpenseLineUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUpdateManyWithoutExpenseNestedInput
   }
 
@@ -25174,7 +23460,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25184,7 +23469,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lines?: ExpenseLineUncheckedUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUncheckedUpdateManyWithoutExpenseNestedInput
   }
 
@@ -25197,7 +23481,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25209,12 +23492,6 @@ export namespace Prisma {
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
-  export type ExpenseLineCreateManyExpenseInput = {
-    id?: string
-    description: string
-    amount: Decimal | DecimalJsLike | number | string
-  }
-
   export type ApprovalActionCreateManyExpenseInput = {
     id?: string
     approverId: string
@@ -25222,24 +23499,6 @@ export namespace Prisma {
     comment?: string | null
     stepOrder: number
     createdAt?: Date | string
-  }
-
-  export type ExpenseLineUpdateWithoutExpenseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-  }
-
-  export type ExpenseLineUncheckedUpdateWithoutExpenseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-  }
-
-  export type ExpenseLineUncheckedUpdateManyWithoutExpenseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
 
   export type ApprovalActionUpdateWithoutExpenseInput = {
@@ -25284,7 +23543,6 @@ export namespace Prisma {
     currencyId: string
     convertedAmount?: Decimal | DecimalJsLike | number | string | null
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
-    paidBy?: $Enums.PaidBy
     status?: $Enums.ExpenseStatus
     remarks?: string | null
     receiptUrl?: string | null
@@ -25322,7 +23580,6 @@ export namespace Prisma {
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25333,7 +23590,6 @@ export namespace Prisma {
     category?: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
     submitter?: UserUpdateOneRequiredWithoutExpensesNestedInput
     currency?: CurrencyUpdateOneRequiredWithoutExpensesNestedInput
-    lines?: ExpenseLineUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUpdateManyWithoutExpenseNestedInput
   }
 
@@ -25346,7 +23602,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25356,7 +23611,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lines?: ExpenseLineUncheckedUpdateManyWithoutExpenseNestedInput
     approvalActions?: ApprovalActionUncheckedUpdateManyWithoutExpenseNestedInput
   }
 
@@ -25369,7 +23623,6 @@ export namespace Prisma {
     currencyId?: StringFieldUpdateOperationsInput | string
     convertedAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    paidBy?: EnumPaidByFieldUpdateOperationsInput | $Enums.PaidBy
     status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     receiptUrl?: NullableStringFieldUpdateOperationsInput | string | null

@@ -7,12 +7,12 @@
  *   - Status breadcrumb (lifecycle tracker)
  *   - Expense metadata (amount, date, category, etc.)
  *   - Receipt image (if attached via OCR or upload)
- *   - Expense line items breakdown
  *   - Approval workflow info & history
  *   - Action buttons (Submit / Approve / Reject)
  */
 
 import { useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { useSession } from "next-auth/react";
@@ -176,7 +176,6 @@ export default function ExpenseDetailPage() {
           <Field label="Description" value={expense.description ?? "—"} />
           <Field label="Expense Date" value={new Date(expense.expenseDate).toLocaleDateString()} />
           <Field label="Category" value={expense.category.name} />
-          <Field label="Paid By" value={expense.paidBy === "EMPLOYEE" ? "Employee" : "Company"} />
           <div>
             <div className="text-xs font-medium text-slate-500">Amount</div>
             <div className="mt-1 text-lg font-bold text-slate-900">
@@ -201,13 +200,21 @@ export default function ExpenseDetailPage() {
         {/* Action Buttons */}
         <div className="flex gap-3 pt-3 border-t border-slate-200">
           {isDraft && isOwner && (
-            <button
-              onClick={() => submitMutation.mutate({ id: expense.id })}
-              disabled={submitMutation.isPending}
-              className="btn btn-primary"
-            >
-              {submitMutation.isPending ? "Submitting..." : "Submit for Approval"}
-            </button>
+            <>
+              <Link
+                href={`/dashboard/expenses/${expense.id}/edit`}
+                className="btn btn-secondary"
+              >
+                Edit Draft
+              </Link>
+              <button
+                onClick={() => submitMutation.mutate({ id: expense.id })}
+                disabled={submitMutation.isPending}
+                className="btn btn-primary"
+              >
+                {submitMutation.isPending ? "Submitting..." : "Submit for Approval"}
+              </button>
+            </>
           )}
           {expense.status === "UNDER_REVIEW" && isManagerOrAdmin && !isOwner && (
             <>
@@ -295,44 +302,6 @@ export default function ExpenseDetailPage() {
               alt="Receipt full size"
               className="max-w-full h-auto"
             />
-          </div>
-        </div>
-      )}
-
-      {/* ── Line Items ── */}
-      {expense.lines && expense.lines.length > 0 && (
-        <div className="card">
-          <h2 className="text-sm font-semibold text-slate-900 mb-3">Expense Breakdown</h2>
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Description</th>
-                  <th className="text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {expense.lines.map((line, idx) => (
-                  <tr key={line.id}>
-                    <td className="text-slate-400 font-medium">{idx + 1}</td>
-                    <td className="text-slate-900">{line.description}</td>
-                    <td className="text-right font-semibold text-slate-900">
-                      {expense.currency.symbol}
-                      {Number(line.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                    </td>
-                  </tr>
-                ))}
-                <tr className="bg-slate-50 font-bold">
-                  <td></td>
-                  <td className="text-slate-700">Total</td>
-                  <td className="text-right text-slate-900">
-                    {expense.currency.symbol}
-                    {Number(expense.totalAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
       )}

@@ -47,7 +47,6 @@ export default function ReceiptScanner({ onResult }: ReceiptScannerProps) {
   // Cleanup camera on unmount
   useEffect(() => {
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       streamRef.current?.getTracks().forEach((track) => track.stop());
     };
   }, []);
@@ -423,12 +422,6 @@ export default function ReceiptScanner({ onResult }: ReceiptScannerProps) {
                     icon="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
                   />
                 </div>
-
-                {ocrResult.lineItems.length > 0 && (
-                  <div className="text-xs text-slate-500">
-                    <span className="font-medium text-slate-700">{ocrResult.lineItems.length}</span> line item{ocrResult.lineItems.length !== 1 ? "s" : ""} detected
-                  </div>
-                )}
               </div>
             </div>
 

@@ -1,32 +1,22 @@
 "use client";
 
-/**
- * New Expense Page
- *
- * Employees create expense claims here. Supports two workflows:
- *   1. Smart Scan → OCR auto-fills fields from a receipt image
- *   2. Manual Entry → fill in all fields by hand
- *
- * Features:
- *   - Receipt scanning with OCR (Tesseract.js)
- *   - Auto-fill from OCR results
- *   - Receipt image stored as base64 in receiptUrl
- */
-
-import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { api } from "~/trpc/react";
-import ReceiptScanner from "./receipt-scanner";
-import type { OcrResult } from "./ocr.service";
 
-// ─── Component ───
-
-export default function NewExpensePage() {
+export default function EditExpensePage() {
+  const params = useParams();
   const router = useRouter();
+  const { data: session } = useSession();
+  const utils = api.useUtils();
+
+  const expenseId = params.id as string;
+
   const [form, setForm] = useState({
     subject: "",
     description: "",
-    expenseDate: new Date().toISOString().split("T")[0]!,
+    expenseDate: "",
     totalAmount: "",
     currencyCode: "",
     categoryId: "",
@@ -34,14 +24,41 @@ export default function NewExpensePage() {
     receiptUrl: "",
   });
   const [error, setError] = useState("");
-  const [scannedFields, setScannedFields] = useState<Set<string>>(new Set());
-  const [showScanner, setShowScanner] = useState(true);
 
+  const { data: expense, isLoading } = api.expense.getById.useQuery({ id: expenseId });
   const { data: categories } = api.company.listCategories.useQuery();
   const { data: countries } = api.currency.listCountries.useQuery();
   const { data: company } = api.company.get.useQuery();
 
-  // Dedupe currencies from countries list
+  const updateMutation = api.expense.update.useMutation({
+    onSuccess: async () => {
+      await Promise.all([
+        utils.expense.getById.invalidate({ id: expenseId }),
+        utils.expense.list.invalidate(),
+      ]);
+      router.push(`/dashboard/expenses/${expenseId}`);
+    },
+    onError: (err) => setError(err.message),
+  });
+
+  useEffect(() => {
+    if (!expense) return;
+
+    setForm({
+      subject: expense.subject,
+      description: expense.description ?? "",
+      expenseDate: new Date(expense.expenseDate).toISOString().split("T")[0] ?? "",
+      totalAmount: String(Number(expense.totalAmount).toFixed(2)),
+      currencyCode: expense.currencyId,
+      categoryId: expense.categoryId,
+      remarks: expense.remarks ?? "",
+      receiptUrl: expense.receiptUrl ?? "",
+    });
+  }, [expense]);
+
+  const isOwner = expense?.submitterId === session?.user?.id;
+  const isDraft = expense?.status === "DRAFT";
+
   const currencies = countries
     ? Array.from(
         new Map(
@@ -53,82 +70,11 @@ export default function NewExpensePage() {
       ).sort((a, b) => a.code.localeCompare(b.code))
     : [];
 
-  const createMutation = api.expense.create.useMutation({
-    onSuccess: (data) => router.push(`/dashboard/expenses/${data.id}`),
-    onError: (err) => setError(err.message),
-  });
-
-  // ── Form Handlers ──
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
-    const field = e.target.name;
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    // Clear scanned indicator when user manually edits
-    setScannedFields((prev) => {
-      const next = new Set(prev);
-      next.delete(field);
-      return next;
-    });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  // ── OCR Result Handler ──
-
-  const handleOcrResult = useCallback(
-    (result: OcrResult, base64Image: string) => {
-      const newScanned = new Set<string>();
-      const updates: Partial<typeof form> = {
-        receiptUrl: base64Image,
-      };
-
-      // Merchant name → Subject
-      if (result.merchantName) {
-        updates.subject = result.merchantName;
-        newScanned.add("subject");
-      }
-
-      // Total amount
-      if (result.totalAmount) {
-        updates.totalAmount = result.totalAmount.toFixed(2);
-        newScanned.add("totalAmount");
-      }
-
-      // Date
-      if (result.date) {
-        updates.expenseDate = result.date;
-        newScanned.add("expenseDate");
-      }
-
-      // Currency
-      if (result.currency) {
-        updates.currencyCode = result.currency;
-        newScanned.add("currencyCode");
-      } else if (company?.baseCurrency?.id) {
-        updates.currencyCode = company.baseCurrency.id;
-        newScanned.add("currencyCode");
-      }
-
-      // Category (match by name)
-      if (result.suggestedCategory && categories) {
-        const matchedCat = categories.find(
-          (cat) => cat.name.toLowerCase() === result.suggestedCategory!.toLowerCase(),
-        );
-        if (matchedCat) {
-          updates.categoryId = matchedCat.id;
-          newScanned.add("categoryId");
-        }
-      }
-
-      setForm((prev) => ({ ...prev, ...updates }));
-      setScannedFields(newScanned);
-
-      setShowScanner(false);
-    },
-    [categories, company],
-  );
-
-  // ── Submit ──
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,73 +85,73 @@ export default function NewExpensePage() {
       return;
     }
 
-    const selectedCurrency = currencies.find((c) => c.code === form.currencyCode);
-
-    createMutation.mutate({
+    updateMutation.mutate({
+      id: expenseId,
       subject: form.subject,
-      description: form.description || undefined,
+      description: form.description.trim() ? form.description : null,
       expenseDate: new Date(form.expenseDate).toISOString(),
       totalAmount: parseFloat(form.totalAmount),
       currencyCode: form.currencyCode,
-      currencyName: selectedCurrency?.name,
-      currencySymbol: selectedCurrency?.symbol,
       categoryId: form.categoryId,
-      remarks: form.remarks || undefined,
-      receiptUrl: form.receiptUrl || undefined,
+      remarks: form.remarks.trim() ? form.remarks : null,
+      receiptUrl: form.receiptUrl || null,
     });
   };
 
-  // ─── Render ───
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-slate-400">Loading draft...</div>
+    );
+  }
+
+  if (!expense) {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-lg font-semibold text-slate-900">Expense not found</h2>
+        <button onClick={() => router.back()} className="btn btn-secondary mt-4">
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  if (!isOwner || !isDraft) {
+    return (
+      <div className="mx-auto max-w-xl card text-center py-12">
+        <h2 className="text-lg font-semibold text-slate-900">This draft cannot be edited</h2>
+        <p className="mt-2 text-sm text-slate-500">
+          Only the submitter can edit an expense while it is in Draft status.
+        </p>
+        <button
+          onClick={() => router.push(`/dashboard/expenses/${expenseId}`)}
+          className="btn btn-secondary mt-4"
+        >
+          Back to Expense
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in mx-auto max-w-2xl space-y-6">
       <div>
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push(`/dashboard/expenses/${expenseId}`)}
           className="mb-2 text-sm text-slate-500 hover:text-slate-700 transition-colors"
         >
-          ← Back to expenses
+          ← Back to expense
         </button>
-        <h1 className="text-2xl font-bold text-slate-900">New Expense</h1>
+        <h1 className="text-2xl font-bold text-slate-900">Edit Draft Expense</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Scan a receipt or fill in the details manually. Save as draft and submit later.
+          Update the draft details and save your changes.
         </p>
       </div>
 
-      {/* ── Receipt Scanner ── */}
-      {showScanner ? (
-        <ReceiptScanner onResult={handleOcrResult} />
-      ) : (
-        <div className="card flex items-center justify-between py-3 px-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100">
-              <svg className="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-              </svg>
-            </div>
-            <div>
-              <div className="text-sm font-medium text-slate-900">Receipt scanned successfully</div>
-              <div className="text-xs text-slate-500">Fields have been auto-filled from the receipt</div>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowScanner(true)}
-            className="btn btn-ghost text-xs"
-          >
-            Scan Another
-          </button>
-        </div>
-      )}
-
-      {/* ── Expense Form ── */}
       <div className="card">
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Subject */}
           <div>
             <label htmlFor="subject" className="label">
               Subject <span className="text-red-500">*</span>
-              {scannedFields.has("subject") && <ScannedBadge />}
             </label>
             <input
               id="subject"
@@ -213,13 +159,10 @@ export default function NewExpensePage() {
               type="text"
               value={form.subject}
               onChange={handleChange}
-              placeholder="Business lunch with client"
               className="input"
-              autoFocus={!showScanner}
             />
           </div>
 
-          {/* Description */}
           <div>
             <label htmlFor="description" className="label">Description</label>
             <textarea
@@ -227,18 +170,15 @@ export default function NewExpensePage() {
               name="description"
               value={form.description}
               onChange={handleChange}
-              placeholder="Brief description of the expense..."
               rows={3}
               className="textarea"
             />
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            {/* Expense Date */}
             <div>
               <label htmlFor="expenseDate" className="label">
                 Expense Date <span className="text-red-500">*</span>
-                {scannedFields.has("expenseDate") && <ScannedBadge />}
               </label>
               <input
                 id="expenseDate"
@@ -250,11 +190,9 @@ export default function NewExpensePage() {
               />
             </div>
 
-            {/* Category */}
             <div>
               <label htmlFor="categoryId" className="label">
                 Category <span className="text-red-500">*</span>
-                {scannedFields.has("categoryId") && <ScannedBadge />}
               </label>
               <select
                 id="categoryId"
@@ -274,11 +212,9 @@ export default function NewExpensePage() {
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            {/* Total Amount */}
             <div>
               <label htmlFor="totalAmount" className="label">
                 Total Amount <span className="text-red-500">*</span>
-                {scannedFields.has("totalAmount") && <ScannedBadge />}
               </label>
               <input
                 id="totalAmount"
@@ -288,16 +224,13 @@ export default function NewExpensePage() {
                 min="0.01"
                 value={form.totalAmount}
                 onChange={handleChange}
-                placeholder="0.00"
                 className="input"
               />
             </div>
 
-            {/* Currency */}
             <div>
               <label htmlFor="currencyCode" className="label">
                 Currency <span className="text-red-500">*</span>
-                {scannedFields.has("currencyCode") && <ScannedBadge />}
               </label>
               <select
                 id="currencyCode"
@@ -323,7 +256,6 @@ export default function NewExpensePage() {
             </div>
           </div>
 
-          {/* Remarks */}
           <div>
             <label htmlFor="remarks" className="label">Remarks</label>
             <textarea
@@ -331,13 +263,11 @@ export default function NewExpensePage() {
               name="remarks"
               value={form.remarks}
               onChange={handleChange}
-              placeholder="Any additional notes..."
               rows={2}
               className="textarea"
             />
           </div>
 
-          {/* Receipt preview thumbnail */}
           {form.receiptUrl && (
             <div>
               <label className="label">Attached Receipt</label>
@@ -353,9 +283,7 @@ export default function NewExpensePage() {
                   <p className="text-xs text-slate-500">Receipt image attached</p>
                   <button
                     type="button"
-                    onClick={() => {
-                      setForm((prev) => ({ ...prev, receiptUrl: "" }));
-                    }}
+                    onClick={() => setForm((prev) => ({ ...prev, receiptUrl: "" }))}
                     className="text-xs text-red-500 hover:text-red-600 mt-1 transition-colors"
                   >
                     Remove
@@ -372,14 +300,14 @@ export default function NewExpensePage() {
           <div className="flex gap-3 pt-2">
             <button
               type="submit"
-              disabled={createMutation.isPending}
+              disabled={updateMutation.isPending}
               className="btn btn-primary flex-1"
             >
-              {createMutation.isPending ? "Saving..." : "Save as Draft"}
+              {updateMutation.isPending ? "Saving..." : "Save Changes"}
             </button>
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={() => router.push(`/dashboard/expenses/${expenseId}`)}
               className="btn btn-secondary"
             >
               Cancel
@@ -388,18 +316,5 @@ export default function NewExpensePage() {
         </form>
       </div>
     </div>
-  );
-}
-
-// ─── Sub-components ───
-
-function ScannedBadge() {
-  return (
-    <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-semibold text-brand-600">
-      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-      </svg>
-      OCR
-    </span>
   );
 }

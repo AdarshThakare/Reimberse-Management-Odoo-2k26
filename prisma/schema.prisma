@@ -51,12 +51,6 @@ enum ApprovalRuleType {
     HYBRID
 }
 
-/// Who paid for the expense.
-enum PaidBy {
-    EMPLOYEE
-    COMPANY
-}
-
 // ──────────────── CURRENCY ────────────────
 // Normalized away from Company. Multiple companies can share
 // the same currency. ISO 4217 code is the primary key.
@@ -159,9 +153,6 @@ model ExpenseCategory {
 }
 
 // ──────────────── EXPENSE ────────────────
-// Header-level expense data. Each expense can have multiple
-// line items (ExpenseLine) for granular breakdown.
-//
 // Currency handling:
 //   currencyId      → the currency the employee submitted in
 //   totalAmount     → the amount in submission currency
@@ -179,7 +170,6 @@ model Expense {
     convertedAmount Decimal? @db.Decimal(12, 2)
     exchangeRate    Decimal? @db.Decimal(18, 8)
 
-    paidBy  PaidBy        @default(EMPLOYEE)
     status  ExpenseStatus @default(DRAFT)
     remarks String?
 
@@ -199,22 +189,10 @@ model Expense {
     currency     Currency         @relation(fields: [currencyId], references: [id])
     approvalRule ApprovalRule?    @relation(fields: [approvalRuleId], references: [id])
 
-    lines           ExpenseLine[]
     approvalActions ApprovalAction[]
 
     @@index([submitterId, status])
     @@index([status])
-}
-
-/// Individual line items within an expense.
-/// Populated manually or auto-filled by OCR.
-model ExpenseLine {
-    id          String  @id @default(cuid())
-    expenseId   String
-    description String
-    amount      Decimal @db.Decimal(12, 2)
-
-    expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 }
 
 // ──────────────── APPROVAL WORKFLOW ────────────────
