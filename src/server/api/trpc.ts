@@ -1,10 +1,11 @@
 /**
- * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
- * 1. You want to modify request context (see Part 1).
- * 2. You want to create a new middleware or type of procedure (see Part 3).
+ * tRPC Server Configuration
  *
- * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
- * need to use are documented accordingly near the end.
+ * This file defines:
+ *   1. CONTEXT — request context with db, session
+ *   2. INITIALIZATION — tRPC instance with superjson + Zod error formatting
+ *   3. MIDDLEWARE — role-based access control
+ *   4. PROCEDURES — public, protected, employee, manager, admin
  */
 
 import { initTRPC, TRPCError } from "@trpc/server";
@@ -14,18 +15,10 @@ import { ZodError } from "zod";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 
-/**
- * 1. CONTEXT
- *
- * This section defines the "contexts" that are available in the backend API.
- *
- * These allow you to access things when processing a request, like the database, the session, etc.
- *
- * This helper generates the "internals" for a tRPC context. The API handler and RSC clients each
- * wrap this and provides the required context.
- *
- * @see https://trpc.io/docs/server/context
- */
+// ═══════════════════════════════════════
+// 1. CONTEXT
+// ═══════════════════════════════════════
+
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
 
@@ -36,13 +29,10 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   };
 };
 
-/**
- * 2. INITIALIZATION
- *
- * This is where the tRPC API is initialized, connecting the context and transformer. We also parse
- * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
- * errors on the backend.
- */
+// ═══════════════════════════════════════
+// 2. INITIALIZATION
+// ═══════════════════════════════════════
+
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
@@ -57,44 +47,26 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
   },
 });
 
-/**
- * Create a server-side caller.
- *
- * @see https://trpc.io/docs/server/server-side-calls
- */
 export const createCallerFactory = t.createCallerFactory;
-
-/**
- * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
- *
- * These are the pieces you use to build your tRPC API. You should import these a lot in the
- * "/src/server/api/routers" directory.
- */
-
-/**
- * This is how you create new routers and sub-routers in your tRPC API.
- *
- * @see https://trpc.io/docs/router
- */
 export const createTRPCRouter = t.router;
 
+// ═══════════════════════════════════════
+// 3. MIDDLEWARE
+// ═══════════════════════════════════════
+
 /**
- * Middleware for timing procedure execution and adding an artificial delay in development.
- *
- * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
- * network latency that would occur in production but not in local development.
+ * Timing middleware — logs execution time.
+ * Adds artificial delay in dev to surface waterfalls.
  */
 const timingMiddleware = t.middleware(async ({ next, path }) => {
   const start = Date.now();
 
   if (t._config.isDev) {
-    // artificial delay in dev
     const waitMs = Math.floor(Math.random() * 400) + 100;
     await new Promise((resolve) => setTimeout(resolve, waitMs));
   }
 
   const result = await next();
-
   const end = Date.now();
   console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
 
@@ -102,32 +74,114 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 /**
- * Public (unauthenticated) procedure
- *
- * This is the base piece you use to build new queries and mutations on your tRPC API. It does not
- * guarantee that a user querying is authorized, but you can still access user session data if they
- * are logged in.
+ * Auth middleware — enforces that a user is logged in.
+ * Guarantees `ctx.session.user` is non-null.
  */
-export const publicProcedure = t.procedure.use(timingMiddleware);
+const enforceAuth = t.middleware(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
 
 /**
- * Protected (authenticated) procedure
- *
- * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
- * the session is valid and guarantees `ctx.session.user` is not null.
- *
- * @see https://trpc.io/docs/procedures
+ * Company middleware — enforces that the user belongs to a company.
+ * Runs after auth. Guarantees `ctx.session.user.companyId` is non-null.
  */
-export const protectedProcedure = t.procedure
-  .use(timingMiddleware)
-  .use(({ ctx, next }) => {
+const enforceCompany = t.middleware(({ ctx, next }) => {
+  const companyId = ctx.session?.user?.companyId;
+  if (!companyId) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You must set up a company first.",
+    });
+  }
+  return next({
+    ctx: {
+      session: {
+        ...ctx.session!,
+        user: {
+          ...ctx.session!.user,
+          companyId: companyId as string, // Narrowed: guaranteed non-null by guard above
+        },
+      },
+    },
+  });
+});
+
+/**
+ * Role middleware factory — creates middleware that enforces a minimum role.
+ * Role hierarchy: ADMIN > MANAGER > EMPLOYEE
+ */
+const enforceRole = (allowedRoles: string[]) =>
+  t.middleware(({ ctx, next }) => {
     if (!ctx.session?.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
+
+    const userRole = ctx.session.user.role;
+    if (!allowedRoles.includes(userRole)) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: `This action requires one of: ${allowedRoles.join(", ")}. Your role: ${userRole}`,
+      });
+    }
+
     return next({
       ctx: {
-        // infers the `session` as non-nullable
         session: { ...ctx.session, user: ctx.session.user },
       },
     });
   });
+
+// ═══════════════════════════════════════
+// 4. PROCEDURES
+// ═══════════════════════════════════════
+
+/**
+ * Public procedure — no authentication required.
+ * Use for: country list, health checks.
+ */
+export const publicProcedure = t.procedure.use(timingMiddleware);
+
+/**
+ * Protected procedure — user must be logged in.
+ * Use for: initial company setup (user may not have a company yet).
+ */
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(enforceAuth);
+
+/**
+ * Employee procedure — user must be logged in AND belong to a company.
+ * Any role (EMPLOYEE, MANAGER, ADMIN) can use this.
+ * Use for: expense submission, viewing own expenses.
+ */
+export const employeeProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(enforceAuth)
+  .use(enforceCompany);
+
+/**
+ * Manager procedure — user must be MANAGER or ADMIN.
+ * Use for: approval queue, approve/reject actions, team expenses.
+ */
+export const managerProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(enforceAuth)
+  .use(enforceCompany)
+  .use(enforceRole(["MANAGER", "ADMIN"]));
+
+/**
+ * Admin procedure — user must be ADMIN.
+ * Use for: user management, approval rule configuration, overrides.
+ */
+export const adminProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(enforceAuth)
+  .use(enforceCompany)
+  .use(enforceRole(["ADMIN"]));

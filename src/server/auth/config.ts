@@ -1,72 +1,68 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import GithubProvider from "next-auth/providers/github"
 import Resend from "next-auth/providers/resend";
-
 
 import { db } from "~/server/db";
 import { env } from "~/env";
+import type { Role } from "../../../generated/prisma";
 
 /**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
+ * Module augmentation for `next-auth` types.
+ * Extends the session to include user ID, role, and companyId
+ * so we can use them in tRPC middleware for access control.
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      role: Role;
+      companyId: string | null;
+      designation: string | null;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    role: Role;
+    companyId: string | null;
+    designation: string | null;
+  }
+}
+
+declare module "@auth/core/adapters" {
+  interface AdapterUser {
+    role: Role;
+    companyId: string | null;
+    designation: string | null;
+  }
 }
 
 /**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
+ * NextAuth configuration.
+ * Auth provider: Resend (email magic links only).
+ * OAuth providers removed per hackathon requirements.
  */
 export const authConfig = {
   providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-    GithubProvider({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-    }),
     Resend({
       apiKey: env.AUTH_RESEND_KEY,
       from: env.EMAIL_FROM,
     }),
-
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
-  adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(db) as NextAuthConfig["adapter"],
   callbacks: {
     session: ({ session, user }) => ({
       ...session,
       user: {
         ...session.user,
         id: user.id,
+        role: (user as unknown as { role: Role }).role,
+        companyId: (user as unknown as { companyId: string | null }).companyId,
+        designation: (user as unknown as { designation: string | null }).designation,
       },
     }),
+  },
+  pages: {
+    signIn: "/auth/signin",
+    verifyRequest: "/auth/verify",
   },
 } satisfies NextAuthConfig;

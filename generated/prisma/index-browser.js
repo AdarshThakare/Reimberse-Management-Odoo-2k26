@@ -120,12 +120,107 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.PostScalarFieldEnum = {
+exports.Prisma.CurrencyScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  symbol: 'symbol'
+};
+
+exports.Prisma.ExchangeRateCacheScalarFieldEnum = {
+  id: 'id',
+  fromCurrencyId: 'fromCurrencyId',
+  toCurrencyId: 'toCurrencyId',
+  rate: 'rate',
+  fetchedAt: 'fetchedAt'
+};
+
+exports.Prisma.CompanyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  country: 'country',
+  baseCurrencyId: 'baseCurrencyId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  emailVerified: 'emailVerified',
+  image: 'image',
+  role: 'role',
+  designation: 'designation',
+  companyId: 'companyId',
+  managerId: 'managerId'
+};
+
+exports.Prisma.ExpenseCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  companyId: 'companyId',
+  isActive: 'isActive'
+};
+
+exports.Prisma.ExpenseScalarFieldEnum = {
+  id: 'id',
+  subject: 'subject',
+  description: 'description',
+  expenseDate: 'expenseDate',
+  totalAmount: 'totalAmount',
+  currencyId: 'currencyId',
+  convertedAmount: 'convertedAmount',
+  exchangeRate: 'exchangeRate',
+  paidBy: 'paidBy',
+  status: 'status',
+  remarks: 'remarks',
+  receiptUrl: 'receiptUrl',
+  categoryId: 'categoryId',
+  submitterId: 'submitterId',
+  approvalRuleId: 'approvalRuleId',
+  currentStepOrder: 'currentStepOrder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  createdById: 'createdById'
+  submittedAt: 'submittedAt'
+};
+
+exports.Prisma.ExpenseLineScalarFieldEnum = {
+  id: 'id',
+  expenseId: 'expenseId',
+  description: 'description',
+  amount: 'amount'
+};
+
+exports.Prisma.ApprovalRuleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  companyId: 'companyId',
+  ruleType: 'ruleType',
+  requiredPercent: 'requiredPercent',
+  specificApproverId: 'specificApproverId',
+  isManagerFirst: 'isManagerFirst',
+  isDefault: 'isDefault',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ApprovalStepScalarFieldEnum = {
+  id: 'id',
+  approvalRuleId: 'approvalRuleId',
+  approverId: 'approverId',
+  stepOrder: 'stepOrder'
+};
+
+exports.Prisma.ApprovalActionScalarFieldEnum = {
+  id: 'id',
+  expenseId: 'expenseId',
+  approverId: 'approverId',
+  action: 'action',
+  comment: 'comment',
+  stepOrder: 'stepOrder',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.AccountScalarFieldEnum = {
@@ -151,14 +246,6 @@ exports.Prisma.SessionScalarFieldEnum = {
   expires: 'expires'
 };
 
-exports.Prisma.UserScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  email: 'email',
-  emailVerified: 'emailVerified',
-  image: 'image'
-};
-
 exports.Prisma.VerificationTokenScalarFieldEnum = {
   identifier: 'identifier',
   token: 'token',
@@ -179,13 +266,50 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.Role = exports.$Enums.Role = {
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  EMPLOYEE: 'EMPLOYEE'
+};
 
+exports.PaidBy = exports.$Enums.PaidBy = {
+  EMPLOYEE: 'EMPLOYEE',
+  COMPANY: 'COMPANY'
+};
+
+exports.ExpenseStatus = exports.$Enums.ExpenseStatus = {
+  DRAFT: 'DRAFT',
+  SUBMITTED: 'SUBMITTED',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+exports.ApprovalRuleType = exports.$Enums.ApprovalRuleType = {
+  SEQUENTIAL: 'SEQUENTIAL',
+  PERCENTAGE: 'PERCENTAGE',
+  SPECIFIC: 'SPECIFIC',
+  HYBRID: 'HYBRID'
+};
+
+exports.ApprovalActionType = exports.$Enums.ApprovalActionType = {
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
 
 exports.Prisma.ModelName = {
-  Post: 'Post',
+  Currency: 'Currency',
+  ExchangeRateCache: 'ExchangeRateCache',
+  Company: 'Company',
+  User: 'User',
+  ExpenseCategory: 'ExpenseCategory',
+  Expense: 'Expense',
+  ExpenseLine: 'ExpenseLine',
+  ApprovalRule: 'ApprovalRule',
+  ApprovalStep: 'ApprovalStep',
+  ApprovalAction: 'ApprovalAction',
   Account: 'Account',
   Session: 'Session',
-  User: 'User',
   VerificationToken: 'VerificationToken'
 };
 
