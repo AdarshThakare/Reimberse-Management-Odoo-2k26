@@ -35,7 +35,7 @@ export const userRouter = createTRPCRouter({
    */
   list: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findMany({
-      where: { companyId: ctx.session.user.companyId! },
+      where: { companyId: ctx.session.user.companyId!, isActive: true },
       include: {
         manager: {
           select: { id: true, name: true, email: true, designation: true },
@@ -250,10 +250,54 @@ export const userRouter = createTRPCRouter({
     return ctx.db.user.findMany({
       where: {
         companyId: ctx.session.user.companyId,
+        isActive: true,
         role: { in: ["MANAGER", "ADMIN"] },
       },
       select: { id: true, name: true, email: true, designation: true, role: true },
       orderBy: { name: "asc" },
     });
   }),
+
+  /**
+   * Remove a user (Soft Delete).
+   * Deactivates them so historical expenses remain intact.
+   */
+  remove: adminProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Cannot delete yourself
+      if (input.userId === ctx.session.user.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot remove yourself.",
+        });
+      }
+
+      // Verify user belongs to same company
+      const user = await ctx.db.user.findFirst({
+        where: { id: input.userId, companyId: ctx.session.user.companyId! },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found in your company.",
+        });
+      }
+
+      // 1. Unset this user as a manager for any subordinates
+      await ctx.db.user.updateMany({
+        where: { managerId: input.userId },
+        data: { managerId: null },
+      });
+
+      // 2. Clear out any specific approval rules where they were the sole override (Optional but clean)
+      // For now we just soft delete the user
+      await ctx.db.user.update({
+        where: { id: input.userId },
+        data: { isActive: false, managerId: null },
+      });
+
+      return { success: true };
+    }),
 });

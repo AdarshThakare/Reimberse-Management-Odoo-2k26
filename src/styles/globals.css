@@ -134,3 +134,74 @@ body {
 .animate-pulse-dot {
   animation: pulse-dot 1.5s ease-in-out infinite;
 }
+
+@keyframes mail-rocket-fly {
+  0% {
+    transform: translate(-76px, -50%) rotate(-14deg) scale(0.92);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  45% {
+    transform: translate(30%, -54%) rotate(-4deg) scale(1);
+    opacity: 1;
+  }
+  70% {
+    transform: translate(64%, -46%) rotate(6deg) scale(0.98);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(112%, -52%) rotate(12deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes mail-flame-flicker {
+  0% {
+    transform: translateY(-50%) scaleX(0.84) scaleY(0.92);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-50%) scaleX(1.16) scaleY(1.12);
+    opacity: 1;
+  }
+}
+
+.mail-rocket-lane::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(94, 102, 133, 0.16) 0,
+    rgba(94, 102, 133, 0.16) 20px,
+    transparent 20px,
+    transparent 34px
+  );
+  mask-image: linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%);
+  pointer-events: none;
+}
+
+.mail-rocket-lane::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, rgba(24, 32, 73, 0.28), transparent);
+  pointer-events: none;
+}
+
+.animate-mail-rocket {
+  width: 100%;
+  animation: mail-rocket-fly 2.4s cubic-bezier(0.37, 0.11, 0.28, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-mail-flame {
+  animation: mail-flame-flicker 0.28s ease-in-out infinite alternate;
+  filter: blur(0.3px);
+}
