@@ -59,7 +59,7 @@ export default function ExpensesPage() {
             </svg>
             New Expense
           </Link>
-        </div>
+        )}
       </div>
 
       {isLoading ? (
