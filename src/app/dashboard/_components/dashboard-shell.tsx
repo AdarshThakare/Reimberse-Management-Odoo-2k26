@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -17,6 +18,12 @@ const NAV_ITEMS = [
     label: "My Expenses",
     href: "/dashboard/expenses",
     icon: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z",
+    roles: ["MANAGER", "EMPLOYEE"],
+  },
+  {
+    label: "Expense History",
+    href: "/dashboard/expenses/history",
+    icon: "M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z",
     roles: ["ADMIN", "MANAGER", "EMPLOYEE"],
   },
   {
@@ -59,6 +66,7 @@ export function DashboardShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const role = session.user.role;
 
   const visibleNav = NAV_ITEMS.filter((item) =>
@@ -70,24 +78,159 @@ export function DashboardShell({
     session.user.email?.charAt(0)?.toUpperCase() ??
     "U";
 
-  return (
-    <div className="flex h-screen overflow-hidden">
-      {/* ── Sidebar ── */}
-      <aside
-        className="flex w-[272px] flex-col"
+  const closeMenu = () => setIsMobileMenuOpen(false);
+
+  const SidebarContent = () => (
+    <>
+      <div className="flex h-[72px] items-center gap-3 px-6">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
+          <Image src="/logo.png" alt="Logo" width={32} height={32} />
+        </div>
+        <span
+          className="text-lg font-bold tracking-tight"
+          style={{
+            background: "linear-gradient(135deg, #ffffff 30%, #00DDB0 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          REIM
+        </span>
+      </div>
+
+      <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto w-full">
+        <div className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[#6B7194]">
+          Menu
+        </div>
+        {visibleNav.map((item) => {
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={closeMenu}
+              className="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200"
+              style={
+                isActive
+                  ? {
+                      background: "rgba(56, 114, 225, 0.12)",
+                      color: "#ffffff",
+                    }
+                  : {
+                      color: "#9CA0B8",
+                    }
+              }
+            >
+              {isActive && (
+                <div
+                  className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full"
+                  style={{
+                    background: "linear-gradient(180deg, #3872E1, #00DDB0)",
+                    boxShadow: "0 0 8px rgba(0, 221, 176, 0.4)",
+                  }}
+                />
+              )}
+              <svg
+                className="h-5 w-5 transition-colors duration-200"
+                style={{
+                  color: isActive ? "#3872E1" : "#6B7194",
+                }}
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+              </svg>
+              <span className={isActive ? "" : "group-hover:text-white"}>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div
+        className="mx-3 mb-4 rounded-xl p-4 w-auto"
         style={{
-          background: "linear-gradient(180deg, #21212F 0%, #1a1a28 100%)",
+          background: "rgba(255, 255, 255, 0.04)",
+          border: "1px solid rgba(255, 255, 255, 0.06)",
         }}
       >
-        {/* Brand */}
-        <div className="flex h-[72px] items-center gap-3 px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
-            <Image
-              src="/logo.png"
-              alt="Logo"
-              width={32}
-              height={32}
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white shrink-0"
+              style={{
+                background: "linear-gradient(135deg, #3872E1, #00DDB0)",
+                boxShadow: "0 4px 12px rgba(56, 114, 225, 0.3)",
+              }}
+            >
+              {initials}
+            </div>
+            <div
+              className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full animate-pulse-dot"
+              style={{
+                background: "#00DDB0",
+                border: "2.5px solid #21212F",
+                boxShadow: "0 0 6px rgba(0, 221, 176, 0.5)",
+              }}
             />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="truncate text-sm font-semibold text-white">
+              {session.user.name ?? session.user.email}
+            </div>
+            <div
+              className="mt-0.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              style={{
+                background: "rgba(0, 221, 176, 0.12)",
+                color: "#00DDB0",
+              }}
+            >
+              {session.user.designation ?? ROLE_LABELS[role] ?? role}
+            </div>
+          </div>
+        </div>
+        <button
+          onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-all duration-200 cursor-pointer"
+          style={{
+            color: "#9CA0B8",
+            background: "rgba(255, 255, 255, 0.04)",
+            border: "1px solid rgba(255, 255, 255, 0.06)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)";
+            e.currentTarget.style.color = "#EF4444";
+            e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.2)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
+            e.currentTarget.style.color = "#9CA0B8";
+            e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.06)";
+          }}
+        >
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+          </svg>
+          Sign Out
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-surface-page md:flex-row flex-col">
+      {/* ── Mobile Top Navigation ── */}
+      <div 
+        className="flex md:hidden items-center justify-between px-6 py-4 z-40 shrink-0"
+        style={{ background: "#21212F" }}
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
+            <Image src="/logo.png" alt="Logo" width={28} height={28} />
           </div>
           <span
             className="text-lg font-bold tracking-tight"
@@ -100,135 +243,50 @@ export function DashboardShell({
             REIM
           </span>
         </div>
-
-        {/* Nav */}
-        <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
-          <div className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[#6B7194]">
-            Menu
-          </div>
-          {visibleNav.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200"
-                style={
-                  isActive
-                    ? {
-                        background: "rgba(56, 114, 225, 0.12)",
-                        color: "#ffffff",
-                      }
-                    : {
-                        color: "#9CA0B8",
-                      }
-                }
-              >
-                {/* Active indicator bar */}
-                {isActive && (
-                  <div
-                    className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full"
-                    style={{
-                      background: "linear-gradient(180deg, #3872E1, #00DDB0)",
-                      boxShadow: "0 0 8px rgba(0, 221, 176, 0.4)",
-                    }}
-                  />
-                )}
-                <svg
-                  className="h-5 w-5 transition-colors duration-200"
-                  style={{
-                    color: isActive ? "#3872E1" : "#6B7194",
-                  }}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                </svg>
-                <span className={isActive ? "" : "group-hover:text-white"}>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User Profile */}
-        <div
-          className="mx-3 mb-4 rounded-xl p-4"
-          style={{
-            background: "rgba(255, 255, 255, 0.04)",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-          }}
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="text-white hover:opacity-80 transition-opacity"
         >
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white"
-                style={{
-                  background: "linear-gradient(135deg, #3872E1, #00DDB0)",
-                  boxShadow: "0 4px 12px rgba(56, 114, 225, 0.3)",
-                }}
-              >
-                {initials}
-              </div>
-              {/* Online dot */}
-              <div
-                className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full animate-pulse-dot"
-                style={{
-                  background: "#00DDB0",
-                  border: "2.5px solid #21212F",
-                  boxShadow: "0 0 6px rgba(0, 221, 176, 0.5)",
-                }}
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="truncate text-sm font-semibold text-white">
-                {session.user.name ?? session.user.email}
-              </div>
-              <div
-                className="mt-0.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                style={{
-                  background: "rgba(0, 221, 176, 0.12)",
-                  color: "#00DDB0",
-                }}
-              >
-                {session.user.designation ?? ROLE_LABELS[role] ?? role}
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={() => signOut({ callbackUrl: "/auth/signin" })}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold transition-all duration-200 cursor-pointer"
-            style={{
-              color: "#9CA0B8",
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "1px solid rgba(255, 255, 255, 0.06)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)";
-              e.currentTarget.style.color = "#EF4444";
-              e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
-              e.currentTarget.style.color = "#9CA0B8";
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.06)";
-            }}
-          >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-            </svg>
-            Sign Out
-          </button>
-        </div>
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      {/* ── Desktop Sidebar ── */}
+      <aside
+        className="hidden md:flex w-[272px] flex-col shrink-0"
+        style={{
+          background: "linear-gradient(180deg, #21212F 0%, #1a1a28 100%)",
+        }}
+      >
+        <SidebarContent />
       </aside>
 
+      {/* ── Mobile Sidebar Overlay Form ── */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={closeMenu} />
+          <div 
+            className="relative flex-1 flex flex-col max-w-[272px] w-full animate-fade-in shadow-2xl h-full"
+            style={{ background: "linear-gradient(180deg, #21212F 0%, #1a1a28 100%)" }}
+          >
+            <button
+              onClick={closeMenu}
+              className="absolute top-5 right-5 text-white hover:text-accent-green transition-colors z-50"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <SidebarContent />
+          </div>
+        </div>
+      )}
+
       {/* ── Main Content ── */}
-      <main className="flex-1 overflow-y-auto bg-surface-page">
-        <div className="p-8 lg:p-10">{children}</div>
+      <main className="flex-1 overflow-y-auto bg-surface-page w-full min-w-0">
+        <div className="p-4 sm:p-6 lg:p-10">{children}</div>
       </main>
     </div>
   );

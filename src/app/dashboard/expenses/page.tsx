@@ -25,9 +25,27 @@ export default function ExpensesPage() {
   const { data: expenses, isLoading } = api.expense.list.useQuery();
   const isAdmin = session?.user?.role === "ADMIN";
 
+  if (isAdmin) {
+    return (
+      <div className="animate-fade-in space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-text-primary tracking-tight">Expense History</h1>
+            <p className="mt-2 text-sm text-text-secondary">
+              View all previous expense records in your company.
+            </p>
+          </div>
+          <Link href="/dashboard/expenses/history" className="btn btn-primary">
+            Open Expense History
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-in space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">My Expenses</h1>
           <p className="mt-2 text-sm text-text-secondary">
@@ -35,7 +53,7 @@ export default function ExpensesPage() {
           </p>
         </div>
         {!isAdmin && (
-          <Link href="/dashboard/expenses/new" className="btn btn-primary">
+          <Link href="/dashboard/expenses/new" className="btn btn-primary w-full sm:w-auto mt-2 sm:mt-0">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
@@ -124,9 +142,14 @@ export default function ExpensesPage() {
           </div>
           <h3 className="text-lg font-bold text-text-primary">No expenses yet</h3>
           <p className="mt-1 text-sm text-text-secondary">Create your first expense claim to get started.</p>
-          <Link href="/dashboard/expenses/new" className="btn btn-primary mt-5 inline-flex">
-            Create Expense
-          </Link>
+          <div className="mt-5 flex items-center justify-center gap-2">
+            <Link href="/dashboard/expenses/history" className="btn btn-secondary inline-flex">
+              View Expense History
+            </Link>
+            <Link href="/dashboard/expenses/new" className="btn btn-primary inline-flex">
+              Create Expense
+            </Link>
+          </div>
         </div>
       )}
     </div>
