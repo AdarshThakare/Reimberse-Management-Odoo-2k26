@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * Expense Detail Page
+ *
+ * Displays full details for a single expense:
+ *   - Status breadcrumb (lifecycle tracker)
+ *   - Expense metadata (amount, date, category, etc.)
+ *   - Receipt image (if attached via OCR or upload)
+ *   - Approval workflow info & history
+ *   - Action buttons (Submit / Approve / Reject)
+ */
+
+import { useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { useSession } from "next-auth/react";
@@ -25,6 +38,7 @@ export default function ExpenseDetailPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const utils = api.useUtils();
+  const [receiptModal, setReceiptModal] = useState(false);
 
   const { data: expense, isLoading } = api.expense.getById.useQuery({
     id: params.id as string,
@@ -162,7 +176,6 @@ export default function ExpenseDetailPage() {
           <Field label="Description" value={expense.description ?? "—"} />
           <Field label="Expense Date" value={new Date(expense.expenseDate).toLocaleDateString()} />
           <Field label="Category" value={expense.category.name} />
-          <Field label="Paid By" value={expense.paidBy === "EMPLOYEE" ? "Employee" : "Company"} />
           <div>
             <div className="text-xs font-medium text-slate-500">Amount</div>
             <div className="mt-1 text-lg font-bold text-slate-900">
@@ -187,13 +200,21 @@ export default function ExpenseDetailPage() {
         {/* Action Buttons */}
         <div className="flex gap-3 pt-3 border-t border-slate-200">
           {isDraft && isOwner && (
-            <button
-              onClick={() => submitMutation.mutate({ id: expense.id })}
-              disabled={submitMutation.isPending}
-              className="btn btn-primary"
-            >
-              {submitMutation.isPending ? "Submitting..." : "Submit for Approval"}
-            </button>
+            <>
+              <Link
+                href={`/dashboard/expenses/${expense.id}/edit`}
+                className="btn btn-secondary"
+              >
+                Edit Draft
+              </Link>
+              <button
+                onClick={() => submitMutation.mutate({ id: expense.id })}
+                disabled={submitMutation.isPending}
+                className="btn btn-primary"
+              >
+                {submitMutation.isPending ? "Submitting..." : "Submit for Approval"}
+              </button>
+            </>
           )}
           {expense.status === "UNDER_REVIEW" && isManagerOrAdmin && !isOwner && (
             <>
@@ -228,6 +249,62 @@ export default function ExpenseDetailPage() {
           )}
         </div>
       </div>
+
+      {/* ── Receipt Image ── */}
+      {expense.receiptUrl && (
+        <div className="card">
+          <h2 className="text-sm font-semibold text-slate-900 mb-3">Attached Receipt</h2>
+          <div className="flex items-start gap-4">
+            <button
+              type="button"
+              onClick={() => setReceiptModal(true)}
+              className="group relative w-32 rounded-lg overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            >
+              <img
+                src={expense.receiptUrl}
+                alt="Receipt"
+                className="w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">
+                  View Full Size
+                </span>
+              </div>
+            </button>
+            <div className="text-xs text-slate-500">
+              <p className="font-medium text-slate-700">Scanned receipt</p>
+              <p className="mt-1">Click to view full-size image</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Receipt Modal */}
+      {receiptModal && expense.receiptUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={() => setReceiptModal(false)}
+        >
+          <div
+            className="relative max-w-3xl max-h-[90vh] overflow-auto rounded-2xl bg-white shadow-2xl animate-fade-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setReceiptModal(false)}
+              className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <img
+              src={expense.receiptUrl}
+              alt="Receipt full size"
+              className="max-w-full h-auto"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Approval History */}
       {expense.approvalActions.length > 0 && (

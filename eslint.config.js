@@ -30,6 +30,8 @@ export default tseslint.config(
       "error",
       { checksVoidReturn: { attributes: false } },
     ],
+    "@typescript-eslint/prefer-regexp-exec": "off",
+    "@next/next/no-img-element": "off",
   },
   },
   {

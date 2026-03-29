@@ -85,12 +85,22 @@ export default function ExpensesPage() {
                     </span>
                   </td>
                   <td>
-                    <Link
-                      href={`/dashboard/expenses/${expense.id}`}
-                      className="text-sm font-medium text-brand-600 hover:text-brand-700"
-                    >
-                      View →
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        href={`/dashboard/expenses/${expense.id}`}
+                        className="text-sm font-medium text-brand-600 hover:text-brand-700"
+                      >
+                        View →
+                      </Link>
+                      {expense.status === "DRAFT" && (
+                        <Link
+                          href={`/dashboard/expenses/${expense.id}/edit`}
+                          className="text-sm font-medium text-slate-600 hover:text-slate-800"
+                        >
+                          Edit
+                        </Link>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

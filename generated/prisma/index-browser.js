@@ -173,7 +173,6 @@ exports.Prisma.ExpenseScalarFieldEnum = {
   currencyId: 'currencyId',
   convertedAmount: 'convertedAmount',
   exchangeRate: 'exchangeRate',
-  paidBy: 'paidBy',
   status: 'status',
   remarks: 'remarks',
   receiptUrl: 'receiptUrl',
@@ -184,13 +183,6 @@ exports.Prisma.ExpenseScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   submittedAt: 'submittedAt'
-};
-
-exports.Prisma.ExpenseLineScalarFieldEnum = {
-  id: 'id',
-  expenseId: 'expenseId',
-  description: 'description',
-  amount: 'amount'
 };
 
 exports.Prisma.ApprovalRuleScalarFieldEnum = {
@@ -273,11 +265,6 @@ exports.Role = exports.$Enums.Role = {
   EMPLOYEE: 'EMPLOYEE'
 };
 
-exports.PaidBy = exports.$Enums.PaidBy = {
-  EMPLOYEE: 'EMPLOYEE',
-  COMPANY: 'COMPANY'
-};
-
 exports.ExpenseStatus = exports.$Enums.ExpenseStatus = {
   DRAFT: 'DRAFT',
   SUBMITTED: 'SUBMITTED',
@@ -305,7 +292,6 @@ exports.Prisma.ModelName = {
   User: 'User',
   ExpenseCategory: 'ExpenseCategory',
   Expense: 'Expense',
-  ExpenseLine: 'ExpenseLine',
   ApprovalRule: 'ApprovalRule',
   ApprovalStep: 'ApprovalStep',
   ApprovalAction: 'ApprovalAction',

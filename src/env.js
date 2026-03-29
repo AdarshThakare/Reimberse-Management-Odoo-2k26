@@ -17,7 +17,7 @@ export const env = createEnv({
       .default("development"),
     EMAIL_FROM: z.string(),
     AUTH_RESEND_KEY: z.string(),
-    VERCEL_URL: z.string(),
+    VERCEL_URL: z.string().optional(),
   },
 
   /**

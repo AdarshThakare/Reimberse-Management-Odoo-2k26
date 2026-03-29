@@ -31,19 +31,10 @@ export const expenseRouter = createTRPCRouter({
         currencyCode: z.string().length(3),
         currencyName: z.string().optional(),
         currencySymbol: z.string().optional(),
-        paidBy: z.enum(["EMPLOYEE", "COMPANY"]).default("EMPLOYEE"),
         categoryId: z.string(),
         remarks: z.string().max(500).optional(),
         receiptUrl: z.string().optional(),
         approvalRuleId: z.string().optional(),
-        lines: z
-          .array(
-            z.object({
-              description: z.string().min(1),
-              amount: z.number().positive(),
-            }),
-          )
-          .optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -85,23 +76,14 @@ export const expenseRouter = createTRPCRouter({
           expenseDate: new Date(input.expenseDate),
           totalAmount: input.totalAmount,
           currencyId: input.currencyCode,
-          paidBy: input.paidBy,
           categoryId: input.categoryId,
           submitterId: ctx.session.user.id,
           approvalRuleId: approvalRuleId ?? undefined,
           remarks: input.remarks,
           receiptUrl: input.receiptUrl,
           status: "DRAFT",
-          lines: input.lines
-            ? {
-                create: input.lines.map((line) => ({
-                  description: line.description,
-                  amount: line.amount,
-                })),
-              }
-            : undefined,
         },
-        include: { lines: true, category: true, currency: true },
+        include: { category: true, currency: true },
       });
     }),
 
@@ -113,14 +95,13 @@ export const expenseRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         subject: z.string().min(1).max(200).optional(),
-        description: z.string().max(1000).optional(),
+        description: z.string().max(1000).nullable().optional(),
         expenseDate: z.string().datetime().optional(),
         totalAmount: z.number().positive().optional(),
         currencyCode: z.string().length(3).optional(),
-        paidBy: z.enum(["EMPLOYEE", "COMPANY"]).optional(),
         categoryId: z.string().optional(),
-        remarks: z.string().max(500).optional(),
-        receiptUrl: z.string().optional(),
+        remarks: z.string().max(500).nullable().optional(),
+        receiptUrl: z.string().nullable().optional(),
         approvalRuleId: z.string().nullable().optional(),
       }),
     )
@@ -139,7 +120,7 @@ export const expenseRouter = createTRPCRouter({
         });
       }
 
-      const { id, ...updateData } = input;
+      const { id, currencyCode, ...updateData } = input;
       return ctx.db.expense.update({
         where: { id },
         data: {
@@ -147,9 +128,9 @@ export const expenseRouter = createTRPCRouter({
           expenseDate: updateData.expenseDate
             ? new Date(updateData.expenseDate)
             : undefined,
-          currencyId: updateData.currencyCode,
+          currencyId: currencyCode,
         },
-        include: { lines: true, category: true, currency: true },
+        include: { category: true, currency: true },
       });
     }),
 
@@ -208,7 +189,6 @@ export const expenseRouter = createTRPCRouter({
       return ctx.db.expense.findUnique({
         where: { id: input.id },
         include: {
-          lines: true,
           category: true,
           currency: true,
           approvalActions: {
@@ -265,7 +245,6 @@ export const expenseRouter = createTRPCRouter({
           ],
         },
         include: {
-          lines: true,
           category: true,
           currency: true,
           submitter: {

@@ -16,7 +16,13 @@ export async function sendWelcomeEmail({
   companyName: string;
   adminName: string;
 }) {
-  const loginUrl = `${process.env.VERCEL_URL ?? "http://localhost:3000"}/auth/signin`;
+  const vercelUrl = process.env.VERCEL_URL;
+  const appUrl = vercelUrl
+    ? vercelUrl.startsWith("http://") || vercelUrl.startsWith("https://")
+      ? vercelUrl
+      : `https://${vercelUrl}`
+    : "http://localhost:3000";
+  const loginUrl = `${appUrl}/auth/signin`;
 
   const roleLabels: Record<string, string> = {
     EMPLOYEE: "Employee",
