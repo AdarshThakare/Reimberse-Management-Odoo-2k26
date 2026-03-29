@@ -152,7 +152,8 @@ exports.Prisma.UserScalarFieldEnum = {
   role: 'role',
   designation: 'designation',
   companyId: 'companyId',
-  managerId: 'managerId'
+  managerId: 'managerId',
+  isActive: 'isActive'
 };
 
 exports.Prisma.ExpenseCategoryScalarFieldEnum = {

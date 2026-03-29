@@ -122,6 +122,7 @@ model User {
 
   companyId String?
   managerId String? // Reports to this user
+  isActive  Boolean @default(true) // For soft-deletion
 
   company      Company? @relation(fields: [companyId], references: [id])
   manager      User?    @relation("ManagerRelation", fields: [managerId], references: [id])

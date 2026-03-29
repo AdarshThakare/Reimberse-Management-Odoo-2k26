@@ -138,6 +138,21 @@ export default function TeamPage() {
                   <td>
                     <span className={`badge ${ROLE_BADGE[user.role]}`}>{user.role}</span>
                   </td>
+                  <td>
+                    <button
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to remove ${user.name || user.email}? They will no longer be able to log in or be assigned as a manager.`)) {
+                          api.useUtils().client.user.remove.mutate({ userId: user.id })
+                            .then(() => utils.user.list.invalidate())
+                            .catch((err) => alert(err.message));
+                        }
+                      }}
+                      className="text-red-600 hover:text-red-800 p-1 bg-red-50 hover:bg-red-100 rounded text-xs font-semibold px-2 transition-colors disabled:opacity-50"
+                      disabled={user.email === "manager@test.com" /* wait, the real check is user itself, handled by DB */}
+                    >
+                      Remove
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

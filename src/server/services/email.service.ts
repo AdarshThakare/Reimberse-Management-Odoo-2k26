@@ -16,7 +16,7 @@ export async function sendWelcomeEmail({
   companyName: string;
   adminName: string;
 }) {
-  const loginUrl = `${process.env.NEXTAUTH_URL ?? "http://localhost:3000"}/auth/signin`;
+  const loginUrl = `${process.env.VERCEL_URL ?? "http://localhost:3000"}/auth/signin`;
 
   const roleLabels: Record<string, string> = {
     EMPLOYEE: "Employee",

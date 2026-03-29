@@ -5712,6 +5712,7 @@ export namespace Prisma {
     designation: string | null
     companyId: string | null
     managerId: string | null
+    isActive: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -5724,6 +5725,7 @@ export namespace Prisma {
     designation: string | null
     companyId: string | null
     managerId: string | null
+    isActive: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -5736,6 +5738,7 @@ export namespace Prisma {
     designation: number
     companyId: number
     managerId: number
+    isActive: number
     _all: number
   }
 
@@ -5750,6 +5753,7 @@ export namespace Prisma {
     designation?: true
     companyId?: true
     managerId?: true
+    isActive?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -5762,6 +5766,7 @@ export namespace Prisma {
     designation?: true
     companyId?: true
     managerId?: true
+    isActive?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -5774,6 +5779,7 @@ export namespace Prisma {
     designation?: true
     companyId?: true
     managerId?: true
+    isActive?: true
     _all?: true
   }
 
@@ -5859,6 +5865,7 @@ export namespace Prisma {
     designation: string | null
     companyId: string | null
     managerId: string | null
+    isActive: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -5888,6 +5895,7 @@ export namespace Prisma {
     designation?: boolean
     companyId?: boolean
     managerId?: boolean
+    isActive?: boolean
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
     subordinates?: boolean | User$subordinatesArgs<ExtArgs>
@@ -5910,6 +5918,7 @@ export namespace Prisma {
     designation?: boolean
     companyId?: boolean
     managerId?: boolean
+    isActive?: boolean
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -5924,6 +5933,7 @@ export namespace Prisma {
     designation?: boolean
     companyId?: boolean
     managerId?: boolean
+    isActive?: boolean
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -5938,9 +5948,10 @@ export namespace Prisma {
     designation?: boolean
     companyId?: boolean
     managerId?: boolean
+    isActive?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "role" | "designation" | "companyId" | "managerId", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "role" | "designation" | "companyId" | "managerId" | "isActive", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
@@ -5985,6 +5996,7 @@ export namespace Prisma {
       designation: string | null
       companyId: string | null
       managerId: string | null
+      isActive: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -6426,6 +6438,7 @@ export namespace Prisma {
     readonly designation: FieldRef<"User", 'String'>
     readonly companyId: FieldRef<"User", 'String'>
     readonly managerId: FieldRef<"User", 'String'>
+    readonly isActive: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -17387,7 +17400,8 @@ export namespace Prisma {
     role: 'role',
     designation: 'designation',
     companyId: 'companyId',
-    managerId: 'managerId'
+    managerId: 'managerId',
+    isActive: 'isActive'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -17887,6 +17901,7 @@ export namespace Prisma {
     designation?: StringNullableFilter<"User"> | string | null
     companyId?: StringNullableFilter<"User"> | string | null
     managerId?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     manager?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     subordinates?: UserListRelationFilter
@@ -17908,6 +17923,7 @@ export namespace Prisma {
     designation?: SortOrderInput | SortOrder
     companyId?: SortOrderInput | SortOrder
     managerId?: SortOrderInput | SortOrder
+    isActive?: SortOrder
     company?: CompanyOrderByWithRelationInput
     manager?: UserOrderByWithRelationInput
     subordinates?: UserOrderByRelationAggregateInput
@@ -17932,6 +17948,7 @@ export namespace Prisma {
     designation?: StringNullableFilter<"User"> | string | null
     companyId?: StringNullableFilter<"User"> | string | null
     managerId?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     manager?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     subordinates?: UserListRelationFilter
@@ -17953,6 +17970,7 @@ export namespace Prisma {
     designation?: SortOrderInput | SortOrder
     companyId?: SortOrderInput | SortOrder
     managerId?: SortOrderInput | SortOrder
+    isActive?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -17971,6 +17989,7 @@ export namespace Prisma {
     designation?: StringNullableWithAggregatesFilter<"User"> | string | null
     companyId?: StringNullableWithAggregatesFilter<"User"> | string | null
     managerId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isActive?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type ExpenseCategoryWhereInput = {
@@ -18831,6 +18850,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
@@ -18852,6 +18872,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -18869,6 +18890,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
@@ -18890,6 +18912,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -18909,6 +18932,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -18919,6 +18943,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -18931,6 +18956,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ExpenseCategoryCreateInput = {
@@ -19883,6 +19909,11 @@ export namespace Prisma {
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type CompanyNullableScalarRelationFilter = {
     is?: CompanyWhereInput | null
     isNot?: CompanyWhereInput | null
@@ -19948,6 +19979,7 @@ export namespace Prisma {
     designation?: SortOrder
     companyId?: SortOrder
     managerId?: SortOrder
+    isActive?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -19960,6 +19992,7 @@ export namespace Prisma {
     designation?: SortOrder
     companyId?: SortOrder
     managerId?: SortOrder
+    isActive?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -19972,6 +20005,7 @@ export namespace Prisma {
     designation?: SortOrder
     companyId?: SortOrder
     managerId?: SortOrder
+    isActive?: SortOrder
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -20016,9 +20050,12 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type CompanyScalarRelationFilter = {
@@ -20053,14 +20090,6 @@ export namespace Prisma {
     description?: SortOrder
     companyId?: SortOrder
     isActive?: SortOrder
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type DecimalNullableFilter<$PrismaModel = never> = {
@@ -21008,6 +21037,10 @@ export namespace Prisma {
     set?: $Enums.Role
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type CompanyUpdateOneWithoutUsersNestedInput = {
     create?: XOR<CompanyCreateWithoutUsersInput, CompanyUncheckedCreateWithoutUsersInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutUsersInput
@@ -21242,10 +21275,6 @@ export namespace Prisma {
     connectOrCreate?: ExpenseCreateOrConnectWithoutCategoryInput | ExpenseCreateOrConnectWithoutCategoryInput[]
     createMany?: ExpenseCreateManyCategoryInputEnvelope
     connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type CompanyUpdateOneRequiredWithoutCategoriesNestedInput = {
@@ -21804,6 +21833,11 @@ export namespace Prisma {
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -21854,11 +21888,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRoleFilter<$PrismaModel>
     _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -22303,6 +22332,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -22322,6 +22352,7 @@ export namespace Prisma {
     role?: $Enums.Role
     designation?: string | null
     managerId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -22463,6 +22494,7 @@ export namespace Prisma {
     designation?: StringNullableFilter<"User"> | string | null
     companyId?: StringNullableFilter<"User"> | string | null
     managerId?: StringNullableFilter<"User"> | string | null
+    isActive?: BoolFilter<"User"> | boolean
   }
 
   export type ExpenseCategoryUpsertWithWhereUniqueWithoutCompanyInput = {
@@ -22560,6 +22592,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -22580,6 +22613,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutSubmitterInput
@@ -22601,6 +22635,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -22620,6 +22655,7 @@ export namespace Prisma {
     role?: $Enums.Role
     designation?: string | null
     companyId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -22899,6 +22935,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -22919,6 +22956,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutSubmitterNestedInput
@@ -23252,6 +23290,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
@@ -23272,6 +23311,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -23437,6 +23477,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
@@ -23457,6 +23498,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -23718,6 +23760,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
@@ -23738,6 +23781,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -23881,6 +23925,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
@@ -23901,6 +23946,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -23984,6 +24030,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
@@ -24004,6 +24051,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -24077,6 +24125,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
@@ -24097,6 +24146,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -24164,6 +24214,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
@@ -24184,6 +24235,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -24273,6 +24325,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
@@ -24293,6 +24346,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -24309,6 +24363,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
@@ -24329,6 +24384,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutSubmitterInput
@@ -24361,6 +24417,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
@@ -24381,6 +24438,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutSubmitterNestedInput
@@ -24397,6 +24455,7 @@ export namespace Prisma {
     image?: string | null
     role?: $Enums.Role
     designation?: string | null
+    isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
@@ -24417,6 +24476,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutSubmitterInput
@@ -24449,6 +24509,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
@@ -24469,6 +24530,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutSubmitterNestedInput
@@ -24640,6 +24702,7 @@ export namespace Prisma {
     role?: $Enums.Role
     designation?: string | null
     managerId?: string | null
+    isActive?: boolean
   }
 
   export type ExpenseCategoryCreateManyCompanyInput = {
@@ -24670,6 +24733,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -24689,6 +24753,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -24707,6 +24772,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ExpenseCategoryUpdateWithoutCompanyInput = {
@@ -24784,6 +24850,7 @@ export namespace Prisma {
     role?: $Enums.Role
     designation?: string | null
     companyId?: string | null
+    isActive?: boolean
   }
 
   export type AccountCreateManyUserInput = {
@@ -24864,6 +24931,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -24883,6 +24951,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -24901,6 +24970,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AccountUpdateWithoutUserInput = {
