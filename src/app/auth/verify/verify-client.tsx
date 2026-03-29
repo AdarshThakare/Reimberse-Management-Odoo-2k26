@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect } from "react";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -59,33 +60,68 @@ export function VerifyClientPage() {
   }, [router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 px-4">
-      <div className="animate-fade-in w-full max-w-md text-center">
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm">
-          <svg className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-          </svg>
+    <div className="relative min-h-screen overflow-hidden bg-[linear-gradient(140deg,#3a46b4_0%,#262f74_58%,#171b47_100%)]">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,#101536_0%,transparent_58%)]" />
+
+      <div className="relative flex min-h-screen flex-col px-6 pt-10 sm:px-12 sm:pt-12">
+        <div className="text-[2.1rem] font-extrabold tracking-tight text-white sm:text-[2.3rem]">
+          REIM
         </div>
 
-        <h1 className="text-2xl font-bold text-white">Check your email</h1>
-        <p className="mt-3 text-brand-200">
-          We&apos;ve sent a magic link to your email address.
-          <br />Click the link to sign in.
-        </p>
+        <div className="flex flex-1 items-end justify-center">
+          <div className="animate-fade-in w-full max-w-100 rounded-t-2xl rounded-b-none bg-[#f0f1f5] p-4 shadow-[0_30px_65px_rgba(8,12,45,0.45)] sm:p-7">
+            <h1 className="text-[2.1rem] uppercase font-semibold leading-none tracking-tight text-[#101222] sm:text-[2.5rem]">
+              Check Your Inbox
+            </h1>
+            <p className="mt-3 text-sm text-[#5f657f]">
+              Your secure magic link is on the way. Click it to finish signing in.
+            </p>
 
-        <div className="mt-8 rounded-2xl bg-white/10 p-6 backdrop-blur-sm">
-          <div className="flex items-center justify-center gap-3 text-white/80">
-            <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse-dot" />
-            <span className="text-sm">Waiting for verification...</span>
+            <div className="mt-6 rounded-xl border border-[#d2d5e2] bg-[#e7e8ee] p-3.5">
+              <div className="mb-2 flex items-center justify-between text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-[#4c5272]">
+                <span>Email Rocket</span>
+                <span>Encrypted Delivery</span>
+              </div>
+
+              <div className="mail-rocket-lane relative h-16 overflow-hidden rounded-lg border border-[#d5d7e2] bg-[#eceef4]">
+                <div className="animate-mail-rocket absolute left-0 top-1/2 z-10 -translate-y-1/2">
+                  <div className="relative pl-2">
+                    <span className="animate-mail-flame absolute left-0 top-1/2 h-3 w-14 -translate-y-1/2 rounded-full bg-linear-to-r from-[#57d8ff]/70 via-[#8bf3ff]/60 to-transparent blur-[1px]" />
+                    <Image
+                      src="/rocket.png"
+                      alt="Email rocket"
+                      width={170}
+                      height={107}
+                      priority
+                      className="h-11 w-auto max-w-none select-none drop-shadow-[0_7px_10px_rgba(24,44,121,0.35)]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-[#d2d5e2] bg-[#e7e8ee] p-3.5">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-[#4c5272]">
+                Quick Guidelines
+              </p>
+              <ul className="mt-2 space-y-1.5 text-xs text-[#5f657f]">
+                <li>Keep this tab open while you check your email.</li>
+                <li>Check inbox, spam, and promotions folders.</li>
+                <li>If the link expires, go back and request a new one.</li>
+              </ul>
+            </div>
+
+            <div className="mt-5 flex items-center justify-between gap-3 text-xs text-[#676d86]">
+              <div className="flex items-center gap-2">
+                {/* <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse-dot" /> */}
+                Waiting for verification...
+              </div>
+              <a href="/auth/signin" className="font-semibold text-[#23295f] underline underline-offset-2 transition hover:text-[#101222]">
+                Use another email
+              </a>
+            </div>
           </div>
         </div>
-
-        <p className="mt-6 text-xs text-brand-300">
-          Didn&apos;t receive it? Check your spam folder or{" "}
-          <a href="/auth/signin" className="underline hover:text-white transition-colors">
-            try again
-          </a>
-        </p>
       </div>
     </div>
   );
