@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { api } from "~/trpc/react";
+import { downloadCsv } from "~/utils/export-csv";
 
 const dateFmt = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -46,21 +47,96 @@ interface ApprovalDetail {
 type ExpenseStatus = "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
 type ApprovalActionType = "APPROVED" | "REJECTED";
 
+const expenseStatuses: readonly ExpenseStatus[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "UNDER_REVIEW",
+  "APPROVED",
+  "REJECTED",
+];
+
+const approvalActions: readonly ApprovalActionType[] = ["APPROVED", "REJECTED"];
+
+function isExpenseStatus(value: string): value is ExpenseStatus {
+  return expenseStatuses.includes(value as ExpenseStatus);
+}
+
+function isApprovalAction(value: string): value is ApprovalActionType {
+  return approvalActions.includes(value as ApprovalActionType);
+}
+
 export default function ApprovalHistoryPage() {
   const [page, setPage] = useState(0);
-  const [actionFilter, setActionFilter] = useState<string | undefined>();
-  const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [actionFilter, setActionFilter] = useState<ApprovalActionType | undefined>();
+  const [statusFilter, setStatusFilter] = useState<ExpenseStatus | undefined>();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const { data, isLoading, error } = api.expense.getManagerApprovalHistory.useQuery({
     skip: page * 50,
     take: 50,
-    action: actionFilter as any,
-    status: statusFilter as any,
+    action: actionFilter,
+    status: statusFilter,
   });
 
-  const expenses = data?.expenses || [];
+  const expenses = data?.expenses ?? [];
   const hasMore = data?.hasMore ?? false;
+
+  const handleExportHistory = () => {
+    if (!expenses.length) return;
+
+    const rows = expenses.map((expense) => {
+      const expectedApprovers = expense.approvalRule?.steps
+        ?.map((step) => `${step.stepOrder}. ${step.approver.name ?? step.approver.id}`)
+        .join(" | ") ?? "";
+
+      const actionsTaken = expense.approvalActions
+        .map((action) => {
+          const approver = action.approver.name ?? action.approver.email;
+          const note = action.comment ? ` (${action.comment})` : "";
+          return `${approver}: ${action.action}${note}`;
+        })
+        .join(" | ");
+
+      return [
+        expense.id,
+        expense.subject,
+        expense.submitter.name ?? "",
+        expense.submitter.email,
+        expense.category.name,
+        Number(expense.totalAmount),
+        expense.currency.id,
+        expense.status,
+        new Date(expense.createdAt).toISOString(),
+        expense.submittedAt ? new Date(expense.submittedAt).toISOString() : "",
+        expense.approvalRule?.name ?? "",
+        expense.approvalRule?.ruleType ?? "",
+        expectedApprovers,
+        actionsTaken,
+      ] as const;
+    });
+
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(
+      `approvals-history-${dateStamp}.csv`,
+      [
+        "Expense ID",
+        "Subject",
+        "Submitter",
+        "Submitter Email",
+        "Category",
+        "Amount",
+        "Currency",
+        "Status",
+        "Created At",
+        "Submitted At",
+        "Approval Rule",
+        "Rule Type",
+        "Expected Approvers",
+        "Actions Taken",
+      ],
+      rows,
+    );
+  };
 
   const toggleExpanded = (id: string) => {
     const newExpanded = new Set(expandedRows);
@@ -75,8 +151,20 @@ export default function ApprovalHistoryPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Approval History</h1>
-        <p className="mt-1 text-sm text-slate-500">View all expenses you have approved or rejected</p>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Approval History</h1>
+            <p className="mt-1 text-sm text-slate-500">View all expenses you have approved or rejected</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleExportHistory}
+            className="btn btn-secondary"
+            disabled={!expenses.length}
+          >
+            Export CSV
+          </button>
+        </div>
       </div>
 
       <div className="card">
@@ -87,7 +175,8 @@ export default function ApprovalHistoryPage() {
             <select
               value={actionFilter ?? ""}
               onChange={(e) => {
-                setActionFilter(e.target.value || undefined);
+                const value = e.target.value;
+                setActionFilter(isApprovalAction(value) ? value : undefined);
                 setPage(0);
               }}
               className="input mt-1"
@@ -102,7 +191,8 @@ export default function ApprovalHistoryPage() {
             <select
               value={statusFilter ?? ""}
               onChange={(e) => {
-                setStatusFilter(e.target.value || undefined);
+                const value = e.target.value;
+                setStatusFilter(isExpenseStatus(value) ? value : undefined);
                 setPage(0);
               }}
               className="input mt-1"
@@ -179,7 +269,7 @@ export default function ApprovalHistoryPage() {
                       <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
                         <div>
                           <p className="text-slate-500">Description</p>
-                          <p className="font-medium text-slate-900">{expense.description || "No description"}</p>
+                          <p className="font-medium text-slate-900">{expense.description ?? "No description"}</p>
                         </div>
                         <div>
                           <p className="text-slate-500">Submitted Date</p>
@@ -235,7 +325,7 @@ export default function ApprovalHistoryPage() {
                                       {action.action}
                                     </span>
                                   </div>
-                                  {action.comment && <p className="mt-1 italic text-slate-700">"{action.comment}"</p>}
+                                  {action.comment && <p className="mt-1 italic text-slate-700">{action.comment}</p>}
                                   <p className="mt-1 text-xs text-slate-500">
                                     {dateTimeFmt.format(new Date(action.createdAt))}
                                   </p>
