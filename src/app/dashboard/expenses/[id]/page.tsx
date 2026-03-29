@@ -62,6 +62,13 @@ export default function ExpenseDetailPage() {
     },
   });
 
+  const overrideMutation = api.approval.override.useMutation({
+    onSuccess: () => {
+      void utils.expense.getById.invalidate({ id: params.id as string });
+      void utils.expense.listPending.invalidate();
+    },
+  });
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20 text-slate-400">
@@ -187,7 +194,7 @@ export default function ExpenseDetailPage() {
             </div>
             {expense.convertedAmount && (
               <div className="text-sm text-slate-500">
-                ≈ ₹{Number(expense.convertedAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                Converted from {expense.currencyId}
                 <span className="text-xs text-slate-400 ml-1">
                   (rate: {Number(expense.exchangeRate).toFixed(4)})
                 </span>
@@ -198,7 +205,7 @@ export default function ExpenseDetailPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-3 border-t border-slate-200">
+        <div className="flex flex-wrap gap-3 pt-3 border-t border-slate-200">
           {isDraft && isOwner && (
             <>
               <Link
@@ -244,6 +251,39 @@ export default function ExpenseDetailPage() {
                 className="btn btn-danger"
               >
                 {rejectMutation.isPending ? "Rejecting..." : "✗ Reject"}
+              </button>
+            </>
+          )}
+          {session?.user?.role === "ADMIN" && (expense.status === "SUBMITTED" || expense.status === "UNDER_REVIEW") && (
+            <>
+              <button
+                onClick={() =>
+                  overrideMutation.mutate({
+                    expenseId: expense.id,
+                    action: "APPROVED",
+                    comment: "Admin approved",
+                  })
+                }
+                disabled={overrideMutation.isPending}
+                className="btn bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                {overrideMutation.isPending ? "Overriding..." : "⚡ Admin Approve"}
+              </button>
+              <button
+                onClick={() => {
+                  const reason = prompt("Override reason:");
+                  if (reason) {
+                    overrideMutation.mutate({
+                      expenseId: expense.id,
+                      action: "REJECTED",
+                      comment: reason,
+                    });
+                  }
+                }}
+                disabled={overrideMutation.isPending}
+                className="btn bg-red-600 hover:bg-red-700 text-white"
+              >
+                {overrideMutation.isPending ? "Overriding..." : "⚡ Admin Reject"}
               </button>
             </>
           )}
