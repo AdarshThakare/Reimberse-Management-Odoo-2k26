@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
 
 interface CountryCurrency {
   countryName: string;
@@ -11,6 +12,7 @@ interface CountryCurrency {
 }
 
 export default function SetupPage() {
+  const router = useRouter();
   const [companyName, setCompanyName] = useState("");
   const [adminName, setAdminName] = useState("");
   const [search, setSearch] = useState("");
