@@ -261,10 +261,10 @@ body {
   border-bottom: 1px solid rgba(33, 33, 47, 0.08);
 }
 .table-container th {
-  @apply px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-widest text-text-muted;
+  @apply px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-widest text-text-muted whitespace-nowrap;
 }
 .table-container td {
-  @apply px-5 py-4 text-text-secondary;
+  @apply px-5 py-4 text-text-secondary whitespace-nowrap;
 }
 .table-container tbody tr {
   @apply transition-all duration-200;
