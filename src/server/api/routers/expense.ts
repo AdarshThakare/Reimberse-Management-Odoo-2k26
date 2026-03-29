@@ -387,4 +387,170 @@ export const expenseRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
       });
     }),
+
+  /**
+   * Get complete expense history for admin dashboard.
+   * Shows all expenses in the company with full approval chain.
+   * Admin only.
+   */
+  getCompanyExpenseHistory: adminProcedure
+    .input(
+      z
+        .object({
+          status: z
+            .enum(["DRAFT", "SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED"])
+            .optional(),
+          submitterId: z.string().optional(),
+          startDate: z.string().datetime().optional(),
+          endDate: z.string().datetime().optional(),
+          skip: z.number().int().min(0).default(0),
+          take: z.number().int().min(1).max(100).default(50),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      const where = {
+        submitter: { companyId: ctx.session.user.companyId! },
+        ...(input?.status ? { status: input.status } : {}),
+        ...(input?.submitterId ? { submitterId: input.submitterId } : {}),
+        ...(input?.startDate || input?.endDate
+          ? {
+              createdAt: {
+                ...(input?.startDate ? { gte: new Date(input.startDate) } : {}),
+                ...(input?.endDate ? { lte: new Date(input.endDate) } : {}),
+              },
+            }
+          : {}),
+      };
+
+      const [expenses, total] = await Promise.all([
+        ctx.db.expense.findMany({
+          where,
+          include: {
+            category: true,
+            currency: true,
+            submitter: {
+              select: { id: true, name: true, email: true, designation: true },
+            },
+            approvalRule: {
+              include: {
+                steps: {
+                  include: {
+                    approver: {
+                      select: { id: true, name: true, designation: true },
+                    },
+                  },
+                  orderBy: { stepOrder: "asc" },
+                },
+              },
+            },
+            approvalActions: {
+              include: {
+                approver: {
+                  select: { id: true, name: true, designation: true, email: true },
+                },
+              },
+              orderBy: { createdAt: "asc" },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          skip: input?.skip,
+          take: input?.take,
+        }),
+        ctx.db.expense.count({ where }),
+      ]);
+
+      return {
+        expenses,
+        total,
+        hasMore: (input?.skip ?? 0) + expenses.length < total,
+      };
+    }),
+
+  /**
+   * Get approval history for a manager.
+   * Shows all expenses that this manager has approved or rejected.
+   * Manager or Admin only.
+   */
+  getManagerApprovalHistory: managerProcedure
+    .input(
+      z
+        .object({
+          action: z.enum(["APPROVED", "REJECTED"]).optional(),
+          status: z
+            .enum(["DRAFT", "SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED"])
+            .optional(),
+          submitterId: z.string().optional(),
+          startDate: z.string().datetime().optional(),
+          endDate: z.string().datetime().optional(),
+          skip: z.number().int().min(0).default(0),
+          take: z.number().int().min(1).max(100).default(50),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      // Get all expenses where this user has taken an action
+      const where = {
+        approvalActions: {
+          some: {
+            approverId: ctx.session.user.id,
+            ...(input?.action ? { action: input.action } : {}),
+          },
+        },
+        submitter: { companyId: ctx.session.user.companyId! },
+        ...(input?.status ? { status: input.status } : {}),
+        ...(input?.submitterId ? { submitterId: input.submitterId } : {}),
+        ...(input?.startDate || input?.endDate
+          ? {
+              createdAt: {
+                ...(input?.startDate ? { gte: new Date(input.startDate) } : {}),
+                ...(input?.endDate ? { lte: new Date(input.endDate) } : {}),
+              },
+            }
+          : {}),
+      };
+
+      const [expenses, total] = await Promise.all([
+        ctx.db.expense.findMany({
+          where,
+          include: {
+            category: true,
+            currency: true,
+            submitter: {
+              select: { id: true, name: true, email: true, designation: true },
+            },
+            approvalRule: {
+              include: {
+                steps: {
+                  include: {
+                    approver: {
+                      select: { id: true, name: true, designation: true },
+                    },
+                  },
+                  orderBy: { stepOrder: "asc" },
+                },
+              },
+            },
+            approvalActions: {
+              include: {
+                approver: {
+                  select: { id: true, name: true, designation: true, email: true },
+                },
+              },
+              orderBy: { createdAt: "asc" },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          skip: input?.skip,
+          take: input?.take,
+        }),
+        ctx.db.expense.count({ where }),
+      ]);
+
+      return {
+        expenses,
+        total,
+        hasMore: (input?.skip ?? 0) + expenses.length < total,
+      };
+    }),
 });
