@@ -235,6 +235,11 @@ export default function ApprovalRulesPage() {
                   {rule.ruleType !== "SEQUENTIAL" && rule.requiredPercent && (
                     <span className="badge badge-submitted">{rule.requiredPercent}% Required</span>
                   )}
+                  {rule._count.appliedUsers > 0 && (
+                    <span className="badge" style={{ background: "rgba(16, 185, 129, 0.08)", color: "#10B981", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
+                      {rule._count.appliedUsers} {rule._count.appliedUsers === 1 ? "Employee" : "Employees"}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -393,8 +398,26 @@ export default function ApprovalRulesPage() {
 
               <div className="mt-6 flex items-center justify-between border-t pt-4" style={{ borderColor: "rgba(33, 33, 47, 0.06)" }}>
                 <div className="text-sm text-text-muted">
-                  {rule._count.expenses} expenses
+                  {rule._count.expenses} {rule._count.expenses === 1 ? "expense" : "expenses"}
                 </div>
+                {rule.appliedUsers.length > 0 && (
+                   <div className="flex -space-x-2 overflow-hidden mr-auto ml-4">
+                    {rule.appliedUsers.slice(0, 3).map((u) => (
+                      <div 
+                        key={u.id}
+                        className="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600"
+                        title={u.name ?? "User"}
+                      >
+                        {u.name?.charAt(0).toUpperCase() ?? "U"}
+                      </div>
+                    ))}
+                    {rule.appliedUsers.length > 3 && (
+                      <div className="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                        +{rule.appliedUsers.length - 3}
+                      </div>
+                    )}
+                   </div>
+                )}
                 <Link
                   href={`/dashboard/rules/${rule.id}/edit`}
                   className="text-sm font-medium text-brand-600 hover:text-brand-700"

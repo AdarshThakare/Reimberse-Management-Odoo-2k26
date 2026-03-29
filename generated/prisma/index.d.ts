@@ -2176,11 +2176,13 @@ export namespace Prisma {
    */
 
   export type ApprovalRuleCountOutputType = {
+    appliedUsers: number
     steps: number
     expenses: number
   }
 
   export type ApprovalRuleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    appliedUsers?: boolean | ApprovalRuleCountOutputTypeCountAppliedUsersArgs
     steps?: boolean | ApprovalRuleCountOutputTypeCountStepsArgs
     expenses?: boolean | ApprovalRuleCountOutputTypeCountExpensesArgs
   }
@@ -2194,6 +2196,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the ApprovalRuleCountOutputType
      */
     select?: ApprovalRuleCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ApprovalRuleCountOutputType without action
+   */
+  export type ApprovalRuleCountOutputTypeCountAppliedUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
   }
 
   /**
@@ -5599,6 +5608,7 @@ export namespace Prisma {
     designation: string | null
     companyId: string | null
     managerId: string | null
+    approvalRuleId: string | null
     isActive: boolean | null
   }
 
@@ -5612,6 +5622,7 @@ export namespace Prisma {
     designation: string | null
     companyId: string | null
     managerId: string | null
+    approvalRuleId: string | null
     isActive: boolean | null
   }
 
@@ -5625,6 +5636,7 @@ export namespace Prisma {
     designation: number
     companyId: number
     managerId: number
+    approvalRuleId: number
     isActive: number
     _all: number
   }
@@ -5640,6 +5652,7 @@ export namespace Prisma {
     designation?: true
     companyId?: true
     managerId?: true
+    approvalRuleId?: true
     isActive?: true
   }
 
@@ -5653,6 +5666,7 @@ export namespace Prisma {
     designation?: true
     companyId?: true
     managerId?: true
+    approvalRuleId?: true
     isActive?: true
   }
 
@@ -5666,6 +5680,7 @@ export namespace Prisma {
     designation?: true
     companyId?: true
     managerId?: true
+    approvalRuleId?: true
     isActive?: true
     _all?: true
   }
@@ -5752,6 +5767,7 @@ export namespace Prisma {
     designation: string | null
     companyId: string | null
     managerId: string | null
+    approvalRuleId: string | null
     isActive: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
@@ -5782,10 +5798,12 @@ export namespace Prisma {
     designation?: boolean
     companyId?: boolean
     managerId?: boolean
+    approvalRuleId?: boolean
     isActive?: boolean
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
     subordinates?: boolean | User$subordinatesArgs<ExtArgs>
+    approvalRule?: boolean | User$approvalRuleArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     expenses?: boolean | User$expensesArgs<ExtArgs>
@@ -5805,9 +5823,11 @@ export namespace Prisma {
     designation?: boolean
     companyId?: boolean
     managerId?: boolean
+    approvalRuleId?: boolean
     isActive?: boolean
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
+    approvalRule?: boolean | User$approvalRuleArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5820,9 +5840,11 @@ export namespace Prisma {
     designation?: boolean
     companyId?: boolean
     managerId?: boolean
+    approvalRuleId?: boolean
     isActive?: boolean
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
+    approvalRule?: boolean | User$approvalRuleArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -5835,14 +5857,16 @@ export namespace Prisma {
     designation?: boolean
     companyId?: boolean
     managerId?: boolean
+    approvalRuleId?: boolean
     isActive?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "role" | "designation" | "companyId" | "managerId" | "isActive", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "role" | "designation" | "companyId" | "managerId" | "approvalRuleId" | "isActive", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
     subordinates?: boolean | User$subordinatesArgs<ExtArgs>
+    approvalRule?: boolean | User$approvalRuleArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     expenses?: boolean | User$expensesArgs<ExtArgs>
@@ -5854,10 +5878,12 @@ export namespace Prisma {
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
+    approvalRule?: boolean | User$approvalRuleArgs<ExtArgs>
   }
   export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     company?: boolean | User$companyArgs<ExtArgs>
     manager?: boolean | User$managerArgs<ExtArgs>
+    approvalRule?: boolean | User$approvalRuleArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5866,6 +5892,7 @@ export namespace Prisma {
       company: Prisma.$CompanyPayload<ExtArgs> | null
       manager: Prisma.$UserPayload<ExtArgs> | null
       subordinates: Prisma.$UserPayload<ExtArgs>[]
+      approvalRule: Prisma.$ApprovalRulePayload<ExtArgs> | null
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       expenses: Prisma.$ExpensePayload<ExtArgs>[]
@@ -5883,6 +5910,7 @@ export namespace Prisma {
       designation: string | null
       companyId: string | null
       managerId: string | null
+      approvalRuleId: string | null
       isActive: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -6281,6 +6309,7 @@ export namespace Prisma {
     company<T extends User$companyArgs<ExtArgs> = {}>(args?: Subset<T, User$companyArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     manager<T extends User$managerArgs<ExtArgs> = {}>(args?: Subset<T, User$managerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     subordinates<T extends User$subordinatesArgs<ExtArgs> = {}>(args?: Subset<T, User$subordinatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    approvalRule<T extends User$approvalRuleArgs<ExtArgs> = {}>(args?: Subset<T, User$approvalRuleArgs<ExtArgs>>): Prisma__ApprovalRuleClient<$Result.GetResult<Prisma.$ApprovalRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     expenses<T extends User$expensesArgs<ExtArgs> = {}>(args?: Subset<T, User$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6325,6 +6354,7 @@ export namespace Prisma {
     readonly designation: FieldRef<"User", 'String'>
     readonly companyId: FieldRef<"User", 'String'>
     readonly managerId: FieldRef<"User", 'String'>
+    readonly approvalRuleId: FieldRef<"User", 'String'>
     readonly isActive: FieldRef<"User", 'Boolean'>
   }
     
@@ -6786,6 +6816,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * User.approvalRule
+   */
+  export type User$approvalRuleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApprovalRule
+     */
+    select?: ApprovalRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApprovalRule
+     */
+    omit?: ApprovalRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApprovalRuleInclude<ExtArgs> | null
+    where?: ApprovalRuleWhereInput
   }
 
   /**
@@ -9643,6 +9692,7 @@ export namespace Prisma {
     updatedAt?: boolean
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     specificApprover?: boolean | ApprovalRule$specificApproverArgs<ExtArgs>
+    appliedUsers?: boolean | ApprovalRule$appliedUsersArgs<ExtArgs>
     steps?: boolean | ApprovalRule$stepsArgs<ExtArgs>
     expenses?: boolean | ApprovalRule$expensesArgs<ExtArgs>
     _count?: boolean | ApprovalRuleCountOutputTypeDefaultArgs<ExtArgs>
@@ -9698,6 +9748,7 @@ export namespace Prisma {
   export type ApprovalRuleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     company?: boolean | CompanyDefaultArgs<ExtArgs>
     specificApprover?: boolean | ApprovalRule$specificApproverArgs<ExtArgs>
+    appliedUsers?: boolean | ApprovalRule$appliedUsersArgs<ExtArgs>
     steps?: boolean | ApprovalRule$stepsArgs<ExtArgs>
     expenses?: boolean | ApprovalRule$expensesArgs<ExtArgs>
     _count?: boolean | ApprovalRuleCountOutputTypeDefaultArgs<ExtArgs>
@@ -9716,6 +9767,7 @@ export namespace Prisma {
     objects: {
       company: Prisma.$CompanyPayload<ExtArgs>
       specificApprover: Prisma.$UserPayload<ExtArgs> | null
+      appliedUsers: Prisma.$UserPayload<ExtArgs>[]
       steps: Prisma.$ApprovalStepPayload<ExtArgs>[]
       expenses: Prisma.$ExpensePayload<ExtArgs>[]
     }
@@ -10127,6 +10179,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     specificApprover<T extends ApprovalRule$specificApproverArgs<ExtArgs> = {}>(args?: Subset<T, ApprovalRule$specificApproverArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    appliedUsers<T extends ApprovalRule$appliedUsersArgs<ExtArgs> = {}>(args?: Subset<T, ApprovalRule$appliedUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     steps<T extends ApprovalRule$stepsArgs<ExtArgs> = {}>(args?: Subset<T, ApprovalRule$stepsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalStepPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     expenses<T extends ApprovalRule$expensesArgs<ExtArgs> = {}>(args?: Subset<T, ApprovalRule$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -10586,6 +10639,30 @@ export namespace Prisma {
      */
     include?: UserInclude<ExtArgs> | null
     where?: UserWhereInput
+  }
+
+  /**
+   * ApprovalRule.appliedUsers
+   */
+  export type ApprovalRule$appliedUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
   /**
@@ -16163,6 +16240,7 @@ export namespace Prisma {
     designation: 'designation',
     companyId: 'companyId',
     managerId: 'managerId',
+    approvalRuleId: 'approvalRuleId',
     isActive: 'isActive'
   };
 
@@ -16638,10 +16716,12 @@ export namespace Prisma {
     designation?: StringNullableFilter<"User"> | string | null
     companyId?: StringNullableFilter<"User"> | string | null
     managerId?: StringNullableFilter<"User"> | string | null
+    approvalRuleId?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     manager?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     subordinates?: UserListRelationFilter
+    approvalRule?: XOR<ApprovalRuleNullableScalarRelationFilter, ApprovalRuleWhereInput> | null
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     expenses?: ExpenseListRelationFilter
@@ -16660,10 +16740,12 @@ export namespace Prisma {
     designation?: SortOrderInput | SortOrder
     companyId?: SortOrderInput | SortOrder
     managerId?: SortOrderInput | SortOrder
+    approvalRuleId?: SortOrderInput | SortOrder
     isActive?: SortOrder
     company?: CompanyOrderByWithRelationInput
     manager?: UserOrderByWithRelationInput
     subordinates?: UserOrderByRelationAggregateInput
+    approvalRule?: ApprovalRuleOrderByWithRelationInput
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     expenses?: ExpenseOrderByRelationAggregateInput
@@ -16685,10 +16767,12 @@ export namespace Prisma {
     designation?: StringNullableFilter<"User"> | string | null
     companyId?: StringNullableFilter<"User"> | string | null
     managerId?: StringNullableFilter<"User"> | string | null
+    approvalRuleId?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
     company?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     manager?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     subordinates?: UserListRelationFilter
+    approvalRule?: XOR<ApprovalRuleNullableScalarRelationFilter, ApprovalRuleWhereInput> | null
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     expenses?: ExpenseListRelationFilter
@@ -16707,6 +16791,7 @@ export namespace Prisma {
     designation?: SortOrderInput | SortOrder
     companyId?: SortOrderInput | SortOrder
     managerId?: SortOrderInput | SortOrder
+    approvalRuleId?: SortOrderInput | SortOrder
     isActive?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -16726,6 +16811,7 @@ export namespace Prisma {
     designation?: StringNullableWithAggregatesFilter<"User"> | string | null
     companyId?: StringNullableWithAggregatesFilter<"User"> | string | null
     managerId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    approvalRuleId?: StringNullableWithAggregatesFilter<"User"> | string | null
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
@@ -16939,6 +17025,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ApprovalRule"> | Date | string
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     specificApprover?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    appliedUsers?: UserListRelationFilter
     steps?: ApprovalStepListRelationFilter
     expenses?: ExpenseListRelationFilter
   }
@@ -16957,6 +17044,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     company?: CompanyOrderByWithRelationInput
     specificApprover?: UserOrderByWithRelationInput
+    appliedUsers?: UserOrderByRelationAggregateInput
     steps?: ApprovalStepOrderByRelationAggregateInput
     expenses?: ExpenseOrderByRelationAggregateInput
   }
@@ -16978,6 +17066,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ApprovalRule"> | Date | string
     company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
     specificApprover?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    appliedUsers?: UserListRelationFilter
     steps?: ApprovalStepListRelationFilter
     expenses?: ExpenseListRelationFilter
   }, "id">
@@ -17531,6 +17620,7 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
@@ -17549,6 +17639,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -17571,6 +17662,7 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
@@ -17589,6 +17681,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -17609,6 +17702,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
   }
 
@@ -17633,6 +17727,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -17854,6 +17949,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutApprovalRulesInput
     specificApprover?: UserCreateNestedOneWithoutSpecificApproverForInput
+    appliedUsers?: UserCreateNestedManyWithoutApprovalRuleInput
     steps?: ApprovalStepCreateNestedManyWithoutApprovalRuleInput
     expenses?: ExpenseCreateNestedManyWithoutApprovalRuleInput
   }
@@ -17870,6 +17966,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    appliedUsers?: UserUncheckedCreateNestedManyWithoutApprovalRuleInput
     steps?: ApprovalStepUncheckedCreateNestedManyWithoutApprovalRuleInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutApprovalRuleInput
   }
@@ -17886,6 +17983,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutApprovalRulesNestedInput
     specificApprover?: UserUpdateOneWithoutSpecificApproverForNestedInput
+    appliedUsers?: UserUpdateManyWithoutApprovalRuleNestedInput
     steps?: ApprovalStepUpdateManyWithoutApprovalRuleNestedInput
     expenses?: ExpenseUpdateManyWithoutApprovalRuleNestedInput
   }
@@ -17902,6 +18000,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appliedUsers?: UserUncheckedUpdateManyWithoutApprovalRuleNestedInput
     steps?: ApprovalStepUncheckedUpdateManyWithoutApprovalRuleNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutApprovalRuleNestedInput
   }
@@ -18542,6 +18641,11 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
+  export type ApprovalRuleNullableScalarRelationFilter = {
+    is?: ApprovalRuleWhereInput | null
+    isNot?: ApprovalRuleWhereInput | null
+  }
+
   export type AccountListRelationFilter = {
     every?: AccountWhereInput
     some?: AccountWhereInput
@@ -18597,6 +18701,7 @@ export namespace Prisma {
     designation?: SortOrder
     companyId?: SortOrder
     managerId?: SortOrder
+    approvalRuleId?: SortOrder
     isActive?: SortOrder
   }
 
@@ -18610,6 +18715,7 @@ export namespace Prisma {
     designation?: SortOrder
     companyId?: SortOrder
     managerId?: SortOrder
+    approvalRuleId?: SortOrder
     isActive?: SortOrder
   }
 
@@ -18623,6 +18729,7 @@ export namespace Prisma {
     designation?: SortOrder
     companyId?: SortOrder
     managerId?: SortOrder
+    approvalRuleId?: SortOrder
     isActive?: SortOrder
   }
 
@@ -18747,11 +18854,6 @@ export namespace Prisma {
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
-  }
-
-  export type ApprovalRuleNullableScalarRelationFilter = {
-    is?: ApprovalRuleWhereInput | null
-    isNot?: ApprovalRuleWhereInput | null
   }
 
   export type ExpenseCountOrderByAggregateInput = {
@@ -19493,6 +19595,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
+  export type ApprovalRuleCreateNestedOneWithoutAppliedUsersInput = {
+    create?: XOR<ApprovalRuleCreateWithoutAppliedUsersInput, ApprovalRuleUncheckedCreateWithoutAppliedUsersInput>
+    connectOrCreate?: ApprovalRuleCreateOrConnectWithoutAppliedUsersInput
+    connect?: ApprovalRuleWhereUniqueInput
+  }
+
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -19632,6 +19740,16 @@ export namespace Prisma {
     update?: UserUpdateWithWhereUniqueWithoutManagerInput | UserUpdateWithWhereUniqueWithoutManagerInput[]
     updateMany?: UserUpdateManyWithWhereWithoutManagerInput | UserUpdateManyWithWhereWithoutManagerInput[]
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput = {
+    create?: XOR<ApprovalRuleCreateWithoutAppliedUsersInput, ApprovalRuleUncheckedCreateWithoutAppliedUsersInput>
+    connectOrCreate?: ApprovalRuleCreateOrConnectWithoutAppliedUsersInput
+    upsert?: ApprovalRuleUpsertWithoutAppliedUsersInput
+    disconnect?: ApprovalRuleWhereInput | boolean
+    delete?: ApprovalRuleWhereInput | boolean
+    connect?: ApprovalRuleWhereUniqueInput
+    update?: XOR<XOR<ApprovalRuleUpdateToOneWithWhereWithoutAppliedUsersInput, ApprovalRuleUpdateWithoutAppliedUsersInput>, ApprovalRuleUncheckedUpdateWithoutAppliedUsersInput>
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -20004,6 +20122,13 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type UserCreateNestedManyWithoutApprovalRuleInput = {
+    create?: XOR<UserCreateWithoutApprovalRuleInput, UserUncheckedCreateWithoutApprovalRuleInput> | UserCreateWithoutApprovalRuleInput[] | UserUncheckedCreateWithoutApprovalRuleInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutApprovalRuleInput | UserCreateOrConnectWithoutApprovalRuleInput[]
+    createMany?: UserCreateManyApprovalRuleInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
   export type ApprovalStepCreateNestedManyWithoutApprovalRuleInput = {
     create?: XOR<ApprovalStepCreateWithoutApprovalRuleInput, ApprovalStepUncheckedCreateWithoutApprovalRuleInput> | ApprovalStepCreateWithoutApprovalRuleInput[] | ApprovalStepUncheckedCreateWithoutApprovalRuleInput[]
     connectOrCreate?: ApprovalStepCreateOrConnectWithoutApprovalRuleInput | ApprovalStepCreateOrConnectWithoutApprovalRuleInput[]
@@ -20016,6 +20141,13 @@ export namespace Prisma {
     connectOrCreate?: ExpenseCreateOrConnectWithoutApprovalRuleInput | ExpenseCreateOrConnectWithoutApprovalRuleInput[]
     createMany?: ExpenseCreateManyApprovalRuleInputEnvelope
     connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutApprovalRuleInput = {
+    create?: XOR<UserCreateWithoutApprovalRuleInput, UserUncheckedCreateWithoutApprovalRuleInput> | UserCreateWithoutApprovalRuleInput[] | UserUncheckedCreateWithoutApprovalRuleInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutApprovalRuleInput | UserCreateOrConnectWithoutApprovalRuleInput[]
+    createMany?: UserCreateManyApprovalRuleInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type ApprovalStepUncheckedCreateNestedManyWithoutApprovalRuleInput = {
@@ -20054,6 +20186,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSpecificApproverForInput, UserUpdateWithoutSpecificApproverForInput>, UserUncheckedUpdateWithoutSpecificApproverForInput>
   }
 
+  export type UserUpdateManyWithoutApprovalRuleNestedInput = {
+    create?: XOR<UserCreateWithoutApprovalRuleInput, UserUncheckedCreateWithoutApprovalRuleInput> | UserCreateWithoutApprovalRuleInput[] | UserUncheckedCreateWithoutApprovalRuleInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutApprovalRuleInput | UserCreateOrConnectWithoutApprovalRuleInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutApprovalRuleInput | UserUpsertWithWhereUniqueWithoutApprovalRuleInput[]
+    createMany?: UserCreateManyApprovalRuleInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutApprovalRuleInput | UserUpdateWithWhereUniqueWithoutApprovalRuleInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutApprovalRuleInput | UserUpdateManyWithWhereWithoutApprovalRuleInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
   export type ApprovalStepUpdateManyWithoutApprovalRuleNestedInput = {
     create?: XOR<ApprovalStepCreateWithoutApprovalRuleInput, ApprovalStepUncheckedCreateWithoutApprovalRuleInput> | ApprovalStepCreateWithoutApprovalRuleInput[] | ApprovalStepUncheckedCreateWithoutApprovalRuleInput[]
     connectOrCreate?: ApprovalStepCreateOrConnectWithoutApprovalRuleInput | ApprovalStepCreateOrConnectWithoutApprovalRuleInput[]
@@ -20080,6 +20226,20 @@ export namespace Prisma {
     update?: ExpenseUpdateWithWhereUniqueWithoutApprovalRuleInput | ExpenseUpdateWithWhereUniqueWithoutApprovalRuleInput[]
     updateMany?: ExpenseUpdateManyWithWhereWithoutApprovalRuleInput | ExpenseUpdateManyWithWhereWithoutApprovalRuleInput[]
     deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutApprovalRuleNestedInput = {
+    create?: XOR<UserCreateWithoutApprovalRuleInput, UserUncheckedCreateWithoutApprovalRuleInput> | UserCreateWithoutApprovalRuleInput[] | UserUncheckedCreateWithoutApprovalRuleInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutApprovalRuleInput | UserCreateOrConnectWithoutApprovalRuleInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutApprovalRuleInput | UserUpsertWithWhereUniqueWithoutApprovalRuleInput[]
+    createMany?: UserCreateManyApprovalRuleInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutApprovalRuleInput | UserUpdateWithWhereUniqueWithoutApprovalRuleInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutApprovalRuleInput | UserUpdateManyWithWhereWithoutApprovalRuleInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type ApprovalStepUncheckedUpdateManyWithoutApprovalRuleNestedInput = {
@@ -20812,6 +20972,7 @@ export namespace Prisma {
     isActive?: boolean
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
@@ -20829,6 +20990,7 @@ export namespace Prisma {
     role?: $Enums.Role
     designation?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -20886,6 +21048,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     specificApprover?: UserCreateNestedOneWithoutSpecificApproverForInput
+    appliedUsers?: UserCreateNestedManyWithoutApprovalRuleInput
     steps?: ApprovalStepCreateNestedManyWithoutApprovalRuleInput
     expenses?: ExpenseCreateNestedManyWithoutApprovalRuleInput
   }
@@ -20901,6 +21064,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    appliedUsers?: UserUncheckedCreateNestedManyWithoutApprovalRuleInput
     steps?: ApprovalStepUncheckedCreateNestedManyWithoutApprovalRuleInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutApprovalRuleInput
   }
@@ -20971,6 +21135,7 @@ export namespace Prisma {
     designation?: StringNullableFilter<"User"> | string | null
     companyId?: StringNullableFilter<"User"> | string | null
     managerId?: StringNullableFilter<"User"> | string | null
+    approvalRuleId?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
   }
 
@@ -21072,6 +21237,7 @@ export namespace Prisma {
     isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
@@ -21090,6 +21256,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -21115,6 +21282,7 @@ export namespace Prisma {
     isActive?: boolean
     company?: CompanyCreateNestedOneWithoutUsersInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
@@ -21132,6 +21300,7 @@ export namespace Prisma {
     role?: $Enums.Role
     designation?: string | null
     companyId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21150,6 +21319,43 @@ export namespace Prisma {
   export type UserCreateManyManagerInputEnvelope = {
     data: UserCreateManyManagerInput | UserCreateManyManagerInput[]
     skipDuplicates?: boolean
+  }
+
+  export type ApprovalRuleCreateWithoutAppliedUsersInput = {
+    id?: string
+    name: string
+    ruleType?: $Enums.ApprovalRuleType
+    requiredPercent?: number | null
+    isManagerFirst?: boolean
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutApprovalRulesInput
+    specificApprover?: UserCreateNestedOneWithoutSpecificApproverForInput
+    steps?: ApprovalStepCreateNestedManyWithoutApprovalRuleInput
+    expenses?: ExpenseCreateNestedManyWithoutApprovalRuleInput
+  }
+
+  export type ApprovalRuleUncheckedCreateWithoutAppliedUsersInput = {
+    id?: string
+    name: string
+    companyId: string
+    ruleType?: $Enums.ApprovalRuleType
+    requiredPercent?: number | null
+    specificApproverId?: string | null
+    isManagerFirst?: boolean
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    steps?: ApprovalStepUncheckedCreateNestedManyWithoutApprovalRuleInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutApprovalRuleInput
+  }
+
+  export type ApprovalRuleCreateOrConnectWithoutAppliedUsersInput = {
+    where: ApprovalRuleWhereUniqueInput
+    create: XOR<ApprovalRuleCreateWithoutAppliedUsersInput, ApprovalRuleUncheckedCreateWithoutAppliedUsersInput>
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -21327,6 +21533,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutApprovalRulesInput
+    appliedUsers?: UserCreateNestedManyWithoutApprovalRuleInput
     steps?: ApprovalStepCreateNestedManyWithoutApprovalRuleInput
     expenses?: ExpenseCreateNestedManyWithoutApprovalRuleInput
   }
@@ -21342,6 +21549,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    appliedUsers?: UserUncheckedCreateNestedManyWithoutApprovalRuleInput
     steps?: ApprovalStepUncheckedCreateNestedManyWithoutApprovalRuleInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutApprovalRuleInput
   }
@@ -21411,6 +21619,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
@@ -21429,6 +21638,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -21452,6 +21662,49 @@ export namespace Prisma {
   export type UserUpdateManyWithWhereWithoutManagerInput = {
     where: UserScalarWhereInput
     data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutManagerInput>
+  }
+
+  export type ApprovalRuleUpsertWithoutAppliedUsersInput = {
+    update: XOR<ApprovalRuleUpdateWithoutAppliedUsersInput, ApprovalRuleUncheckedUpdateWithoutAppliedUsersInput>
+    create: XOR<ApprovalRuleCreateWithoutAppliedUsersInput, ApprovalRuleUncheckedCreateWithoutAppliedUsersInput>
+    where?: ApprovalRuleWhereInput
+  }
+
+  export type ApprovalRuleUpdateToOneWithWhereWithoutAppliedUsersInput = {
+    where?: ApprovalRuleWhereInput
+    data: XOR<ApprovalRuleUpdateWithoutAppliedUsersInput, ApprovalRuleUncheckedUpdateWithoutAppliedUsersInput>
+  }
+
+  export type ApprovalRuleUpdateWithoutAppliedUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ruleType?: EnumApprovalRuleTypeFieldUpdateOperationsInput | $Enums.ApprovalRuleType
+    requiredPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    isManagerFirst?: BoolFieldUpdateOperationsInput | boolean
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutApprovalRulesNestedInput
+    specificApprover?: UserUpdateOneWithoutSpecificApproverForNestedInput
+    steps?: ApprovalStepUpdateManyWithoutApprovalRuleNestedInput
+    expenses?: ExpenseUpdateManyWithoutApprovalRuleNestedInput
+  }
+
+  export type ApprovalRuleUncheckedUpdateWithoutAppliedUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    ruleType?: EnumApprovalRuleTypeFieldUpdateOperationsInput | $Enums.ApprovalRuleType
+    requiredPercent?: NullableIntFieldUpdateOperationsInput | number | null
+    specificApproverId?: NullableStringFieldUpdateOperationsInput | string | null
+    isManagerFirst?: BoolFieldUpdateOperationsInput | boolean
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    steps?: ApprovalStepUncheckedUpdateManyWithoutApprovalRuleNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutApprovalRuleNestedInput
   }
 
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
@@ -21763,6 +22016,7 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     approvalActions?: ApprovalActionCreateNestedManyWithoutApproverInput
@@ -21780,6 +22034,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21827,6 +22082,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutApprovalRulesInput
     specificApprover?: UserCreateNestedOneWithoutSpecificApproverForInput
+    appliedUsers?: UserCreateNestedManyWithoutApprovalRuleInput
     steps?: ApprovalStepCreateNestedManyWithoutApprovalRuleInput
   }
 
@@ -21842,6 +22098,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    appliedUsers?: UserUncheckedCreateNestedManyWithoutApprovalRuleInput
     steps?: ApprovalStepUncheckedCreateNestedManyWithoutApprovalRuleInput
   }
 
@@ -21928,6 +22185,7 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     approvalActions?: ApprovalActionUpdateManyWithoutApproverNestedInput
@@ -21945,6 +22203,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22004,6 +22263,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutApprovalRulesNestedInput
     specificApprover?: UserUpdateOneWithoutSpecificApproverForNestedInput
+    appliedUsers?: UserUpdateManyWithoutApprovalRuleNestedInput
     steps?: ApprovalStepUpdateManyWithoutApprovalRuleNestedInput
   }
 
@@ -22019,6 +22279,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appliedUsers?: UserUncheckedUpdateManyWithoutApprovalRuleNestedInput
     steps?: ApprovalStepUncheckedUpdateManyWithoutApprovalRuleNestedInput
   }
 
@@ -22077,6 +22338,7 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
@@ -22094,6 +22356,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22106,6 +22369,56 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutSpecificApproverForInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutSpecificApproverForInput, UserUncheckedCreateWithoutSpecificApproverForInput>
+  }
+
+  export type UserCreateWithoutApprovalRuleInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    image?: string | null
+    role?: $Enums.Role
+    designation?: string | null
+    isActive?: boolean
+    company?: CompanyCreateNestedOneWithoutUsersInput
+    manager?: UserCreateNestedOneWithoutSubordinatesInput
+    subordinates?: UserCreateNestedManyWithoutManagerInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
+    approvalActions?: ApprovalActionCreateNestedManyWithoutApproverInput
+    approvalSteps?: ApprovalStepCreateNestedManyWithoutApproverInput
+    specificApproverFor?: ApprovalRuleCreateNestedManyWithoutSpecificApproverInput
+  }
+
+  export type UserUncheckedCreateWithoutApprovalRuleInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    image?: string | null
+    role?: $Enums.Role
+    designation?: string | null
+    companyId?: string | null
+    managerId?: string | null
+    isActive?: boolean
+    subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    expenses?: ExpenseUncheckedCreateNestedManyWithoutSubmitterInput
+    approvalActions?: ApprovalActionUncheckedCreateNestedManyWithoutApproverInput
+    approvalSteps?: ApprovalStepUncheckedCreateNestedManyWithoutApproverInput
+    specificApproverFor?: ApprovalRuleUncheckedCreateNestedManyWithoutSpecificApproverInput
+  }
+
+  export type UserCreateOrConnectWithoutApprovalRuleInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutApprovalRuleInput, UserUncheckedCreateWithoutApprovalRuleInput>
+  }
+
+  export type UserCreateManyApprovalRuleInputEnvelope = {
+    data: UserCreateManyApprovalRuleInput | UserCreateManyApprovalRuleInput[]
+    skipDuplicates?: boolean
   }
 
   export type ApprovalStepCreateWithoutApprovalRuleInput = {
@@ -22238,6 +22551,7 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
@@ -22255,6 +22569,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22262,6 +22577,22 @@ export namespace Prisma {
     expenses?: ExpenseUncheckedUpdateManyWithoutSubmitterNestedInput
     approvalActions?: ApprovalActionUncheckedUpdateManyWithoutApproverNestedInput
     approvalSteps?: ApprovalStepUncheckedUpdateManyWithoutApproverNestedInput
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutApprovalRuleInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutApprovalRuleInput, UserUncheckedUpdateWithoutApprovalRuleInput>
+    create: XOR<UserCreateWithoutApprovalRuleInput, UserUncheckedCreateWithoutApprovalRuleInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutApprovalRuleInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutApprovalRuleInput, UserUncheckedUpdateWithoutApprovalRuleInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutApprovalRuleInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutApprovalRuleInput>
   }
 
   export type ApprovalStepUpsertWithWhereUniqueWithoutApprovalRuleInput = {
@@ -22308,6 +22639,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     company: CompanyCreateNestedOneWithoutApprovalRulesInput
     specificApprover?: UserCreateNestedOneWithoutSpecificApproverForInput
+    appliedUsers?: UserCreateNestedManyWithoutApprovalRuleInput
     expenses?: ExpenseCreateNestedManyWithoutApprovalRuleInput
   }
 
@@ -22323,6 +22655,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    appliedUsers?: UserUncheckedCreateNestedManyWithoutApprovalRuleInput
     expenses?: ExpenseUncheckedCreateNestedManyWithoutApprovalRuleInput
   }
 
@@ -22343,6 +22676,7 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
@@ -22360,6 +22694,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22397,6 +22732,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutApprovalRulesNestedInput
     specificApprover?: UserUpdateOneWithoutSpecificApproverForNestedInput
+    appliedUsers?: UserUpdateManyWithoutApprovalRuleNestedInput
     expenses?: ExpenseUpdateManyWithoutApprovalRuleNestedInput
   }
 
@@ -22412,6 +22748,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appliedUsers?: UserUncheckedUpdateManyWithoutApprovalRuleNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutApprovalRuleNestedInput
   }
 
@@ -22438,6 +22775,7 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
@@ -22455,6 +22793,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22523,6 +22862,7 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
@@ -22540,6 +22880,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22630,6 +22971,7 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
@@ -22647,6 +22989,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22668,6 +23011,7 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
     approvalActions?: ApprovalActionCreateNestedManyWithoutApproverInput
@@ -22685,6 +23029,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -22722,6 +23067,7 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
     approvalActions?: ApprovalActionUpdateManyWithoutApproverNestedInput
@@ -22739,6 +23085,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -22760,6 +23107,7 @@ export namespace Prisma {
     company?: CompanyCreateNestedOneWithoutUsersInput
     manager?: UserCreateNestedOneWithoutSubordinatesInput
     subordinates?: UserCreateNestedManyWithoutManagerInput
+    approvalRule?: ApprovalRuleCreateNestedOneWithoutAppliedUsersInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     expenses?: ExpenseCreateNestedManyWithoutSubmitterInput
     approvalActions?: ApprovalActionCreateNestedManyWithoutApproverInput
@@ -22777,6 +23125,7 @@ export namespace Prisma {
     designation?: string | null
     companyId?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
     subordinates?: UserUncheckedCreateNestedManyWithoutManagerInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -22814,6 +23163,7 @@ export namespace Prisma {
     company?: CompanyUpdateOneWithoutUsersNestedInput
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
     approvalActions?: ApprovalActionUpdateManyWithoutApproverNestedInput
@@ -22831,6 +23181,7 @@ export namespace Prisma {
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -22997,6 +23348,7 @@ export namespace Prisma {
     role?: $Enums.Role
     designation?: string | null
     managerId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
   }
 
@@ -23031,6 +23383,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     manager?: UserUpdateOneWithoutSubordinatesNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
@@ -23048,6 +23401,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -23067,6 +23421,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -23104,6 +23459,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     specificApprover?: UserUpdateOneWithoutSpecificApproverForNestedInput
+    appliedUsers?: UserUpdateManyWithoutApprovalRuleNestedInput
     steps?: ApprovalStepUpdateManyWithoutApprovalRuleNestedInput
     expenses?: ExpenseUpdateManyWithoutApprovalRuleNestedInput
   }
@@ -23119,6 +23475,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appliedUsers?: UserUncheckedUpdateManyWithoutApprovalRuleNestedInput
     steps?: ApprovalStepUncheckedUpdateManyWithoutApprovalRuleNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutApprovalRuleNestedInput
   }
@@ -23145,6 +23502,7 @@ export namespace Prisma {
     role?: $Enums.Role
     designation?: string | null
     companyId?: string | null
+    approvalRuleId?: string | null
     isActive?: boolean
   }
 
@@ -23228,6 +23586,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     company?: CompanyUpdateOneWithoutUsersNestedInput
     subordinates?: UserUpdateManyWithoutManagerNestedInput
+    approvalRule?: ApprovalRuleUpdateOneWithoutAppliedUsersNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
@@ -23245,6 +23604,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -23264,6 +23624,7 @@ export namespace Prisma {
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     designation?: NullableStringFieldUpdateOperationsInput | string | null
     companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalRuleId?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -23448,6 +23809,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneRequiredWithoutApprovalRulesNestedInput
+    appliedUsers?: UserUpdateManyWithoutApprovalRuleNestedInput
     steps?: ApprovalStepUpdateManyWithoutApprovalRuleNestedInput
     expenses?: ExpenseUpdateManyWithoutApprovalRuleNestedInput
   }
@@ -23463,6 +23825,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appliedUsers?: UserUncheckedUpdateManyWithoutApprovalRuleNestedInput
     steps?: ApprovalStepUncheckedUpdateManyWithoutApprovalRuleNestedInput
     expenses?: ExpenseUncheckedUpdateManyWithoutApprovalRuleNestedInput
   }
@@ -23598,6 +23961,19 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserCreateManyApprovalRuleInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    image?: string | null
+    role?: $Enums.Role
+    designation?: string | null
+    companyId?: string | null
+    managerId?: string | null
+    isActive?: boolean
+  }
+
   export type ApprovalStepCreateManyApprovalRuleInput = {
     id?: string
     approverId: string
@@ -23622,6 +23998,59 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     submittedAt?: Date | string | null
+  }
+
+  export type UserUpdateWithoutApprovalRuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    company?: CompanyUpdateOneWithoutUsersNestedInput
+    manager?: UserUpdateOneWithoutSubordinatesNestedInput
+    subordinates?: UserUpdateManyWithoutManagerNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUpdateManyWithoutSubmitterNestedInput
+    approvalActions?: ApprovalActionUpdateManyWithoutApproverNestedInput
+    approvalSteps?: ApprovalStepUpdateManyWithoutApproverNestedInput
+    specificApproverFor?: ApprovalRuleUpdateManyWithoutSpecificApproverNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutApprovalRuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    subordinates?: UserUncheckedUpdateManyWithoutManagerNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    expenses?: ExpenseUncheckedUpdateManyWithoutSubmitterNestedInput
+    approvalActions?: ApprovalActionUncheckedUpdateManyWithoutApproverNestedInput
+    approvalSteps?: ApprovalStepUncheckedUpdateManyWithoutApproverNestedInput
+    specificApproverFor?: ApprovalRuleUncheckedUpdateManyWithoutSpecificApproverNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutApprovalRuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    designation?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    managerId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ApprovalStepUpdateWithoutApprovalRuleInput = {

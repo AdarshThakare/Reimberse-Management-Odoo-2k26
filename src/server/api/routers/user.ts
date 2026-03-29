@@ -40,6 +40,9 @@ export const userRouter = createTRPCRouter({
         manager: {
           select: { id: true, name: true, email: true, designation: true },
         },
+        approvalRule: {
+          select: { id: true, name: true },
+        },
         _count: { select: { subordinates: true, expenses: true } },
       },
       orderBy: { name: "asc" },
