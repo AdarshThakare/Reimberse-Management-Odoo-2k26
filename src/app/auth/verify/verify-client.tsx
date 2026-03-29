@@ -77,9 +77,9 @@ export function VerifyClientPage() {
           <span className="text-[1.6rem] font-extrabold tracking-tight text-white">REIM</span>
         </div>
 
-        <div className="flex flex-1 items-end justify-center">
+        <div className="flex flex-1 items-end justify-center lg:items-center">
           <div
-            className="animate-fade-in w-full max-w-100 rounded-t-2xl rounded-b-none p-4 sm:p-7"
+            className="animate-fade-in w-full max-w-100 rounded-t-2xl rounded-b-none p-4 sm:p-7 lg:rounded-2xl"
             style={{
               background: "#F6F8FC",
               boxShadow: "0 -30px 65px rgba(33, 33, 47, 0.45)",

@@ -108,7 +108,7 @@ export default function DashboardPage() {
         )}
         {role === "ADMIN" && (
           <StatCard
-            label="Company-Wide"
+            label="Company-wide Approvals"
             value={stats.companyTotal}
             gradient="linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(139, 92, 246, 0.02))"
             accentColor="#8B5CF6"

@@ -4,6 +4,7 @@ import Resend from "next-auth/providers/resend";
 
 import { db } from "~/server/db";
 import { env } from "~/env";
+import { sendMagicLinkEmail } from "~/server/services/email.service";
 import type { Role } from "../../../generated/prisma";
 
 /**
@@ -49,6 +50,12 @@ export const authConfig = {
     Resend({
       apiKey: env.AUTH_RESEND_KEY,
       from: env.EMAIL_FROM,
+      sendVerificationRequest: async ({ identifier, url }) => {
+        await sendMagicLinkEmail({
+          to: identifier,
+          url,
+        });
+      },
     }),
   ],
   adapter: PrismaAdapter(db) as NextAuthConfig["adapter"],
