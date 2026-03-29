@@ -157,7 +157,7 @@ export default function DashboardPage() {
           </Link>
 
           <Link
-            href="/dashboard/expenses"
+            href={role === "ADMIN" ? "/dashboard/expenses/history" : "/dashboard/expenses"}
             className="group relative overflow-hidden rounded-2xl bg-white p-6 transition-all duration-300 hover:shadow-lg"
             style={{
               border: "1px solid rgba(33, 33, 47, 0.06)",
@@ -178,8 +178,12 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div>
-                <div className="text-sm font-bold text-text-primary">View Expenses</div>
-                <div className="text-xs text-text-secondary mt-0.5">See all your expense claims</div>
+                <div className="text-sm font-bold text-text-primary">
+                  {role === "ADMIN" ? "View Expense History" : "View Expenses"}
+                </div>
+                <div className="text-xs text-text-secondary mt-0.5">
+                  {role === "ADMIN" ? "See all company-wide expense records" : "See all your expense claims"}
+                </div>
               </div>
             </div>
           </Link>

@@ -130,13 +130,14 @@ export default function ApprovalRulesPage() {
                 <div className="text-sm text-text-muted">
                   {rule._count.expenses} expenses
                 </div>
-                <button
-                  onClick={() => alert('Editing rules coming soon. Use the DB directly for now, or create a new one.')}
-                  className="text-sm font-semibold transition-colors duration-200"
+                <Link
+                  href={`/dashboard/rules/${rule.id}/edit`}
+                  className="text-sm font-medium text-brand-600 hover:text-brand-700"
                   style={{ color: "#3872E1" }}
+
                 >
                   Edit Rule
-                </button>
+                </Link>
               </div>
             </div>
           ))}
