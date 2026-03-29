@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { api } from "~/trpc/react";
 
 interface CountryCurrency {
@@ -22,7 +23,6 @@ export default function SetupPage() {
 
   const setupMutation = api.company.setup.useMutation({
     onSuccess: () => {
-      // Force a full page reload to refresh the session with new companyId
       window.location.href = "/dashboard";
     },
     onError: (err) => setError(err.message),
@@ -62,25 +62,37 @@ export default function SetupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen items-center justify-center px-4" style={{ background: "linear-gradient(135deg, #F6F8FC 0%, #ECE9EA 100%)" }}>
       <div className="animate-fade-in w-full max-w-lg">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-slate-900">
+          {/* Logo */}
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-white">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={48}
+              height={48}
+            />
+          </div>
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">
             Set up your company
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-text-secondary">
             Enter your company details. The currency will be set based on your
             country.
           </p>
         </div>
 
-        <div className="card">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Admin Name */}
+        <div
+          className="rounded-2xl bg-white p-7"
+          style={{
+            border: "1px solid rgba(33, 33, 47, 0.06)",
+            boxShadow: "0 4px 20px rgba(33, 33, 47, 0.08)",
+          }}
+        >
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="adminName" className="label">
-                Your Name
-              </label>
+              <label htmlFor="adminName" className="label">Your Name</label>
               <input
                 id="adminName"
                 type="text"
@@ -92,11 +104,8 @@ export default function SetupPage() {
               />
             </div>
 
-            {/* Company Name */}
             <div>
-              <label htmlFor="companyName" className="label">
-                Company Name
-              </label>
+              <label htmlFor="companyName" className="label">Company Name</label>
               <input
                 id="companyName"
                 type="text"
@@ -107,11 +116,8 @@ export default function SetupPage() {
               />
             </div>
 
-            {/* Country Search */}
             <div>
-              <label htmlFor="country" className="label">
-                Country
-              </label>
+              <label htmlFor="country" className="label">Country</label>
               <input
                 id="country"
                 type="text"
@@ -122,17 +128,15 @@ export default function SetupPage() {
               />
             </div>
 
-            {/* Country List */}
             {loadingCountries ? (
-              <div className="flex items-center justify-center py-8 text-slate-400">
-                <svg className="h-5 w-5 animate-spin mr-2" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-                  <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" className="opacity-75" />
-                </svg>
-                Loading countries...
+              <div className="flex items-center justify-center py-8 text-text-muted">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="h-6 w-6 rounded-full border-2 border-accent-blue border-t-transparent animate-spin" />
+                  <span className="text-xs">Loading countries...</span>
+                </div>
               </div>
             ) : (
-              <div className="max-h-48 overflow-y-auto rounded-lg border border-slate-200">
+              <div className="max-h-48 overflow-y-auto rounded-xl" style={{ border: "1px solid rgba(33, 33, 47, 0.08)" }}>
                 {filtered?.slice(0, 50).map((c) => (
                   <button
                     key={`${c.countryName}-${c.currencyCode}`}
@@ -141,14 +145,19 @@ export default function SetupPage() {
                       setSelected(c);
                       setSearch(c.countryName);
                     }}
-                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-sm transition-colors ${
+                    className="flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-all duration-200"
+                    style={
                       selected?.countryName === c.countryName
-                        ? "bg-brand-50 text-brand-700 font-medium"
-                        : "hover:bg-slate-50 text-slate-700"
-                    }`}
+                        ? {
+                            background: "rgba(56, 114, 225, 0.06)",
+                            color: "#3872E1",
+                            fontWeight: 600,
+                          }
+                        : { color: "#6B7194" }
+                    }
                   >
                     <span>{c.countryName}</span>
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-text-muted">
                       {c.currencyCode} ({c.currencySymbol})
                     </span>
                   </button>
@@ -156,13 +165,18 @@ export default function SetupPage() {
               </div>
             )}
 
-            {/* Selected Currency Display */}
             {selected && (
-              <div className="rounded-lg bg-brand-50 p-4 border border-brand-200">
-                <div className="text-sm font-medium text-brand-700">
+              <div
+                className="rounded-xl p-4"
+                style={{
+                  background: "rgba(56, 114, 225, 0.04)",
+                  border: "1px solid rgba(56, 114, 225, 0.15)",
+                }}
+              >
+                <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#3872E1" }}>
                   Base Currency
                 </div>
-                <div className="mt-1 text-lg font-semibold text-brand-900">
+                <div className="mt-1 text-lg font-bold text-text-primary">
                   {selected.currencySymbol} {selected.currencyCode} —{" "}
                   {selected.currencyName}
                 </div>
@@ -170,7 +184,7 @@ export default function SetupPage() {
             )}
 
             {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+              <div className="rounded-xl p-3 text-sm font-medium" style={{ background: "rgba(239, 68, 68, 0.06)", color: "#EF4444", border: "1px solid rgba(239, 68, 68, 0.15)" }}>
                 {error}
               </div>
             )}

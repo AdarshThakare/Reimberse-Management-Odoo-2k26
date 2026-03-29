@@ -100,14 +100,19 @@ export default function EditExpensePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20 text-slate-400">Loading draft...</div>
+      <div className="flex items-center justify-center py-20 text-text-muted">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 rounded-full border-2 border-accent-blue border-t-transparent animate-spin" />
+          <span className="text-sm">Loading draft...</span>
+        </div>
+      </div>
     );
   }
 
   if (!expense) {
     return (
       <div className="text-center py-20">
-        <h2 className="text-lg font-semibold text-slate-900">Expense not found</h2>
+        <h2 className="text-lg font-bold text-text-primary">Expense not found</h2>
         <button onClick={() => router.back()} className="btn btn-secondary mt-4">
           Go Back
         </button>
@@ -118,8 +123,8 @@ export default function EditExpensePage() {
   if (!isOwner || !isDraft) {
     return (
       <div className="mx-auto max-w-xl card text-center py-12">
-        <h2 className="text-lg font-semibold text-slate-900">This draft cannot be edited</h2>
-        <p className="mt-2 text-sm text-slate-500">
+        <h2 className="text-lg font-bold text-text-primary">This draft cannot be edited</h2>
+        <p className="mt-2 text-sm text-text-secondary">
           Only the submitter can edit an expense while it is in Draft status.
         </p>
         <button
@@ -137,21 +142,25 @@ export default function EditExpensePage() {
       <div>
         <button
           onClick={() => router.push(`/dashboard/expenses/${expenseId}`)}
-          className="mb-2 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+          className="mb-2 text-sm font-medium transition-colors duration-200 cursor-pointer"
+          style={{ color: "#3872E1" }}
         >
           ← Back to expense
         </button>
-        <h1 className="text-2xl font-bold text-slate-900">Edit Draft Expense</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-3xl font-bold text-text-primary tracking-tight">Edit Draft Expense</h1>
+        <p className="mt-2 text-sm text-text-secondary">
           Update the draft details and save your changes.
         </p>
       </div>
 
-      <div className="card">
+      <div
+        className="relative overflow-hidden rounded-2xl bg-white p-7"
+        style={{ border: "1px solid rgba(33, 33, 47, 0.06)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+      >
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="subject" className="label">
-              Subject <span className="text-red-500">*</span>
+              Subject <span style={{ color: "#EF4444" }}>*</span>
             </label>
             <input
               id="subject"
@@ -178,7 +187,7 @@ export default function EditExpensePage() {
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="expenseDate" className="label">
-                Expense Date <span className="text-red-500">*</span>
+                Expense Date <span style={{ color: "#EF4444" }}>*</span>
               </label>
               <input
                 id="expenseDate"
@@ -192,7 +201,7 @@ export default function EditExpensePage() {
 
             <div>
               <label htmlFor="categoryId" className="label">
-                Category <span className="text-red-500">*</span>
+                Category <span style={{ color: "#EF4444" }}>*</span>
               </label>
               <select
                 id="categoryId"
@@ -214,7 +223,7 @@ export default function EditExpensePage() {
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="totalAmount" className="label">
-                Total Amount <span className="text-red-500">*</span>
+                Total Amount <span style={{ color: "#EF4444" }}>*</span>
               </label>
               <input
                 id="totalAmount"
@@ -230,7 +239,7 @@ export default function EditExpensePage() {
 
             <div>
               <label htmlFor="currencyCode" className="label">
-                Currency <span className="text-red-500">*</span>
+                Currency <span style={{ color: "#EF4444" }}>*</span>
               </label>
               <select
                 id="currencyCode"
@@ -272,7 +281,10 @@ export default function EditExpensePage() {
             <div>
               <label className="label">Attached Receipt</label>
               <div className="flex items-center gap-3">
-                <div className="w-16 h-20 rounded-lg overflow-hidden border border-slate-200 shadow-sm flex-shrink-0">
+                <div
+                  className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0"
+                  style={{ border: "1px solid rgba(33, 33, 47, 0.08)", boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)" }}
+                >
                   <img
                     src={form.receiptUrl}
                     alt="Receipt"
@@ -280,11 +292,12 @@ export default function EditExpensePage() {
                   />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Receipt image attached</p>
+                  <p className="text-xs text-text-secondary">Receipt image attached</p>
                   <button
                     type="button"
                     onClick={() => setForm((prev) => ({ ...prev, receiptUrl: "" }))}
-                    className="text-xs text-red-500 hover:text-red-600 mt-1 transition-colors"
+                    className="text-xs font-semibold mt-1 transition-colors cursor-pointer"
+                    style={{ color: "#EF4444" }}
                   >
                     Remove
                   </button>
@@ -294,7 +307,9 @@ export default function EditExpensePage() {
           )}
 
           {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
+            <div className="rounded-xl p-3 text-sm font-medium" style={{ background: "rgba(239, 68, 68, 0.06)", color: "#EF4444", border: "1px solid rgba(239, 68, 68, 0.15)" }}>
+              {error}
+            </div>
           )}
 
           <div className="flex gap-3 pt-2">
