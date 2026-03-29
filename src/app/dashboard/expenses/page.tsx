@@ -45,24 +45,21 @@ export default function ExpensesPage() {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">My Expenses</h1>
           <p className="mt-2 text-sm text-text-secondary">
             View and manage your expense claims
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link href="/dashboard/expenses/history" className="btn btn-secondary">
-            Expense History
-          </Link>
-          <Link href="/dashboard/expenses/new" className="btn btn-primary">
+        {!isAdmin && (
+          <Link href="/dashboard/expenses/new" className="btn btn-primary w-full sm:w-auto mt-2 sm:mt-0">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
             New Expense
           </Link>
-        </div>
+        )}
       </div>
 
       {isLoading ? (
