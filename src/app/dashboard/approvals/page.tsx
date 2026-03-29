@@ -18,28 +18,37 @@ export default function ApprovalsPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Approval Queue</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-3xl font-bold text-text-primary tracking-tight">Approval Queue</h1>
+        <p className="mt-2 text-sm text-text-secondary">
           Expenses waiting for your approval
         </p>
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-16 text-slate-400">
-          <svg className="h-5 w-5 animate-spin mr-2" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-            <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" className="opacity-75" />
-          </svg>
-          Loading...
+        <div className="flex items-center justify-center py-20 text-text-muted">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-8 w-8 rounded-full border-2 border-accent-blue border-t-transparent animate-spin" />
+            <span className="text-sm">Loading...</span>
+          </div>
         </div>
       ) : pending && pending.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-4 stagger-children">
           {pending.map((expense) => (
-            <div key={expense.id} className="card animate-slide-in">
+            <div
+              key={expense.id}
+              className="relative overflow-hidden rounded-2xl bg-white p-6 transition-all duration-300 hover:shadow-lg"
+              style={{
+                border: "1px solid rgba(33, 33, 47, 0.06)",
+                boxShadow: "0 1px 2px rgba(33, 33, 47, 0.06)",
+              }}
+            >
+              {/* Accent top line */}
+              <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, #F59E0B, #00DDB0)" }} />
+
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-base font-semibold text-slate-900">
+                    <h3 className="text-base font-bold text-text-primary">
                       {expense.subject}
                     </h3>
                     {expense.approvalRule && (
@@ -48,13 +57,13 @@ export default function ApprovalsPage() {
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1.5 text-sm text-text-secondary">
                     Submitted by{" "}
-                    <span className="font-medium text-slate-700">
+                    <span className="font-semibold text-text-primary">
                       {expense.submitter.name ?? expense.submitter.email}
                     </span>
                     {expense.submitter.designation && (
-                      <span className="text-slate-400"> ({expense.submitter.designation})</span>
+                      <span className="text-text-muted"> ({expense.submitter.designation})</span>
                     )}
                     {" · "}
                     {expense.category.name}
@@ -62,19 +71,19 @@ export default function ApprovalsPage() {
                 </div>
 
                 <div className="text-right">
-                  <div className="text-lg font-bold text-slate-900">
+                  <div className="text-xl font-bold text-text-primary">
                     {expense.currency.symbol}
                     {Number(expense.totalAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </div>
                   {expense.convertedAmount && (
-                    <div className="text-xs text-slate-400">
+                    <div className="text-xs text-text-muted mt-0.5">
                       ≈ ₹{Number(expense.convertedAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })} (company)
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4">
+              <div className="mt-5 flex items-center gap-3 border-t pt-4" style={{ borderColor: "rgba(33, 33, 47, 0.06)" }}>
                 <button
                   onClick={() =>
                     approveMutation.mutate({
@@ -113,14 +122,17 @@ export default function ApprovalsPage() {
           ))}
         </div>
       ) : (
-        <div className="card text-center py-16">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-            <svg className="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <div className="card text-center py-20">
+          <div
+            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl"
+            style={{ background: "rgba(0, 221, 176, 0.08)" }}
+          >
+            <svg className="h-8 w-8" style={{ color: "#00DDB0" }} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">All caught up!</h3>
-          <p className="mt-1 text-sm text-slate-500">No expenses waiting for your approval.</p>
+          <h3 className="text-lg font-bold text-text-primary">All caught up!</h3>
+          <p className="mt-1 text-sm text-text-secondary">No expenses waiting for your approval.</p>
         </div>
       )}
     </div>
