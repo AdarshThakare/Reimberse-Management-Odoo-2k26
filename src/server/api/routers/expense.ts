@@ -333,7 +333,11 @@ export const expenseRouter = createTRPCRouter({
           select: { id: true, name: true, email: true, designation: true },
         },
         approvalRule: {
-          select: { name: true, ruleType: true },
+          select: {
+            name: true,
+            ruleType: true,
+            steps: { select: { stepOrder: true, approverId: true } },
+          },
         },
       },
       orderBy: { submittedAt: "desc" },
@@ -347,7 +351,9 @@ export const expenseRouter = createTRPCRouter({
 
       // For sequential, we need to verify the current step matches
       // This is a post-filter since Prisma can't do this in one query
-      return true; // We'll validate in the approve action
+      return expense.approvalRule.steps.some(
+        (step) => step.stepOrder === expense.currentStepOrder && step.approverId === userId
+      );
     });
   }),
 

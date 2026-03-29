@@ -213,10 +213,35 @@ export const userRouter = createTRPCRouter({
         }
       }
 
-      return ctx.db.user.update({
+      const updatedUser = await ctx.db.user.update({
         where: { id: input.userId },
         data: { managerId: input.managerId },
       });
+
+      // Retroactive Manager Gate pull-back:
+      // If a manager was just assigned, and the user has 'UNDER_REVIEW' expenses
+      // that bypassed the manager gate because they previously lacked a manager,
+      // pull them back to step 0 so the new manager sees them immediately.
+      if (input.managerId) {
+        await ctx.db.expense.updateMany({
+          where: {
+            submitterId: input.userId,
+            status: "UNDER_REVIEW",
+            approvalRule: {
+              isManagerFirst: true,
+            },
+            OR: [
+              { currentStepOrder: { not: 0 } },
+              { currentStepOrder: null },
+            ],
+          },
+          data: {
+            currentStepOrder: 0,
+          },
+        });
+      }
+
+      return updatedUser;
     }),
 
   /**

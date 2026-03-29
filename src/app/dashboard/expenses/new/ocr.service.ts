@@ -186,7 +186,7 @@ export async function extractReceiptData(
 ): Promise<OcrResult> {
   // Run Tesseract.js OCR
   const result = await Tesseract.recognize(imageSource, "eng", {
-    logger: (m) => {
+    logger: (m: { status: string; progress: number }) => {
       if (m.status === "recognizing text" && typeof m.progress === "number") {
         onProgress?.(Math.round(m.progress * 100));
       }
